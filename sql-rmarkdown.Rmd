@@ -1,5 +1,5 @@
 ---
-title: "SQL 100 knocks"
+title: "100 knocks on SQLite"
 output: html_document
 editor_options: 
   chunk_output_type: inline
