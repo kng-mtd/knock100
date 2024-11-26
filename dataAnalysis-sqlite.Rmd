@@ -551,14 +551,16 @@ from tmp1;
 
 
 ## sampling
+#### extract a certain number
 ```{sql}
 select row_number() over() as id,* from(
   select customer_id, gender_cd, age from customer
-  where customer_id not like 'Z%' and gender_cd!='9'
+  where customer_id not like 'Z%'
   order by random() limit 10
 )
 ```
 
+#### stratify and extract a certain number
 ```{sql}
 select row_number() over() as id,* from(
   select customer_id, gender_cd, age from customer
@@ -573,3 +575,37 @@ select row_number() over() as id,* from(
 )
 ```
 
+#### divide data to learn or test with 8:2 for ML
+```{sql}
+select row_number() over() as id, customer_id
+  ,case when abs(random())%10<8 then 'learn' else 'test' end as grp
+from customer
+where customer_id not like 'Z%';
+```
+
+#### divide to 2 groups 
+```{sql}
+select row_number() over() as id, customer_id, gender_cd, age
+  ,case when abs(random())%2<1 then 'A' else 'B' end as grp
+from customer
+where customer_id not like 'Z%';
+```
+
+#### divide to 4 groups 
+```{sql}
+create temp table tmp1 as
+  select row_number() over() as id, customer_id, gender_cd, age
+    ,case when abs(random())%4<1 then 'A'
+      when abs(random())%3<1 then 'B'
+      when abs(random())%2<1 then 'C' else 'D' end as grp
+  from customer
+  where customer_id not like 'Z%';
+```
+
+```{sql}
+select grp, count(1), avg(age) from tmp1 group by grp, gender_cd;
+```
+
+```{sql}
+drop table tmp1
+```
