@@ -603,7 +603,7 @@ create temp table tmp1 as
 ```
 
 ```{sql}
-select grp, count(1), avg(age) from tmp1 group by grp, gender_cd;
+select grp, gender_cd, count(1), avg(age) from tmp1 group by grp, gender_cd;
 ```
 
 ```{sql}
