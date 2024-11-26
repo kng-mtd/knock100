@@ -63,18 +63,6 @@ pragma table_info(customer);
 select * from customer limit 5;
 ```
 
-
-## see duplication
-```{sql}
-with tmp1 as(
-  select customer_id, customer_name, postal_cd
-    ,row_number() over (partition by customer_name, postal_cd order by customer_id) as no
-  from customer
-)
-select * from tmp1 where no!=1;
-```
-
-
 ## process to null
 ```{sql}
 create temp table tmp1 (col1 int, col2 int, col3 int, col4 text);
@@ -92,12 +80,27 @@ select * from tmp1;
 
 ```{sql}
 select count(1), count(col1), count(col2), count(col3), count(col4)
-  ,sum(col1), sum(col2), sum(col3), sum(col4)
+from tmp1;
+```
+
+```{sql}
+select sum(col1), sum(col2), sum(col3), sum(col4)
   ,avg(col1), avg(col2), avg(col3), avg(col4) from tmp1;
 ```
 
 ```{sql}
 drop table tmp1;
+```
+
+
+## see duplication
+```{sql}
+with tmp1 as(
+  select customer_id, customer_name, postal_cd
+    ,row_number() over (partition by customer_name, postal_cd order by customer_id) as no
+  from customer
+)
+select * from tmp1 where no!=1;
 ```
 
 
