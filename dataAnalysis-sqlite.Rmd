@@ -63,6 +63,18 @@ pragma table_info(customer);
 select * from customer limit 5;
 ```
 
+
+## see duplication
+```{sql}
+with tmp1 as(
+  select customer_id, customer_name, postal_cd
+    ,row_number() over (partition by customer_name, postal_cd order by customer_id) as no
+  from customer
+)
+select * from tmp1 where no!=1;
+```
+
+
 ## process to null
 ```{sql}
 create temp table tmp1 (col1 int, col2 int, col3 int, col4 text);
@@ -80,11 +92,7 @@ select * from tmp1;
 
 ```{sql}
 select count(1), count(col1), count(col2), count(col3), count(col4)
-from tmp1;
-```
-
-```{sql}
-select sum(col1), sum(col2), sum(col3), sum(col4)
+  ,sum(col1), sum(col2), sum(col3), sum(col4)
   ,avg(col1), avg(col2), avg(col3), avg(col4) from tmp1;
 ```
 
@@ -93,18 +101,8 @@ drop table tmp1;
 ```
 
 
-## see duplication
-```{sql}
-with tmp1 as(
-  select customer_id, customer_name, postal_cd
-    ,row_number() over (partition by customer_name, postal_cd order by customer_id) as no
-  from customer
-)
-select * from tmp1 where no!=1;
-```
-
-
 ## aggregation
+
 ```{sql}
 with tmp1 as(
   select store_cd, count(1) as n, sum(amount) as sum
@@ -142,6 +140,43 @@ select store_cd, n, sum(amount) as sum
   ,sqrt(avg(sq)-avg(amount)*avg(amount))/avg(amount) as cv
 from tmp2
 group by store_cd;
+```
+
+
+## see difference
+```{sql}
+create temp table tmp0 as
+  with tmp1 as(
+    select count(1) as n0, avg(age) as mean0
+      ,sqrt(avg(age*age)) as sd0 from customer
+  )
+  ,tmp2 as(
+    select count(1) as na, avg(age) as mean_a
+      ,sqrt(avg(age*age)) as sd_a from customer
+    where gender_cd='0'
+  )
+  ,tmp3 as(
+    select count(1) as nb, avg(age) as mean_b
+      ,sqrt(avg(age*age)) as sd_b from customer
+    where gender_cd='1' 
+  )
+  select n0, mean0, sd0, na, mean_a, sd_a, nb, mean_b, sd_b
+  from tmp1, tmp2, tmp3;
+```
+
+#### Glass's delta
+```{sql}
+select (mean_a-mean0)/sd0 as G_delta from tmp0;
+```
+
+#### Cohen's d
+```{sql}
+select (mean_a-mean_b)/sqrt(((na-1)*sd_a*sd_a+(nb-1)*sd_b*sd_b)/(na+nb-2)) as d
+from tmp0;
+```
+
+```{sql}
+drop table tmp0;
 ```
 
 
