@@ -4195,10 +4195,10 @@ group by store_cd order by med desc limit 5;</code></pre>
 <pre class="sql"><code>with tmp1 as(
   select store_cd, product_cd, count(1) as count from receipt
   group by store_cd, product_cd
-),
-tmp2 as(
-  select store_cd, product_cd, count,
-    rank() over(partition by store_cd order by count desc) as rank
+)
+, tmp2 as(
+  select store_cd, product_cd, count
+  , rank() over(partition by store_cd order by count desc) as rank
   from tmp1
 )
 select store_cd, product_cd, count from tmp2 where rank=1 limit 10;</code></pre>
@@ -4349,8 +4349,8 @@ group by store_cd order by sd desc limit 5;</code></pre>
 <h4>S-032:
 レシート明細データ（receipt）の売上金額（amount）について、25％刻みでパーセンタイル値を求めよ。</h4>
 <pre class="sql"><code>with tmp1 as(
-  select amount-0 as val,
-    ntile(4) over(order by amount-0) as quartile from receipt
+  select amount-0 as val
+  , ntile(4) over(order by amount-0) as quartile from receipt
 )
 select quartile, min(val), max(val) from tmp1
 group by quartile;</code></pre>
@@ -4540,8 +4540,7 @@ where total&gt;=(select avg(total) from tmp1) limit 10;</code></pre>
 <h4>S-036:
 レシート明細データ（receipt）と店舗データ（store）を内部結合し、レシート明細データの全項目と店舗データの店舗名（store_name）を10件表示せよ。</h4>
 <pre class="sql"><code>select * from receipt
-inner join (select store_cd,store_name from store)
-  using (store_cd) limit 10;</code></pre>
+inner join (select store_cd,store_name from store) using (store_cd) limit 10;</code></pre>
 <div class="knitsql-table">
 <table style="width:100%;">
 <caption>Displaying records 1 - 10</caption>
@@ -4888,8 +4887,8 @@ group by customer_id limit 10;</code></pre>
   select customer_id,count(distinct sales_ymd) as n from receipt 
   where customer_id not like &#39;Z%&#39;
   group by customer_id order by n desc limit 20
-),
-tmp2 as(
+)
+, tmp2 as(
   select customer_id,sum(amount) as total from receipt 
   where customer_id not like &#39;Z%&#39;
   group by customer_id order by total desc limit 20
@@ -4987,8 +4986,8 @@ select * from tmp1 full join tmp2 using(customer_id)</code></pre>
   select sales_ymd, sum(amount) as total from receipt
   group by sales_ymd
 )
-select sales_ymd,
-  total-lag(total,1) over(order by sales_ymd) from tmp1 limit 10;</code></pre>
+select sales_ymd
+, total-lag(total,1) over(order by sales_ymd) from tmp1 limit 10;</code></pre>
 <div class="knitsql-table">
 <table>
 <caption>Displaying records 1 - 10</caption>
@@ -5050,10 +5049,10 @@ select sales_ymd,
   select sales_ymd, sum(amount) as total from receipt
   group by sales_ymd
 )
-select sales_ymd, total,
-  lag(total,1) over(order by sales_ymd) as yesterday,
-  lag(total,2) over(order by sales_ymd) as two_days_ago,
-  lag(total,3) over(order by sales_ymd) as three_days_ago
+select sales_ymd, total
+, lag(total,1) over(order by sales_ymd) as yesterday
+, lag(total,2) over(order by sales_ymd) as two_days_ago
+, lag(total,3) over(order by sales_ymd) as three_days_ago
 from tmp1 limit 10;</code></pre>
 <div class="knitsql-table">
 <table>
@@ -5150,10 +5149,10 @@ from tmp1 limit 10;</code></pre>
   select gender_cd, age/10*10 as ages, amount from receipt
   inner join customer using (customer_id)
 )
-select ages,
-  sum(case when gender_cd=0 then amount else 0 end) as male,
-  sum(case when gender_cd=1 then amount else 0 end) as female,
-  sum(case when gender_cd=9 then amount else 0 end) as unknown
+select ages
+, sum(case when gender_cd=0 then amount else 0 end) as male
+, sum(case when gender_cd=1 then amount else 0 end) as female
+, sum(case when gender_cd=9 then amount else 0 end) as unknown
 from tmp1
 group by ages order by ages;</code></pre>
 <div class="knitsql-table">
@@ -5233,10 +5232,10 @@ group by ages order by ages;</code></pre>
   select gender_cd, age/10*10 as ages, amount from receipt
   inner join customer using (customer_id)
 )
-select ages,
-  case when gender_cd=0 then &#39;00&#39; when gender_cd=1 then &#39;01&#39;
-  else &#39;99&#39; end as gender_c,
-  sum(amount)
+select ages
+, case when gender_cd=0 then &#39;00&#39; when gender_cd=1 then &#39;01&#39;
+  else &#39;99&#39; end as gender_c
+, sum(amount)
 from tmp1
 group by ages, gender_cd order by ages, gender_c;</code></pre>
 <div class="knitsql-table">
@@ -5490,8 +5489,8 @@ from customer limit 10;</code></pre>
 <div id="s-046-顧客データcustomerの申し込み日application_dateはyyyymmdd形式の文字列型でデータを保有しているこれを日付型に変換し顧客idcustomer_idとともに10件表示せよ" class="section level4">
 <h4>S-046:
 顧客データ（customer）の申し込み日（application_date）はYYYYMMDD形式の文字列型でデータを保有している。これを日付型に変換し、顧客ID（customer_id）とともに10件表示せよ。</h4>
-<pre class="sql"><code>select customer_id,
-  substr(application_date, 1, 4) || &#39;-&#39; ||
+<pre class="sql"><code>select customer_id
+, substr(application_date, 1, 4) || &#39;-&#39; ||
     substr(application_date, 5, 2) || &#39;-&#39; || 
     substr(application_date, 7, 2) as &quot;yyyy-mm-dd&quot;
 from customer limit 10;</code></pre>
@@ -5552,8 +5551,8 @@ from customer limit 10;</code></pre>
 <div id="s-047-レシート明細データreceiptの売上日sales_ymdはyyyymmdd形式の数値型でデータを保有しているこれを日付型に変換しレシート番号receipt_noレシートサブ番号receipt_sub_noとともに10件表示せよ" class="section level4">
 <h4>S-047:
 レシート明細データ（receipt）の売上日（sales_ymd）はYYYYMMDD形式の数値型でデータを保有している。これを日付型に変換し、レシート番号(receipt_no)、レシートサブ番号（receipt_sub_no）とともに10件表示せよ。</h4>
-<pre class="sql"><code>select receipt_no, receipt_sub_no,
-  substr(sales_ymd, 1, 4) || &#39;-&#39; ||
+<pre class="sql"><code>select receipt_no, receipt_sub_no
+, substr(sales_ymd, 1, 4) || &#39;-&#39; ||
     substr(sales_ymd, 5, 2) || &#39;-&#39; || 
     substr(sales_ymd, 7, 2) as &quot;yyyy-mm-dd&quot;
 from receipt limit 10;</code></pre>
@@ -5625,8 +5624,8 @@ from receipt limit 10;</code></pre>
 <div id="s-048-レシート明細データreceiptの売上エポック秒sales_epochは数値型のunix秒でデータを保有しているこれを日付型に変換しレシート番号receipt_noレシートサブ番号receipt_sub_noとともに10件表示せよ" class="section level4">
 <h4>S-048:
 レシート明細データ（receipt）の売上エポック秒（sales_epoch）は数値型のUNIX秒でデータを保有している。これを日付型に変換し、レシート番号(receipt_no)、レシートサブ番号（receipt_sub_no）とともに10件表示せよ。</h4>
-<pre class="sql"><code>select receipt_no, receipt_sub_no,
-  date(sales_epoch, &#39;unixepoch&#39;) as &quot;yyyy-mm-dd&quot;
+<pre class="sql"><code>select receipt_no, receipt_sub_no
+, date(sales_epoch, &#39;unixepoch&#39;) as &quot;yyyy-mm-dd&quot;
 from receipt limit 10;</code></pre>
 <div class="knitsql-table">
 <table>
@@ -5696,8 +5695,8 @@ from receipt limit 10;</code></pre>
 <div id="s-049-レシート明細データreceiptの売上エポック秒sales_epochを日付型に変換し年だけ取り出してレシート番号receipt_noレシートサブ番号receipt_sub_noとともに10件表示せよ" class="section level4">
 <h4>S-049:
 レシート明細データ（receipt）の売上エポック秒（sales_epoch）を日付型に変換し、「年」だけ取り出してレシート番号(receipt_no)、レシートサブ番号（receipt_sub_no）とともに10件表示せよ。</h4>
-<pre class="sql"><code>select receipt_no, receipt_sub_no,
-  strftime(&#39;%Y&#39;, date(sales_epoch, &#39;unixepoch&#39;)) as year
+<pre class="sql"><code>select receipt_no, receipt_sub_no
+, strftime(&#39;%Y&#39;, date(sales_epoch, &#39;unixepoch&#39;)) as year
 from receipt limit 10;</code></pre>
 <div class="knitsql-table">
 <table>
@@ -5767,8 +5766,8 @@ from receipt limit 10;</code></pre>
 <div id="s-050-レシート明細データreceiptの売上エポック秒sales_epochを日付型に変換し月だけ取り出してレシート番号receipt_noレシートサブ番号receipt_sub_noとともに10件表示せよなお月は0埋め2桁で取り出すこと" class="section level4">
 <h4>S-050:
 レシート明細データ（receipt）の売上エポック秒（sales_epoch）を日付型に変換し、「月」だけ取り出してレシート番号(receipt_no)、レシートサブ番号（receipt_sub_no）とともに10件表示せよ。なお、「月」は0埋め2桁で取り出すこと。</h4>
-<pre class="sql"><code>select receipt_no, receipt_sub_no,
-  strftime(&#39;%m&#39;, date(sales_epoch, &#39;unixepoch&#39;)) as month
+<pre class="sql"><code>select receipt_no, receipt_sub_no
+, strftime(&#39;%m&#39;, date(sales_epoch, &#39;unixepoch&#39;)) as month
 from receipt limit 10;</code></pre>
 <div class="knitsql-table">
 <table>
@@ -5838,8 +5837,8 @@ from receipt limit 10;</code></pre>
 <div id="s-051-レシート明細データreceiptの売上エポック秒を日付型に変換し日だけ取り出してレシート番号receipt_noレシートサブ番号receipt_sub_noとともに10件表示せよなお日は0埋め2桁で取り出すこと" class="section level4">
 <h4>S-051:
 レシート明細データ（receipt）の売上エポック秒を日付型に変換し、「日」だけ取り出してレシート番号(receipt_no)、レシートサブ番号（receipt_sub_no）とともに10件表示せよ。なお、「日」は0埋め2桁で取り出すこと。</h4>
-<pre class="sql"><code>select receipt_no, receipt_sub_no,
-  strftime(&#39;%d&#39;, date(sales_epoch, &#39;unixepoch&#39;)) as day 
+<pre class="sql"><code>select receipt_no, receipt_sub_no
+, strftime(&#39;%d&#39;, date(sales_epoch, &#39;unixepoch&#39;)) as day 
 from receipt limit 10;</code></pre>
 <div class="knitsql-table">
 <table>
@@ -5909,8 +5908,8 @@ from receipt limit 10;</code></pre>
 <div id="s-052-レシート明細データreceiptの売上金額amountを顧客idcustomer_idごとに合計の上売上金額合計に対して2000円以下を02000円より大きい金額を1に二値化し顧客id売上金額合計とともに10件表示せよただし顧客idがzから始まるのものは非会員を表すため除外して計算すること" class="section level4">
 <h4>S-052:
 レシート明細データ（receipt）の売上金額（amount）を顧客ID（customer_id）ごとに合計の上、売上金額合計に対して2,000円以下を0、2,000円より大きい金額を1に二値化し、顧客ID、売上金額合計とともに10件表示せよ。ただし、顧客IDが”Z”から始まるのものは非会員を表すため、除外して計算すること。</h4>
-<pre class="sql"><code>select customer_id, sum(amount),
-  case when sum(amount)&gt;2000 then 1 else 0 end as binary
+<pre class="sql"><code>select customer_id, sum(amount)
+, case when sum(amount)&gt;2000 then 1 else 0 end as binary
 from receipt
 where customer_id not like &#39;Z%&#39;
 group by customer_id limit 10;</code></pre>
@@ -5983,14 +5982,13 @@ group by customer_id limit 10;</code></pre>
 <h4>S-053:
 顧客データ（customer）の郵便番号（postal_cd）に対し、東京（先頭3桁が100〜209のもの）を1、それ以外のものを0に二値化せよ。さらにレシート明細データ（receipt）と結合し、全期間において売上実績のある顧客数を、作成した二値ごとにカウントせよ。</h4>
 <pre class="sql"><code>with tmp1 as(
-  select customer_id,
-    case when substr(postal_cd, 1, 3) between &#39;100&#39; and &#39;209&#39; then 1
+  select customer_id
+  , case when substr(postal_cd, 1, 3) between &#39;100&#39; and &#39;209&#39; then 1
     else 0 end as binary
   from customer
 )
 select binary, count(1) from tmp1
-inner join(select distinct customer_id from receipt)
-  using(customer_id)
+inner join(select distinct customer_id from receipt) using(customer_id)
 group by binary;</code></pre>
 <div class="knitsql-table">
 <table>
@@ -6017,11 +6015,11 @@ group by binary;</code></pre>
 <div id="s-054-顧客データcustomerの住所addressは埼玉県千葉県東京都神奈川県のいずれかとなっている都道府県毎にコード値を作成し顧客id住所とともに10件表示せよ値は埼玉県を11千葉県を12東京都を13神奈川県を14とすること" class="section level4">
 <h4>S-054:
 顧客データ（customer）の住所（address）は、埼玉県、千葉県、東京都、神奈川県のいずれかとなっている。都道府県毎にコード値を作成し、顧客ID、住所とともに10件表示せよ。値は埼玉県を11、千葉県を12、東京都を13、神奈川県を14とすること。</h4>
-<pre class="sql"><code>select customer_id, address,
-  case when address like &#39;埼玉県%&#39; then 11
-    when address like &#39;千葉県%&#39; then 12
-    when address like &#39;東京都%&#39; then 13
-    else 14 end as pref_cd
+<pre class="sql"><code>select customer_id, address
+, case when address like &#39;埼玉県%&#39; then 11
+  when address like &#39;千葉県%&#39; then 12
+  when address like &#39;東京都%&#39; then 13
+  else 14 end as pref_cd
 from customer limit 10;</code></pre>
 <div class="knitsql-table">
 <table>
@@ -6097,8 +6095,8 @@ from customer limit 10;</code></pre>
 第2四分位以上第3四分位未満 ・・・ 3を付与<br />
 第3四分位以上 ・・・ 4を付与<br />
 </p>
-<pre class="sql"><code>select customer_id,
-  sum(amount), ntile(4) over (order by sum(amount)) as quartile from receipt
+<pre class="sql"><code>select customer_id
+, sum(amount), ntile(4) over (order by sum(amount)) as quartile from receipt
 group by customer_id
 order by random();</code></pre>
 <div class="knitsql-table">
@@ -6113,53 +6111,53 @@ order by random();</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">CS023415000200</td>
-<td align="right">1401</td>
-<td align="right">2</td>
+<td align="left">CS022614000012</td>
+<td align="right">428</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
-<td align="left">CS013514000001</td>
-<td align="right">2612</td>
-<td align="right">3</td>
+<td align="left">CS041115000002</td>
+<td align="right">1084</td>
+<td align="right">2</td>
 </tr>
 <tr class="odd">
-<td align="left">CS014513000226</td>
-<td align="right">1298</td>
-<td align="right">2</td>
+<td align="left">CS003415000570</td>
+<td align="right">346</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
-<td align="left">CS007615000063</td>
-<td align="right">11038</td>
-<td align="right">4</td>
-</tr>
-<tr class="odd">
-<td align="left">CS039212000025</td>
-<td align="right">1168</td>
-<td align="right">2</td>
-</tr>
-<tr class="even">
-<td align="left">CS016512000097</td>
-<td align="right">239</td>
+<td align="left">CS017311000021</td>
+<td align="right">286</td>
 <td align="right">1</td>
 </tr>
 <tr class="odd">
-<td align="left">CS031414000090</td>
-<td align="right">3406</td>
+<td align="left">CS017411000013</td>
+<td align="right">3114</td>
 <td align="right">3</td>
 </tr>
 <tr class="even">
-<td align="left">CS037114000001</td>
-<td align="right">3435</td>
-<td align="right">3</td>
+<td align="left">CS023615000058</td>
+<td align="right">1338</td>
+<td align="right">2</td>
 </tr>
 <tr class="odd">
-<td align="left">CS004415000452</td>
-<td align="right">1375</td>
+<td align="left">CS001305000016</td>
+<td align="right">728</td>
 <td align="right">2</td>
 </tr>
 <tr class="even">
-<td align="left">CS024414000056</td>
-<td align="right">6794</td>
+<td align="left">CS035514000004</td>
+<td align="right">529</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">CS016513000020</td>
+<td align="right">2102</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">CS014514000100</td>
+<td align="right">5341</td>
 <td align="right">4</td>
 </tr>
 </tbody>
@@ -6169,8 +6167,8 @@ order by random();</code></pre>
 <div id="s-056-顧客データcustomerの年齢ageをもとに10歳刻みで年代を算出し顧客idcustomer_id生年月日birth_dayとともに10件表示せよただし60歳以上は全て60歳代とすること年代を表すカテゴリ名は任意とする" class="section level4">
 <h4>S-056:
 顧客データ（customer）の年齢（age）をもとに10歳刻みで年代を算出し、顧客ID（customer_id）、生年月日（birth_day）とともに10件表示せよ。ただし、60歳以上は全て60歳代とすること。年代を表すカテゴリ名は任意とする。</h4>
-<pre class="sql"><code>select customer_id, birth_day,
-  case when age&gt;=60 then 60 else age/10*10 end as ages
+<pre class="sql"><code>select customer_id, birth_day
+, case when age&gt;=60 then 60 else age/10*10 end as ages
 from customer limit 10;</code></pre>
 <div class="knitsql-table">
 <table>
@@ -6241,14 +6239,14 @@ from customer limit 10;</code></pre>
 <h4>S-057:
 056の抽出結果と性別コード（gender_cd）により、新たに性別×年代の組み合わせを表すカテゴリデータを作成し、10件表示せよ。組み合わせを表すカテゴリの値は任意とする。</h4>
 <pre class="sql"><code>with tmp1 as(
-  select customer_id, birth_day, gender_cd,
-    case when age&gt;=60 then 60 else age/10*10 end as ages
+  select customer_id, birth_day, gender_cd
+  , case when age&gt;=60 then 60 else age/10*10 end as ages
   from customer
 )
-select customer_id, birth_day, 
-  case when gender_cd=0 then ages||&#39;M&#39;
-    when gender_cd=1 then ages||&#39;F&#39;
-    else ages||&#39;U&#39; end as class
+select customer_id, birth_day
+, case when gender_cd=0 then ages||&#39;M&#39;
+  when gender_cd=1 then ages||&#39;F&#39;
+  else ages||&#39;U&#39; end as class
 from tmp1 limit 10;</code></pre>
 <div class="knitsql-table">
 <table>
@@ -6318,9 +6316,9 @@ from tmp1 limit 10;</code></pre>
 <div id="s-058-顧客データcustomerの性別コードgender_cdをダミー変数化し顧客idcustomer_idとともに10件表示せよ" class="section level4">
 <h4>S-058:
 顧客データ（customer）の性別コード（gender_cd）をダミー変数化し、顧客ID（customer_id）とともに10件表示せよ。</h4>
-<pre class="sql"><code>select customer_id,
-  case when gender_cd=0 then 1 else 0 end as male,
-  case when gender_cd=1 then 1 else 0 end as female
+<pre class="sql"><code>select customer_id
+, case when gender_cd=0 then 1 else 0 end as male
+, case when gender_cd=1 then 1 else 0 end as female
 from customer limit 10;</code></pre>
 <div class="knitsql-table">
 <table>
@@ -6398,8 +6396,8 @@ from customer limit 10;</code></pre>
 tmp2 as(
   select avg(total) as mean, sqrt(avg(sq)-avg(total)*avg(total)) as sd from tmp1
 )
-select customer_id, total,
-  (total-mean)/sd as normalize
+select customer_id, total
+, (total-mean)/sd as normalize
 from tmp1,tmp2 limit 10;</code></pre>
 <div class="knitsql-table">
 <table>
@@ -6473,12 +6471,12 @@ from tmp1,tmp2 limit 10;</code></pre>
   select customer_id, sum(amount) as total from receipt
   where customer_id not like &#39;Z%&#39;
   group by customer_id
-),
-tmp2 as(
+)
+, tmp2 as(
   select max(total) as max, min(total) as min from tmp1
 )
-select customer_id, total,
-  (total-min)*1.0/(max-min) normalize
+select customer_id, total
+, (total-min)*1.0/(max-min) normalize
 from tmp1,tmp2 limit 10;</code></pre>
 <div class="knitsql-table">
 <table>
@@ -7113,10 +7111,10 @@ where unit_price is not null limit 10;</code></pre>
   select customer_id, category_major_cd, sum(amount) as subtotal from receipt
   left join product using(product_cd) 
   group by customer_id, category_major_cd
-),
-tmp2 as(
-  select customer_id, sum(subtotal) as total,
-  case when category_major_cd=&#39;07&#39; then subtotal else 0 end as &#39;code07&#39;
+)
+, tmp2 as(
+  select customer_id, sum(subtotal) as total
+  , case when category_major_cd=&#39;07&#39; then subtotal else 0 end as &#39;code07&#39;
   from tmp1
   group by customer_id
 )
@@ -7201,11 +7199,11 @@ where code07!=0 limit 10;</code></pre>
 <div id="s-070-レシート明細データreceiptの売上日sales_ymdに対し顧客データcustomerの会員申込日application_dateからの経過日数を計算し顧客idcustomer_id売上日会員申込日とともに10件表示せよ-xxxsales_ymdは数値application_dateは文字列でデータを保持している点に注意" class="section level4">
 <h4>S-070:
 レシート明細データ（receipt）の売上日（sales_ymd）に対し、顧客データ（customer）の会員申込日（application_date）からの経過日数を計算し、顧客ID（customer_id）、売上日、会員申込日とともに10件表示せよ。 xxx（sales_ymdは数値、application_dateは文字列でデータを保持している点に注意）。</h4>
-<pre class="sql"><code>select customer_id, sales_ymd, application_date,
-  julianday(substr(sales_ymd,1,4)||&#39;-&#39;||
+<pre class="sql"><code>select customer_id, sales_ymd, application_date
+, julianday(substr(sales_ymd,1,4)||&#39;-&#39;||
     substr(sales_ymd,5,2)||&#39;-&#39;|| 
-    substr(sales_ymd,7,2))-
-  julianday(substr(application_date, 1, 4)||&#39;-&#39;||
+    substr(sales_ymd,7,2))
+  -julianday(substr(application_date, 1, 4)||&#39;-&#39;||
     substr(application_date,5,2)||&#39;-&#39;|| 
     substr(application_date,7,2)) as elapsed_days
 from receipt
@@ -7293,11 +7291,11 @@ inner join customer using(customer_id) limit 10;</code></pre>
 <p>xxx（sales_ymdは数値、application_dateは文字列でデータを保持している点に注意）。<br />
 1ヶ月未満は切り捨てること。</p>
 <pre class="sql"><code>with tmp1 as(
-  select customer_id,
-    substr(sales_ymd,1,4)||&#39;-&#39;||
+  select customer_id
+  , substr(sales_ymd,1,4)||&#39;-&#39;||
       substr(sales_ymd,5,2)||&#39;-&#39;|| 
-      substr(sales_ymd,7,2) as sale,
-    substr(application_date, 1, 4)||&#39;-&#39;||
+      substr(sales_ymd,7,2) as sale
+  , substr(application_date, 1, 4)||&#39;-&#39;||
       substr(application_date,5,2)||&#39;-&#39;|| 
       substr(application_date,7,2) as apply
   from receipt
@@ -7390,11 +7388,11 @@ from tmp1 limit 10;</code></pre>
 <p>xxx（sales_ymdは数値、application_dateは文字列でデータを保持している点に注意）。<br />
 1年未満は切り捨てること。</p>
 <pre class="sql"><code>with tmp1 as(
-  select customer_id,
-    substr(sales_ymd,1,4)||&#39;-&#39;||
+  select customer_id
+  , substr(sales_ymd,1,4)||&#39;-&#39;||
       substr(sales_ymd,5,2)||&#39;-&#39;|| 
-      substr(sales_ymd,7,2) as sale,
-    substr(application_date, 1, 4)||&#39;-&#39;||
+      substr(sales_ymd,7,2) as sale
+  , substr(application_date, 1, 4)||&#39;-&#39;||
       substr(application_date,5,2)||&#39;-&#39;|| 
       substr(application_date,7,2) as apply
   from receipt
@@ -7484,11 +7482,11 @@ from tmp1 limit 10;</code></pre>
 </h4>
 <p>xxx（なお、sales_ymdは数値、application_dateは文字列でデータを保持している点に注意）。なお、時間情報は保有していないため各日付は0時0分0秒を表すものとする。</p>
 <pre class="sql"><code>with tmp1 as(
-  select customer_id,
-    substr(sales_ymd,1,4)||&#39;-&#39;||
+  select customer_id
+  , substr(sales_ymd,1,4)||&#39;-&#39;||
       substr(sales_ymd,5,2)||&#39;-&#39;|| 
-      substr(sales_ymd,7,2) as sale,
-    substr(application_date, 1, 4)||&#39;-&#39;||
+      substr(sales_ymd,7,2) as sale
+  , substr(application_date, 1, 4)||&#39;-&#39;||
       substr(application_date,5,2)||&#39;-&#39;|| 
       substr(application_date,7,2) as apply
   from receipt
@@ -7583,9 +7581,9 @@ from tmp1 limit 10;</code></pre>
     substr(sales_ymd,7,2) as sale
   from receipt
 )
-select *,
-  (strftime(&#39;%w&#39;,sale)+6)%7 as from_monday,
-  date(julianday(sale)-(strftime(&#39;%w&#39;,sale)+6)%7) as monday
+select *
+  , (strftime(&#39;%w&#39;,sale)+6)%7 as from_monday
+  , date(julianday(sale)-(strftime(&#39;%w&#39;,sale)+6)%7) as monday
 from tmp1 limit 10;</code></pre>
 <div class="knitsql-table">
 <table>
@@ -7657,17 +7655,17 @@ from tmp1 limit 10;</code></pre>
 顧客データ（customer）からランダムに1%のデータを抽出し、先頭から10件表示せよ。</h4>
 <pre class="sql"><code>select * from customer where abs(random())%100=0 limit 10;</code></pre>
 <div class="knitsql-table">
-<table style="width:100%;">
+<table>
 <caption>Displaying records 1 - 10</caption>
 <colgroup>
 <col width="9%" />
-<col width="8%" />
+<col width="9%" />
 <col width="6%" />
 <col width="4%" />
 <col width="6%" />
 <col width="2%" />
 <col width="6%" />
-<col width="23%" />
+<col width="22%" />
 <col width="13%" />
 <col width="10%" />
 <col width="8%" />
@@ -7689,133 +7687,133 @@ from tmp1 limit 10;</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">CS009315000023</td>
-<td align="left">皆川 文世</td>
+<td align="left">CS023313000130</td>
+<td align="left">小沼 法子</td>
 <td align="left">1</td>
 <td align="left">女性</td>
-<td align="left">1980-04-15</td>
-<td align="left">38</td>
-<td align="left">154-0012</td>
-<td align="left">東京都世田谷区駒沢**********</td>
-<td align="left">S13009</td>
-<td align="left">20150319</td>
-<td align="left">5-20080322-1</td>
-</tr>
-<tr class="even">
-<td align="left">CS002715000007</td>
-<td align="left">土居 美紀</td>
-<td align="left">1</td>
-<td align="left">女性</td>
-<td align="left">1941-07-03</td>
-<td align="left">77</td>
-<td align="left">187-0022</td>
-<td align="left">東京都小平市上水本町**********</td>
-<td align="left">S13002</td>
-<td align="left">20150615</td>
-<td align="left">0-00000000-0</td>
-</tr>
-<tr class="odd">
-<td align="left">CS026614000034</td>
-<td align="left">西川 瞬</td>
-<td align="left">1</td>
-<td align="left">女性</td>
-<td align="left">1956-10-23</td>
-<td align="left">62</td>
-<td align="left">251-0047</td>
-<td align="left">神奈川県藤沢市辻堂**********</td>
-<td align="left">S14026</td>
-<td align="left">20150402</td>
+<td align="left">1982-03-31</td>
+<td align="left">37</td>
+<td align="left">212-0016</td>
+<td align="left">神奈川県川崎市幸区南幸町**********</td>
+<td align="left">S14023</td>
+<td align="left">20150731</td>
 <td align="left">0-00000000-0</td>
 </tr>
 <tr class="even">
-<td align="left">CS027713000072</td>
-<td align="left">市村 遥</td>
+<td align="left">CS005611000049</td>
+<td align="left">宮地 はるみ</td>
 <td align="left">1</td>
 <td align="left">女性</td>
-<td align="left">1943-07-25</td>
-<td align="left">75</td>
-<td align="left">251-0015</td>
-<td align="left">神奈川県藤沢市川名**********</td>
-<td align="left">S14027</td>
-<td align="left">20180122</td>
-<td align="left">0-00000000-0</td>
-</tr>
-<tr class="odd">
-<td align="left">CS034212000044</td>
-<td align="left">相原 ちえみ</td>
-<td align="left">1</td>
-<td align="left">女性</td>
-<td align="left">1997-06-26</td>
-<td align="left">21</td>
-<td align="left">223-0066</td>
-<td align="left">神奈川県横浜市港北区高田西**********</td>
-<td align="left">S14034</td>
-<td align="left">20160106</td>
-<td align="left">0-00000000-0</td>
-</tr>
-<tr class="even">
-<td align="left">CS005512000106</td>
-<td align="left">河原 恭子</td>
-<td align="left">1</td>
-<td align="left">女性</td>
-<td align="left">1963-06-25</td>
-<td align="left">55</td>
-<td align="left">166-0001</td>
-<td align="left">東京都杉並区阿佐谷北**********</td>
+<td align="left">1952-11-20</td>
+<td align="left">66</td>
+<td align="left">177-0031</td>
+<td align="left">東京都練馬区三原台**********</td>
 <td align="left">S13005</td>
-<td align="left">20150401</td>
-<td align="left">3-20091206-1</td>
+<td align="left">20170407</td>
+<td align="left">0-00000000-0</td>
 </tr>
 <tr class="odd">
-<td align="left">CS002614000180</td>
-<td align="left">関口 沙知絵</td>
+<td align="left">CS023514000113</td>
+<td align="left">水上 かおり</td>
 <td align="left">1</td>
 <td align="left">女性</td>
-<td align="left">1948-10-19</td>
-<td align="left">70</td>
-<td align="left">187-0021</td>
-<td align="left">東京都小平市上水南町**********</td>
-<td align="left">S13002</td>
-<td align="left">20170130</td>
-<td align="left">C-20100830-7</td>
+<td align="left">1961-02-24</td>
+<td align="left">58</td>
+<td align="left">144-0056</td>
+<td align="left">東京都大田区西六郷**********</td>
+<td align="left">S14023</td>
+<td align="left">20150411</td>
+<td align="left">2-20100920-6</td>
 </tr>
 <tr class="even">
-<td align="left">CS016513000044</td>
-<td align="left">三輪 真希</td>
+<td align="left">CS028713000039</td>
+<td align="left">石倉 沙知絵</td>
 <td align="left">1</td>
 <td align="left">女性</td>
-<td align="left">1960-10-12</td>
-<td align="left">58</td>
-<td align="left">184-0015</td>
-<td align="left">東京都小金井市貫井北町**********</td>
-<td align="left">S13016</td>
-<td align="left">20151013</td>
-<td align="left">B-20100711-9</td>
+<td align="left">1941-03-26</td>
+<td align="left">78</td>
+<td align="left">246-0012</td>
+<td align="left">神奈川県横浜市瀬谷区東野**********</td>
+<td align="left">S14028</td>
+<td align="left">20150422</td>
+<td align="left">0-00000000-0</td>
 </tr>
 <tr class="odd">
-<td align="left">CS007413000291</td>
-<td align="left">上原 未華子</td>
+<td align="left">CS001615000158</td>
+<td align="left">相田 愛</td>
 <td align="left">1</td>
 <td align="left">女性</td>
-<td align="left">1971-12-03</td>
-<td align="left">47</td>
-<td align="left">285-0859</td>
-<td align="left">千葉県佐倉市南ユーカリが丘**********</td>
-<td align="left">S12007</td>
-<td align="left">20170227</td>
+<td align="left">1956-09-23</td>
+<td align="left">62</td>
+<td align="left">144-0054</td>
+<td align="left">東京都大田区新蒲田**********</td>
+<td align="left">S13001</td>
+<td align="left">20161017</td>
 <td align="left">0-00000000-0</td>
 </tr>
 <tr class="even">
-<td align="left">CS039502000025</td>
-<td align="left">内村 兼</td>
+<td align="left">CS017313000149</td>
+<td align="left">米沢 みゆき</td>
+<td align="left">1</td>
+<td align="left">女性</td>
+<td align="left">1982-05-12</td>
+<td align="left">36</td>
+<td align="left">166-0003</td>
+<td align="left">東京都杉並区高円寺南**********</td>
+<td align="left">S13017</td>
+<td align="left">20150806</td>
+<td align="left">0-00000000-0</td>
+</tr>
+<tr class="odd">
+<td align="left">CS021404000009</td>
+<td align="left">八木 聖陽</td>
 <td align="left">0</td>
 <td align="left">男性</td>
-<td align="left">1959-04-13</td>
-<td align="left">59</td>
-<td align="left">168-0073</td>
-<td align="left">東京都杉並区下高井戸**********</td>
-<td align="left">S13039</td>
-<td align="left">20150824</td>
+<td align="left">1970-11-17</td>
+<td align="left">48</td>
+<td align="left">259-1133</td>
+<td align="left">神奈川県伊勢原市東大竹**********</td>
+<td align="left">S14021</td>
+<td align="left">20150918</td>
+<td align="left">4-20090803-3</td>
+</tr>
+<tr class="even">
+<td align="left">CS019614000020</td>
+<td align="left">おかやま 真悠子</td>
+<td align="left">1</td>
+<td align="left">女性</td>
+<td align="left">1957-05-29</td>
+<td align="left">61</td>
+<td align="left">173-0037</td>
+<td align="left">東京都板橋区小茂根**********</td>
+<td align="left">S13019</td>
+<td align="left">20150730</td>
+<td align="left">2-20080701-3</td>
+</tr>
+<tr class="odd">
+<td align="left">CS005515000473</td>
+<td align="left">水谷 美智子</td>
+<td align="left">1</td>
+<td align="left">女性</td>
+<td align="left">1960-09-16</td>
+<td align="left">58</td>
+<td align="left">167-0033</td>
+<td align="left">東京都杉並区清水**********</td>
+<td align="left">S13005</td>
+<td align="left">20170506</td>
+<td align="left">1-20100630-2</td>
+</tr>
+<tr class="even">
+<td align="left">CS001501000030</td>
+<td align="left">加藤 人志</td>
+<td align="left">0</td>
+<td align="left">男性</td>
+<td align="left">1940-07-01</td>
+<td align="left">78</td>
+<td align="left">223-0057</td>
+<td align="left">神奈川県横浜市港北区新羽町**********</td>
+<td align="left">S13001</td>
+<td align="left">20160130</td>
 <td align="left">0-00000000-0</td>
 </tr>
 </tbody>
@@ -7848,15 +7846,15 @@ select gender_cd, count(1) from tmp1 group by gender_cd;</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">0</td>
-<td align="right">305</td>
+<td align="right">303</td>
 </tr>
 <tr class="even">
 <td align="left">1</td>
-<td align="right">1778</td>
+<td align="right">1845</td>
 </tr>
 <tr class="odd">
 <td align="left">9</td>
-<td align="right">110</td>
+<td align="right">115</td>
 </tr>
 </tbody>
 </table>
@@ -7868,8 +7866,8 @@ select gender_cd, count(1) from tmp1 group by gender_cd;</code></pre>
 <pre class="sql"><code>with tmp1 as(
   select customer_id, log(sum(amount)) as x from receipt
   group by customer_id
-),
-tmp2 as(
+)
+, tmp2 as(
   select avg(x) as mean, sqrt(avg(x*x)-avg(x)*avg(x)) as sd from tmp1
 )
 select customer_id, x, (x-mean)/sd as z, exp(x) from tmp1,tmp2
@@ -7903,14 +7901,14 @@ where z not between -3 and 3 limit 10;</code></pre>
   select customer_id, sum(amount) as total from receipt
   where customer_id not like &#39;Z%&#39;
   group by customer_id
-),
-tmp2 as(
+)
+, tmp2 as(
   select median(total) as q2 from tmp1
-),
-tmp3 as(
+)
+, tmp3 as(
   select median(total) as q1 from tmp1,tmp2 where total&lt;q2 
-),
-tmp4 as(
+)
+, tmp4 as(
   select median(total) as q3 from tmp1,tmp2 where total&gt;q2
 )
 select customer_id, total from tmp1,tmp3,tmp4,tmp2
@@ -7972,12 +7970,12 @@ where total&lt;q1-(q3-q1)*1.5 or total&gt;q3+(q3-q1)*1.5 limit 10;</code></pre>
 <div id="s-079-商品データproductの各項目に対し欠損数を確認せよ" class="section level4">
 <h4>S-079: 商品データ（product）の各項目に対し、欠損数を確認せよ。</h4>
 <pre class="sql"><code>select
-  sum(case when product_cd is null then 1 else 0 end) as code,
-  sum(case when category_major_cd is null then 1 else 0 end) as major,
-  sum(case when category_medium_cd is null then 1 else 0 end) as medium,
-  sum(case when category_small_cd is null then 1 else 0 end) as small,
-  sum(case when unit_price is null then 1 else 0 end) as price,
-  sum(case when unit_cost is null then 1 else 0 end) as cost
+  sum(case when product_cd is null then 1 else 0 end) as code
+  , sum(case when category_major_cd is null then 1 else 0 end) as major
+  , sum(case when category_medium_cd is null then 1 else 0 end) as medium
+  , sum(case when category_small_cd is null then 1 else 0 end) as small
+  , sum(case when unit_price is null then 1 else 0 end) as price
+  , sum(case when unit_cost is null then 1 else 0 end) as cost
 from product; </code></pre>
 <div class="knitsql-table">
 <table>
@@ -8022,11 +8020,11 @@ from product; </code></pre>
 <h4>S-081:
 単価（unit_price）と原価（unit_cost）の欠損値について、それぞれの平均値で補完した新たな商品データを作成せよ。なお、平均値については1円未満を丸めること（四捨五入または偶数への丸めで良い）。補完実施後、各項目について欠損が生じていないことも確認すること。</h4>
 <pre class="sql"><code>create table if not exists product_new as
-  select product_cd,category_major_cd,category_medium_cd,category_small_cd,
-    coalesce(unit_price,
-      round((select avg(unit_price) from product))) AS unit_price,
-    coalesce(unit_cost,
-      round((select avg(unit_cost) from product))) AS unit_costprice
+  select product_cd,category_major_cd,category_medium_cd,category_small_cd
+  , coalesce(unit_price
+    , round((select avg(unit_price) from product))) AS unit_price
+  , coalesce(unit_cost
+    , round((select avg(unit_cost) from product))) AS unit_costprice
   from product;</code></pre>
 <pre class="sql"><code>drop table product_new;</code></pre>
 </div>
@@ -8034,11 +8032,11 @@ from product; </code></pre>
 <h4>S-082:
 単価（unit_price）と原価（unit_cost）の欠損値について、それぞれの中央値で補完した新たな商品データを作成せよ。なお、中央値については1円未満を丸めること（四捨五入または偶数への丸めで良い）。補完実施後、各項目について欠損が生じていないことも確認すること。</h4>
 <pre class="sql"><code>create table if not exists product_new as
-  select product_cd,category_major_cd,category_medium_cd,category_small_cd,
-    coalesce(unit_price,
-      round((select median(unit_price) from product))) AS unit_price,
-    coalesce(unit_cost,
-      round((select median(unit_cost) from product))) AS unit_costprice
+  select product_cd,category_major_cd,category_medium_cd,category_small_cd
+  , coalesce(unit_price
+    , round((select median(unit_price) from product))) AS unit_price
+  , coalesce(unit_cost
+    , round((select median(unit_cost) from product))) AS unit_costprice
   from product;</code></pre>
 <pre class="sql"><code>drop table product_new;</code></pre>
 </div>
@@ -8046,15 +8044,15 @@ from product; </code></pre>
 <h4>S-083:
 単価（unit_price）と原価（unit_cost）の欠損値について、各商品のカテゴリ小区分コード（category_small_cd）ごとに算出した中央値で補完した新たな商品データを作成せよ。なお、中央値については1円未満を丸めること（四捨五入または偶数への丸めで良い）。補完実施後、各項目について欠損が生じていないことも確認すること。</h4>
 <pre class="sql"><code>create temp table if not exists median as
-  select category_small_cd,
-    round(median(unit_price)) as price_mean,
-    round(median(unit_cost)) as cost_mean
+  select category_small_cd
+  , round(median(unit_price)) as price_mean
+  , round(median(unit_cost)) as cost_mean
   from product
   group by category_small_cd;</code></pre>
 <pre class="sql"><code>create table if not exists product_new as
-  select product_cd,category_major_cd,category_medium_cd,category_small_cd,
-    coalesce(unit_price, price_mean) as unit_price,
-    coalesce(unit_cost, cost_mean) as unit_cost
+  select product_cd,category_major_cd,category_medium_cd,category_small_cd
+  , coalesce(unit_price, price_mean) as unit_price
+  , coalesce(unit_cost, cost_mean) as unit_cost
   from product left join median using(category_small_cd);</code></pre>
 <pre class="sql"><code>drop table median;</code></pre>
 <pre class="sql"><code>drop table product_new;</code></pre>
@@ -8063,8 +8061,8 @@ from product; </code></pre>
 <h4>S-084:
 顧客データ（customer）の全顧客に対して全期間の売上金額に占める2019年売上金額の割合を計算し、新たなデータを作成せよ。ただし、売上実績がない場合は0として扱うこと。そして計算した割合が0超のものを抽出し、結果を10件表示せよ。また、作成したデータに欠損が存在しないことを確認せよ。</h4>
 <pre class="sql"><code>with tmp1 as(
-  select customer_id, sum(amount) as total,
-    sum(case when date(sales_epoch, &#39;unixepoch&#39;)
+  select customer_id, sum(amount) as total
+  , sum(case when date(sales_epoch, &#39;unixepoch&#39;)
       between &#39;2019-01-01&#39; and &#39;2019-12-31&#39; then amount else 0 end) as sum2019
   from receipt
   group by customer_id
@@ -8362,20 +8360,20 @@ limit 10;</code></pre>
   from geocode
   group by postal_cd)
   using(postal_cd)
-),
-tmp2 as(
-  select customer_id, address, address_s,
-    lat, long, lat_s, long_s from tmp1
+)
+, tmp2 as(
+  select customer_id, address, address_s
+  , lat, long, lat_s, long_s from tmp1
   left join(
-    select store_cd, address as address_s,
-      longitude as long_s ,latitude as lat_s
+    select store_cd, address as address_s
+    , longitude as long_s ,latitude as lat_s
     from store) as store
     on tmp1.application_store_cd=store.store_cd
 )
-select customer_id, address, address_s,
-  6371*acos(sin(lat/180*pi())*sin(lat_s/180*pi())+
+select customer_id, address, address_s
+  , 6371*acos(sin(lat/180*pi())*sin(lat_s/180*pi())+
     cos(lat/180*pi())*cos(lat_s/180*pi())*
-    cos(long/180*pi()-long_s/180*pi())) as distance
+      cos(long/180*pi()-long_s/180*pi())) as distance
 from tmp2 limit 10;</code></pre>
 <div class="knitsql-table">
 <table style="width:100%;">
@@ -8605,7 +8603,7 @@ group by customer_id</code></pre>
 </tr>
 <tr class="even">
 <td align="left">CS001114000005</td>
-<td align="right">1</td>
+<td align="right">0</td>
 </tr>
 <tr class="odd">
 <td align="left">CS001115000010</td>
@@ -8617,7 +8615,7 @@ group by customer_id</code></pre>
 </tr>
 <tr class="odd">
 <td align="left">CS001205000006</td>
-<td align="right">1</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">CS001211000025</td>
@@ -8633,11 +8631,11 @@ group by customer_id</code></pre>
 </tr>
 <tr class="odd">
 <td align="left">CS001212000046</td>
-<td align="right">1</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">CS001212000070</td>
-<td align="right">0</td>
+<td align="right">1</td>
 </tr>
 </tbody>
 </table>
@@ -8647,19 +8645,19 @@ group by customer_id</code></pre>
 <h4>S-090:
 レシート明細データ（receipt）は2017年1月1日〜2019年10月31日までのデータを有している。売上金額（amount）を月次で集計し、学習用に12ヶ月、テスト用に6ヶ月の時系列モデル構築用データを3セット作成せよ。</h4>
 <pre class="sql"><code>with tmp1 as(
-  select strftime(&#39;%Y%m&#39;,date(sales_epoch, &#39;unixepoch&#39;))as ym,
-    sum(amount) as total
+  select strftime(&#39;%Y%m&#39;,date(sales_epoch, &#39;unixepoch&#39;))as ym
+  , sum(amount) as total
   from receipt
   group by ym
 )
-select *,
-  case when ym between &#39;201701&#39; and &#39;201712&#39; then &#39;learn&#39;
+select *
+, case when ym between &#39;201701&#39; and &#39;201712&#39; then &#39;learn&#39;
     when ym between &#39;201801&#39; and &#39;201806&#39; then &#39;test&#39;
-    else null end as set1,
-  case when ym between &#39;201709&#39; and &#39;201808&#39; then &#39;learn&#39;
+    else null end as set1
+, case when ym between &#39;201709&#39; and &#39;201808&#39; then &#39;learn&#39;
     when ym between &#39;201809&#39; and &#39;201902&#39; then &#39;test&#39;
-    else null end as set2,
-  case when ym between &#39;201805&#39; and &#39;201904&#39; then &#39;learn&#39;
+    else null end as set2
+, case when ym between &#39;201805&#39; and &#39;201904&#39; then &#39;learn&#39;
     when ym between &#39;201905&#39; and &#39;201910&#39; then &#39;test&#39;
     else null end as set3    
 from tmp1;</code></pre>
@@ -8791,34 +8789,34 @@ order by random() limit 8306;</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">CS016815000011</td>
+<td align="left">CS040112000004</td>
 </tr>
 <tr class="even">
-<td align="left">CS006514000051</td>
+<td align="left">CS005314000126</td>
 </tr>
 <tr class="odd">
-<td align="left">CS028215000024</td>
+<td align="left">CS031515000113</td>
 </tr>
 <tr class="even">
-<td align="left">CS028415000215</td>
+<td align="left">CS016511000018</td>
 </tr>
 <tr class="odd">
-<td align="left">CS009315000098</td>
+<td align="left">CS040512000007</td>
 </tr>
 <tr class="even">
-<td align="left">CS028514000017</td>
+<td align="left">CS019814000010</td>
 </tr>
 <tr class="odd">
-<td align="left">CS029414000035</td>
+<td align="left">CS014314000064</td>
 </tr>
 <tr class="even">
-<td align="left">CS003414000207</td>
+<td align="left">CS030515000138</td>
 </tr>
 <tr class="odd">
-<td align="left">CS030514000075</td>
+<td align="left">CS001515000304</td>
 </tr>
 <tr class="even">
-<td align="left">CS010512000177</td>
+<td align="left">CS027515000063</td>
 </tr>
 </tbody>
 </table>
@@ -8835,34 +8833,34 @@ order by random() limit 8306;</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">CS010714000003</td>
+<td align="left">CS025301000010</td>
 </tr>
 <tr class="even">
-<td align="left">CS017612000120</td>
+<td align="left">CS008614000031</td>
 </tr>
 <tr class="odd">
-<td align="left">CS009303000015</td>
+<td align="left">CS019615000002</td>
 </tr>
 <tr class="even">
-<td align="left">CS017313000100</td>
+<td align="left">CS005513000263</td>
 </tr>
 <tr class="odd">
-<td align="left">CS003413000280</td>
+<td align="left">CS014613000034</td>
 </tr>
 <tr class="even">
-<td align="left">CS003405000017</td>
+<td align="left">CS002715000060</td>
 </tr>
 <tr class="odd">
-<td align="left">CS002212000109</td>
+<td align="left">CS025212000016</td>
 </tr>
 <tr class="even">
-<td align="left">CS012501000009</td>
+<td align="left">CS001615000284</td>
 </tr>
 <tr class="odd">
-<td align="left">CS002613000269</td>
+<td align="left">CS025405000010</td>
 </tr>
 <tr class="even">
-<td align="left">CS008405000011</td>
+<td align="left">CS001315000434</td>
 </tr>
 </tbody>
 </table>

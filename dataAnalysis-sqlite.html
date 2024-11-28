@@ -2668,7 +2668,7 @@ border-radius: 0px;
 <h2>see duplication</h2>
 <pre class="sql"><code>with tmp1 as(
   select customer_id, customer_name, postal_cd
-    ,row_number() over (partition by customer_name, postal_cd order by customer_id) as no
+    , row_number() over (partition by customer_name, postal_cd order by customer_id) as no
   from customer
 )
 select * from tmp1 where no!=1;</code></pre>
@@ -2753,9 +2753,9 @@ select * from tmp1 where no!=1;</code></pre>
 <pre class="sql"><code>create temp table tmp1 (col1 int, col2 int, col3 int, col4 text);</code></pre>
 <pre class="sql"><code>insert into tmp1 (col1 ,col2, col3, col4) values
   (1,10,10,&#39;aaa&#39;)
-  ,(2,20,20,null)
-  ,(3,null,&#39;&#39;,&#39;ccc&#39;)
-  ,(4,40,40,&#39;&#39;);</code></pre>
+  , (2,20,20,null)
+  , (3,null,&#39;&#39;,&#39;ccc&#39;)
+  , (4,40,40,&#39;&#39;);</code></pre>
 <pre class="sql"><code>select * from tmp1;</code></pre>
 <div class="knitsql-table">
 <table>
@@ -2797,8 +2797,8 @@ select * from tmp1 where no!=1;</code></pre>
 </table>
 </div>
 <pre class="sql"><code>select count(1), count(col1), count(col2), count(col3), count(col4)
-  ,sum(col1), sum(col2), sum(col3), sum(col4)
-  ,avg(col1), avg(col2), avg(col3), avg(col4) from tmp1;</code></pre>
+  , sum(col1), sum(col2), sum(col3), sum(col4)
+  , avg(col1), avg(col2), avg(col3), avg(col4) from tmp1;</code></pre>
 <div class="knitsql-table">
 <table>
 <caption>1 records</caption>
@@ -2859,15 +2859,15 @@ select * from tmp1 where no!=1;</code></pre>
 <h2>aggregation</h2>
 <pre class="sql"><code>with tmp1 as(
   select store_cd, count(1) as n, sum(amount) as sum
-    ,min(amount-0) as min, max(amount-0) as max
-    ,median(amount) as med
-    ,avg(amount) as mean, avg(amount*amount) as sq
+    , min(amount-0) as min, max(amount-0) as max
+    , median(amount) as med
+    , avg(amount) as mean, avg(amount*amount) as sq
   from receipt
   group by store_cd
 )
 select store_cd, n,sum, min, max, med, mean
-  ,sqrt(sq-mean*mean) as sd
-  ,sqrt(sq-mean*mean)/mean as cv
+  , sqrt(sq-mean*mean) as sd
+  , sqrt(sq-mean*mean)/mean as cv
 from tmp1;</code></pre>
 <div class="knitsql-table">
 <table>
@@ -3002,21 +3002,21 @@ from tmp1;</code></pre>
 <pre class="sql"><code>with tmp1 as(
   select store_cd, count(1) as n from receipt group by store_cd
 )
-,tmp2 as(
+, tmp2 as(
   select store_cd, amount, amount*amount as sq, n
-    ,row_number() over(partition by store_cd order by amount-0) as rank
+    , row_number() over(partition by store_cd order by amount-0) as rank
     from receipt
   inner join tmp1 using(store_cd)
 )
 select store_cd, n, sum(amount) as sum
-  ,min(amount-0) as min
-  ,max(case when rank=round(n*0.25) then amount else 0 end) as q1
-  ,max(case when rank=round(n*0.5) then amount else 0 end) as q2 
-  ,max(case when rank=round(n*0.75) then amount else 0 end) as q3
-  ,max(amount-0) as max
-  ,avg(amount) as mean
-  ,sqrt(avg(sq)-avg(amount)*avg(amount)) as sd
-  ,sqrt(avg(sq)-avg(amount)*avg(amount))/avg(amount) as cv
+  , min(amount-0) as min
+  , max(case when rank=round(n*0.25) then amount else 0 end) as q1
+  , max(case when rank=round(n*0.5) then amount else 0 end) as q2 
+  , max(case when rank=round(n*0.75) then amount else 0 end) as q3
+  , max(amount-0) as max
+  , avg(amount) as mean
+  , sqrt(avg(sq)-avg(amount)*avg(amount)) as sd
+  , sqrt(avg(sq)-avg(amount)*avg(amount))/avg(amount) as cv
 from tmp2
 group by store_cd;</code></pre>
 <div class="knitsql-table">
@@ -3190,16 +3190,16 @@ group by store_cd;</code></pre>
 <pre class="sql"><code>create temp table tmp0 as
   with tmp1 as(
     select count(1) as n0, avg(age) as mean0
-      ,sqrt(avg(age*age)) as sd0 from customer
+      , sqrt(avg(age*age)) as sd0 from customer
   )
-  ,tmp2 as(
+  , tmp2 as(
     select count(1) as na, avg(age) as mean_a
-      ,sqrt(avg(age*age)) as sd_a from customer
+      , sqrt(avg(age*age)) as sd_a from customer
     where gender_cd=&#39;0&#39;
   )
-  ,tmp3 as(
+  , tmp3 as(
     select count(1) as nb, avg(age) as mean_b
-      ,sqrt(avg(age*age)) as sd_b from customer
+      , sqrt(avg(age*age)) as sd_b from customer
     where gender_cd=&#39;1&#39; 
   )
   select n0, mean0, sd0, na, mean_a, sd_a, nb, mean_b, sd_b
@@ -3248,9 +3248,9 @@ from tmp0;</code></pre>
 <div id="make-dummy-var.-from-category-var." class="section level2">
 <h2>make dummy var. from category var.</h2>
 <pre class="sql"><code>select customer_id
-  ,max(case when gender_cd=&#39;0&#39; then 1 else 0 end) as male
-  ,max(case when gender_cd=&#39;1&#39; then 1 else 0 end) as female
-  ,max(case when gender_cd=&#39;9&#39; then 1 else 0 end) as unknown
+  , max(case when gender_cd=&#39;0&#39; then 1 else 0 end) as male
+  , max(case when gender_cd=&#39;1&#39; then 1 else 0 end) as female
+  , max(case when gender_cd=&#39;9&#39; then 1 else 0 end) as unknown
 from customer
 group by customer_id;</code></pre>
 <div class="knitsql-table">
@@ -3332,7 +3332,7 @@ group by customer_id;</code></pre>
 <div id="invalid-date-valueyyyymmdd-is-made-to-null" class="section level2">
 <h2>invalid date value(YYYYmmdd) is made to null</h2>
 <pre class="sql"><code>select &#39;20000123&#39; as str
-  ,date(substr(&#39;20000123&#39;,1,4)||&#39;-&#39;||
+  , date(substr(&#39;20000123&#39;,1,4)||&#39;-&#39;||
     substr(&#39;20000123&#39;,5,2)||&#39;-&#39;||
     substr(&#39;20000123&#39;,7,2)) as date;</code></pre>
 <div class="knitsql-table">
@@ -3353,7 +3353,7 @@ group by customer_id;</code></pre>
 </table>
 </div>
 <pre class="sql"><code>select &#39;20001234&#39; as str
-  ,date(substr(&#39;200001234&#39;,1,4)||&#39;-&#39;||
+  , date(substr(&#39;200001234&#39;,1,4)||&#39;-&#39;||
     substr(&#39;20001234&#39;,5,2)||&#39;-&#39;||
     substr(&#39;20001234&#39;,7,2)) as date;</code></pre>
 <div class="knitsql-table">
@@ -3374,7 +3374,7 @@ group by customer_id;</code></pre>
 </table>
 </div>
 <pre class="sql"><code>select sales_ymd
-  ,date(substr(sales_ymd,1,4)||&#39;-&#39;||
+  , date(substr(sales_ymd,1,4)||&#39;-&#39;||
     substr(sales_ymd,5,2)||&#39;-&#39;||
     substr(sales_ymd,7,2)) as date
 from receipt;</code></pre>
@@ -3435,7 +3435,7 @@ from receipt;</code></pre>
 <div id="invalid-time-valuehhmmss-is-made-to-null" class="section level2">
 <h2>invalid time value(HHMMSS) is made to null</h2>
 <pre class="sql"><code>select &#39;123456&#39; as str
-  ,time(substr(&#39;123456&#39;,1,2)||&#39;:&#39;||
+  , time(substr(&#39;123456&#39;,1,2)||&#39;:&#39;||
     substr(&#39;123456&#39;,3,2)||&#39;:&#39;||
     substr(&#39;123456&#39;,5,2)) as time;</code></pre>
 <div class="knitsql-table">
@@ -3456,7 +3456,7 @@ from receipt;</code></pre>
 </table>
 </div>
 <pre class="sql"><code>select &#39;234567&#39; as str
-  ,time(substr(&#39;234567&#39;,1,2)||&#39;:&#39;||
+  , time(substr(&#39;234567&#39;,1,2)||&#39;:&#39;||
     substr(&#39;234567&#39;,3,2)||&#39;:&#39;||
     substr(&#39;234567&#39;,5,2)) as time;</code></pre>
 <div class="knitsql-table">
@@ -3480,11 +3480,11 @@ from receipt;</code></pre>
 <div id="interval-of-date" class="section level2">
 <h2>interval of date</h2>
 <pre class="sql"><code>select customer_id, birth_day, apply
-  ,julianday(apply)-julianday(birth_day) as days
-  ,strftime(&#39;%Y&#39;,julianday(apply))-strftime(&#39;%Y&#39;,julianday(birth_day))-0 as years
+  , julianday(apply)-julianday(birth_day) as days
+  , strftime(&#39;%Y&#39;,julianday(apply))-strftime(&#39;%Y&#39;,julianday(birth_day))-0 as years
 from(
   select customer_id, birth_day
-    ,date(substr(application_date,1,4)||&#39;-&#39;||
+    , date(substr(application_date,1,4)||&#39;-&#39;||
       substr(application_date,5,2)||&#39;-&#39;||
       substr(application_date,7,2)) as apply
   from customer);</code></pre>
@@ -3578,7 +3578,7 @@ from(
 <div id="add-row-has-0-instead-of-no-row-in-time-series" class="section level2">
 <h2>add row has 0 instead of no row in time series</h2>
 <pre class="sql"><code>select customer_id
-  ,row_number() over(partition by customer_id order by sales_ymd) as times
+  , row_number() over(partition by customer_id order by sales_ymd) as times
 from receipt
 where customer_id not like &#39;Z%&#39;
 order by times desc;</code></pre>
@@ -3641,7 +3641,7 @@ order by times desc;</code></pre>
 )
 select ym, coalesce(sum,0) from tmp1 left join(
   select strftime(&#39;%Y%m&#39;,date(sales_epoch,&#39;unixepoch&#39;)) as ym
-    ,sum(amount) as sum
+    , sum(amount) as sum
   from receipt where customer_id=&#39;CS040214000008&#39;
   group by ym
 ) using(ym)
@@ -3706,18 +3706,18 @@ order by ym;</code></pre>
   select sales_ymd, sum(quantity) as qty, sum(amount) as amt
   from receipt group by sales_ymd
 )
-,tmp2 as(
+, tmp2 as(
   select avg(qty) as q_mean, avg(qty*qty) q_sq
-    ,min(qty) as q_min, max(qty) as q_max
-    ,avg(amt) as a_mean, avg(amt*amt) a_sq
-    ,min(amt) as a_min, max(amt) as a_max
+    , min(qty) as q_min, max(qty) as q_max
+    , avg(amt) as a_mean, avg(amt*amt) a_sq
+    , min(amt) as a_min, max(amt) as a_max
   from tmp1
 )
 select sales_ymd
-  ,(qty-q_mean)/sqrt(q_sq-q_mean*q_mean) as q_z
-  ,(qty-q_min-0.0)/(q_max-q_min) as q_0to1
-  ,(amt-a_mean)/sqrt(a_sq-a_mean*a_mean) as a_z
-  ,(amt-a_min-0.0)/(a_max-a_min) as a_0to1
+  , (qty-q_mean)/sqrt(q_sq-q_mean*q_mean) as q_z
+  , (qty-q_min-0.0)/(q_max-q_min) as q_0to1
+  , (amt-a_mean)/sqrt(a_sq-a_mean*a_mean) as a_z
+  , (amt-a_min-0.0)/(a_max-a_min) as a_0to1
 from tmp1,tmp2;
 </code></pre>
 <div class="knitsql-table">
@@ -3813,18 +3813,18 @@ from tmp1,tmp2;
   select sales_ymd, sum(quantity) as qty, sum(amount) as amt
   from receipt group by sales_ymd
 )
-,tmp2 as(
+, tmp2 as(
   select sales_ymd
-    ,qty, lag(qty,1) over(order by sales_ymd) as qty_lag1
-    ,lag(qty,2) over(order by sales_ymd) as qty_lag2
-    ,amt, lag(amt,1) over(order by sales_ymd) as amt_lag1
-    ,lag(amt,2) over(order by sales_ymd) as amt_lag2
+    , qty, lag(qty,1) over(order by sales_ymd) as qty_lag1
+    , lag(qty,2) over(order by sales_ymd) as qty_lag2
+    , amt, lag(amt,1) over(order by sales_ymd) as amt_lag1
+    , lag(amt,2) over(order by sales_ymd) as amt_lag2
   from tmp1
 )
 select sales_ymd, qty, qty_lag1
-  ,qty-qty_lag1 as q_diff1, qty*1.0/qty_lag1 as q_rate1, qty_lag2
-  ,amt, amt_lag1
-  ,amt-amt_lag1 as a_diff1, amt*1.0/amt_lag1 as a_rate1, amt_lag2
+  , qty-qty_lag1 as q_diff1, qty*1.0/qty_lag1 as q_rate1, qty_lag2
+  , amt, amt_lag1
+  , amt-amt_lag1 as a_diff1, amt*1.0/amt_lag1 as a_rate1, amt_lag2
 from tmp2;</code></pre>
 <div class="knitsql-table">
 <table>
@@ -3999,12 +3999,12 @@ from tmp2;</code></pre>
   from receipt group by sales_ymd
 )
 select sales_ymd
-  ,qty, sum(qty) over(order by sales_ymd) as cum_qty
-  ,avg(qty) over(order by sales_ymd) as cum_avg_qty
-  ,avg(qty) over(order by sales_ymd rows between 2 preceding and current row) as mov_avg_qty
-  ,amt, sum(amt) over(order by sales_ymd) as cum_amt
-  ,avg(amt) over(order by sales_ymd) as cum_avg_amt
-  ,avg(amt) over(order by sales_ymd rows between 2 preceding and current row) as mov_avg_amt
+  , qty, sum(qty) over(order by sales_ymd) as cum_qty
+  , avg(qty) over(order by sales_ymd) as cum_avg_qty
+  , avg(qty) over(order by sales_ymd rows between 2 preceding and current row) as mov_avg_qty
+  , amt, sum(amt) over(order by sales_ymd) as cum_amt
+  , avg(amt) over(order by sales_ymd) as cum_avg_amt
+  , avg(amt) over(order by sales_ymd rows between 2 preceding and current row) as mov_avg_amt
 from tmp1;</code></pre>
 <div class="knitsql-table">
 <table style="width:100%;">
@@ -4172,43 +4172,43 @@ from tmp1;</code></pre>
 <tbody>
 <tr class="odd">
 <td align="right">9</td>
-<td align="right">3</td>
+<td align="right">4</td>
 </tr>
 <tr class="even">
+<td align="right">7</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="right">3</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
 <td align="right">4</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
 <td align="right">2</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
-<td align="right">4</td>
-</tr>
-<tr class="even">
-<td align="right">6</td>
-<td align="right">3</td>
-</tr>
-<tr class="odd">
-<td align="right">3</td>
-<td align="right">4</td>
-</tr>
-<tr class="even">
-<td align="right">6</td>
 <td align="right">5</td>
 </tr>
-<tr class="odd">
-<td align="right">8</td>
-<td align="right">10</td>
-</tr>
 <tr class="even">
-<td align="right">6</td>
-<td align="right">10</td>
-</tr>
-<tr class="odd">
-<td align="right">10</td>
-<td align="right">6</td>
-</tr>
-<tr class="even">
-<td align="right">6</td>
-<td align="right">7</td>
+<td align="right">9</td>
+<td align="right">4</td>
 </tr>
 </tbody>
 </table>
@@ -4216,10 +4216,10 @@ from tmp1;</code></pre>
 <pre class="sql"><code>with tmp1 as(
   select org, count(1) as out_deg from edges group by org
 )
-,tmp2 as(
+, tmp2 as(
   select dst, count(1) as in_deg from edges group by dst
 )
-,tmp3 as(
+, tmp3 as(
   select org, dst, count(1) as weight from edges group by org,dst
 )
 select org, dst, weight, out_deg, weight*1.0/out_deg as out_prop
@@ -4245,92 +4245,92 @@ inner join tmp2 using(dst);</code></pre>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">2</td>
-<td align="right">3</td>
-<td align="right">21</td>
-<td align="right">0.1428571</td>
-<td align="right">27</td>
+<td align="right">4</td>
+<td align="right">36</td>
 <td align="right">0.1111111</td>
+<td align="right">27</td>
+<td align="right">0.1481481</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">3</td>
-<td align="right">3</td>
-<td align="right">21</td>
-<td align="right">0.1428571</td>
-<td align="right">31</td>
-<td align="right">0.0967742</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">4</td>
-<td align="right">4</td>
-<td align="right">21</td>
-<td align="right">0.1904762</td>
-<td align="right">33</td>
-<td align="right">0.1212121</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right">5</td>
-<td align="right">3</td>
-<td align="right">21</td>
-<td align="right">0.1428571</td>
-<td align="right">31</td>
-<td align="right">0.0967742</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">6</td>
 <td align="right">2</td>
-<td align="right">21</td>
-<td align="right">0.0952381</td>
-<td align="right">35</td>
-<td align="right">0.0571429</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right">7</td>
-<td align="right">2</td>
-<td align="right">21</td>
-<td align="right">0.0952381</td>
+<td align="right">36</td>
+<td align="right">0.0555556</td>
 <td align="right">22</td>
 <td align="right">0.0909091</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
+<td align="right">4</td>
+<td align="right">4</td>
+<td align="right">36</td>
+<td align="right">0.1111111</td>
+<td align="right">25</td>
+<td align="right">0.1600000</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">5</td>
+<td align="right">4</td>
+<td align="right">36</td>
+<td align="right">0.1111111</td>
+<td align="right">31</td>
+<td align="right">0.1290323</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">7</td>
+<td align="right">36</td>
+<td align="right">0.1944444</td>
+<td align="right">32</td>
+<td align="right">0.2187500</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">7</td>
+<td align="right">4</td>
+<td align="right">36</td>
+<td align="right">0.1111111</td>
+<td align="right">23</td>
+<td align="right">0.1739130</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
 <td align="right">8</td>
-<td align="right">2</td>
-<td align="right">21</td>
-<td align="right">0.0952381</td>
-<td align="right">20</td>
-<td align="right">0.1000000</td>
+<td align="right">4</td>
+<td align="right">36</td>
+<td align="right">0.1111111</td>
+<td align="right">24</td>
+<td align="right">0.1666667</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">9</td>
-<td align="right">1</td>
-<td align="right">21</td>
-<td align="right">0.0476190</td>
-<td align="right">18</td>
-<td align="right">0.0555556</td>
+<td align="right">3</td>
+<td align="right">36</td>
+<td align="right">0.0833333</td>
+<td align="right">22</td>
+<td align="right">0.1363636</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">10</td>
-<td align="right">1</td>
-<td align="right">21</td>
-<td align="right">0.0476190</td>
-<td align="right">21</td>
-<td align="right">0.0476190</td>
+<td align="right">4</td>
+<td align="right">36</td>
+<td align="right">0.1111111</td>
+<td align="right">30</td>
+<td align="right">0.1333333</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
 <td align="right">1</td>
-<td align="right">5</td>
-<td align="right">31</td>
-<td align="right">0.1612903</td>
-<td align="right">25</td>
-<td align="right">0.2000000</td>
+<td align="right">2</td>
+<td align="right">20</td>
+<td align="right">0.1000000</td>
+<td align="right">26</td>
+<td align="right">0.0769231</td>
 </tr>
 </tbody>
 </table>
@@ -4338,7 +4338,7 @@ inner join tmp2 using(dst);</code></pre>
 <pre class="sql"><code>drop table edges;</code></pre>
 <pre class="sql"><code>create temp table edges as
   select case when org&lt;dst then org else dst end as node1
-    ,case when org&gt;dst then org else dst end as node2
+    , case when org&gt;dst then org else dst end as node2
   from edges0</code></pre>
 <pre class="sql"><code>select * from edges;</code></pre>
 <div class="knitsql-table">
@@ -4352,44 +4352,44 @@ inner join tmp2 using(dst);</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">3</td>
+<td align="right">4</td>
 <td align="right">9</td>
 </tr>
 <tr class="even">
+<td align="right">3</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
 <td align="right">2</td>
-<td align="right">4</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">4</td>
-</tr>
-<tr class="even">
 <td align="right">3</td>
-<td align="right">6</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">1</td>
 </tr>
 <tr class="even">
-<td align="right">8</td>
-<td align="right">8</td>
+<td align="right">1</td>
+<td align="right">5</td>
 </tr>
 <tr class="odd">
-<td align="right">3</td>
-<td align="right">4</td>
-</tr>
-<tr class="even">
 <td align="right">5</td>
 <td align="right">6</td>
 </tr>
+<tr class="even">
+<td align="right">3</td>
+<td align="right">5</td>
+</tr>
 <tr class="odd">
-<td align="right">8</td>
-<td align="right">10</td>
+<td align="right">4</td>
+<td align="right">5</td>
 </tr>
 <tr class="even">
-<td align="right">6</td>
-<td align="right">10</td>
+<td align="right">2</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="right">9</td>
 </tr>
 </tbody>
 </table>
@@ -4397,10 +4397,10 @@ inner join tmp2 using(dst);</code></pre>
 <pre class="sql"><code>with tmp1 as(
   select node1, count(1) as deg1 from edges group by node1
 )
-,tmp2 as(
+, tmp2 as(
   select node2, count(1) as deg2 from edges group by node2
 )
-,tmp3 as(
+, tmp3 as(
   select node1, node2, count(1) as weight from edges group by node1, node2
 )
 select node1, node2, weight, deg1+deg2, weight*1.0/(deg1+deg2) as prop
@@ -4423,72 +4423,72 @@ inner join tmp2 using(node2);</code></pre>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">1</td>
-<td align="right">1</td>
-<td align="right">48</td>
-<td align="right">0.0208333</td>
+<td align="right">2</td>
+<td align="right">66</td>
+<td align="right">0.0303030</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">2</td>
-<td align="right">8</td>
-<td align="right">58</td>
-<td align="right">0.1379310</td>
+<td align="right">6</td>
+<td align="right">73</td>
+<td align="right">0.0821918</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">3</td>
-<td align="right">5</td>
-<td align="right">71</td>
-<td align="right">0.0704225</td>
+<td align="right">7</td>
+<td align="right">80</td>
+<td align="right">0.0875000</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">4</td>
-<td align="right">5</td>
-<td align="right">70</td>
-<td align="right">0.0714286</td>
+<td align="right">6</td>
+<td align="right">80</td>
+<td align="right">0.0750000</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">5</td>
-<td align="right">7</td>
-<td align="right">77</td>
-<td align="right">0.0909091</td>
+<td align="right">6</td>
+<td align="right">95</td>
+<td align="right">0.0631579</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">6</td>
-<td align="right">3</td>
-<td align="right">92</td>
-<td align="right">0.0326087</td>
+<td align="right">11</td>
+<td align="right">105</td>
+<td align="right">0.1047619</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">7</td>
-<td align="right">6</td>
-<td align="right">81</td>
-<td align="right">0.0740741</td>
+<td align="right">7</td>
+<td align="right">98</td>
+<td align="right">0.0714286</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">8</td>
-<td align="right">6</td>
-<td align="right">91</td>
-<td align="right">0.0659341</td>
+<td align="right">7</td>
+<td align="right">109</td>
+<td align="right">0.0642202</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">9</td>
-<td align="right">2</td>
-<td align="right">86</td>
-<td align="right">0.0232558</td>
+<td align="right">5</td>
+<td align="right">108</td>
+<td align="right">0.0462963</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">10</td>
-<td align="right">4</td>
-<td align="right">96</td>
-<td align="right">0.0416667</td>
+<td align="right">7</td>
+<td align="right">126</td>
+<td align="right">0.0555556</td>
 </tr>
 </tbody>
 </table>
@@ -4512,7 +4512,7 @@ inner join tmp2 using(node2);</code></pre>
     select grp, item
     from basket0
   )
-  ,tmp2 as(
+  , tmp2 as(
     select t1.grp as grp, t1.item as item1, t2.item as item2
     from tmp1 as t1
     inner join tmp1 as t2 on t1.grp=t2.grp and t1.item&lt;t2.item
@@ -4534,12 +4534,12 @@ inner join tmp2 using(node2);</code></pre>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">2</td>
-<td align="right">7</td>
+<td align="right">5</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">2</td>
-<td align="right">12</td>
+<td align="right">9</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
@@ -4553,33 +4553,33 @@ inner join tmp2 using(node2);</code></pre>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
-<td align="right">7</td>
-<td align="right">12</td>
+<td align="right">2</td>
+<td align="right">16</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
-<td align="right">7</td>
-<td align="right">13</td>
+<td align="right">5</td>
+<td align="right">9</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
-<td align="right">7</td>
-<td align="right">15</td>
+<td align="right">5</td>
+<td align="right">13</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
-<td align="right">12</td>
-<td align="right">13</td>
+<td align="right">5</td>
+<td align="right">15</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
-<td align="right">12</td>
-<td align="right">15</td>
+<td align="right">5</td>
+<td align="right">16</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
+<td align="right">9</td>
 <td align="right">13</td>
-<td align="right">15</td>
 </tr>
 </tbody>
 </table>
@@ -4599,18 +4599,28 @@ order by item1, item2; </code></pre>
 <tbody>
 <tr class="odd">
 <td align="right">1</td>
-<td align="right">3</td>
+<td align="right">2</td>
 <td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
-<td align="right">5</td>
+<td align="right">3</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">6</td>
 <td align="right">2</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
-<td align="right">6</td>
-<td align="right">1</td>
+<td align="right">7</td>
+<td align="right">2</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
@@ -4620,32 +4630,22 @@ order by item1, item2; </code></pre>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">9</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right">11</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">12</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right">13</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">15</td>
 <td align="right">2</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
-<td align="right">16</td>
+<td align="right">10</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
 <td align="right">1</td>
+<td align="right">11</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">12</td>
+<td align="right">2</td>
 </tr>
 </tbody>
 </table>
@@ -4659,12 +4659,12 @@ order by item1, item2; </code></pre>
     select distinct grp, item from basket0
   )
   select grp, item
-    ,row_number() over(partition by grp order by random()) as ord
+    , row_number() over(partition by grp order by random()) as ord
   from tmp1</code></pre>
 <pre class="sql"><code>select grp, ord
-  ,lag(item,1) over(partition by grp) as before
-  ,item
-  ,lead(item,1) over(partition by grp) as after
+  , lag(item,1) over(partition by grp) as before
+  , item
+  , lead(item,1) over(partition by grp) as after
 from basket;</code></pre>
 <div class="knitsql-table">
 <table>
@@ -4684,70 +4684,70 @@ from basket;</code></pre>
 <td align="right">1</td>
 <td align="right">NA</td>
 <td align="right">13</td>
-<td align="right">2</td>
+<td align="right">15</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">2</td>
 <td align="right">13</td>
-<td align="right">2</td>
-<td align="right">7</td>
+<td align="right">15</td>
+<td align="right">9</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">3</td>
-<td align="right">2</td>
-<td align="right">7</td>
 <td align="right">15</td>
+<td align="right">9</td>
+<td align="right">16</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">4</td>
-<td align="right">7</td>
-<td align="right">15</td>
-<td align="right">12</td>
+<td align="right">9</td>
+<td align="right">16</td>
+<td align="right">2</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">5</td>
-<td align="right">15</td>
-<td align="right">12</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td align="right">2</td>
-<td align="right">1</td>
-<td align="right">NA</td>
-<td align="right">18</td>
-<td align="right">14</td>
-</tr>
-<tr class="odd">
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">18</td>
-<td align="right">14</td>
-<td align="right">3</td>
-</tr>
-<tr class="even">
-<td align="right">2</td>
-<td align="right">3</td>
-<td align="right">14</td>
-<td align="right">3</td>
-<td align="right">12</td>
-</tr>
-<tr class="odd">
-<td align="right">2</td>
-<td align="right">4</td>
-<td align="right">3</td>
-<td align="right">12</td>
 <td align="right">16</td>
-</tr>
-<tr class="even">
 <td align="right">2</td>
 <td align="right">5</td>
-<td align="right">12</td>
-<td align="right">16</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
 <td align="right">6</td>
+<td align="right">2</td>
+<td align="right">5</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">11</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">2</td>
+<td align="right">11</td>
+<td align="right">7</td>
+<td align="right">9</td>
+</tr>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">3</td>
+<td align="right">7</td>
+<td align="right">9</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">4</td>
+<td align="right">9</td>
+<td align="right">8</td>
+<td align="right">13</td>
 </tr>
 </tbody>
 </table>
@@ -4856,9 +4856,9 @@ from customer group by gender_cd, ages;</code></pre>
 </table>
 </div>
 <pre class="sql"><code>select customer_id, gender_cd
-  ,case when age-0&lt;20 then 1 else 0 end young
-  ,case when age-0 between 20 and 64 then 1 else 0 end adult
-  ,case when age-0&gt;64 then 1 else 0 end senior
+  , case when age-0&lt;20 then 1 else 0 end young
+  , case when age-0 between 20 and 64 then 1 else 0 end adult
+  , case when age-0&gt;64 then 1 else 0 end senior
 from customer limit 10;</code></pre>
 <div class="knitsql-table">
 <table>
@@ -4949,10 +4949,10 @@ from customer limit 10;</code></pre>
 <pre class="sql"><code>create temp table cross as
   with tmp1 as(
     select gender_cd
-    ,sum(case when age-0&lt;20 then 1 else 0 end) young
-    ,sum(case when age-0 between 20 and 64 then 1 else 0 end) adult
-    ,sum(case when age-0&gt;64 then 1 else 0 end) senior
-    ,count(1) subtotal
+    , sum(case when age-0&lt;20 then 1 else 0 end) young
+    , sum(case when age-0 between 20 and 64 then 1 else 0 end) adult
+    , sum(case when age-0&gt;64 then 1 else 0 end) senior
+    , count(1) subtotal
     from customer group by gender_cd
   )
   select * from tmp1</code></pre>
@@ -5005,15 +5005,15 @@ from cross;</code></pre>
 </table>
 </div>
 <pre class="sql"><code>select gender_cd
-  ,young*1.0/subtotal as prop_young
-  ,adult*1.0/subtotal as prop_adult
-  ,senior*1.0/subtotal as prop_senior
+  , young*1.0/subtotal as prop_young
+  , adult*1.0/subtotal as prop_adult
+  , senior*1.0/subtotal as prop_senior
 from cross
 union all
 select &#39;total&#39;
-  ,sum(young)*1.0/sum(subtotal)
-  ,sum(adult)*1.0/sum(subtotal)
-  ,sum(senior)*1.0/sum(subtotal)
+  , sum(young)*1.0/sum(subtotal)
+  , sum(adult)*1.0/sum(subtotal)
+  , sum(senior)*1.0/sum(subtotal)
 from cross;</code></pre>
 <div class="knitsql-table">
 <table>
@@ -5056,15 +5056,15 @@ from cross;</code></pre>
 </div>
 <pre class="sql"><code>with tmp1 as(
   select &#39;proportion&#39;
-  ,sum(young)*1.0/sum(subtotal) as prop_young
-  ,sum(adult)*1.0/sum(subtotal) as prop_adult
-  ,sum(senior)*1.0/sum(subtotal) as prop_senior
+  , sum(young)*1.0/sum(subtotal) as prop_young
+  , sum(adult)*1.0/sum(subtotal) as prop_adult
+  , sum(senior)*1.0/sum(subtotal) as prop_senior
   from cross
 )
 select gender_cd
-  ,young*1.0/subtotal/tmp1.prop_young as lift_young
-  ,adult*1.0/subtotal/tmp1.prop_adult as lift_adult
-  ,senior*1.0/subtotal/tmp1.prop_senior as lift_senior
+  , young*1.0/subtotal/tmp1.prop_young as lift_young
+  , adult*1.0/subtotal/tmp1.prop_adult as lift_adult
+  , senior*1.0/subtotal/tmp1.prop_senior as lift_senior
 from cross,tmp1;</code></pre>
 <div class="knitsql-table">
 <table>
@@ -5236,61 +5236,61 @@ from tmp1;</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">1</td>
-<td align="left">CS010515000015</td>
-<td align="left">1</td>
-<td align="left">59</td>
+<td align="left">CS035603000041</td>
+<td align="left">0</td>
+<td align="left">67</td>
 </tr>
 <tr class="even">
 <td align="left">2</td>
-<td align="left">CS014703000019</td>
-<td align="left">0</td>
-<td align="left">72</td>
+<td align="left">CS004512000330</td>
+<td align="left">1</td>
+<td align="left">53</td>
 </tr>
 <tr class="odd">
 <td align="left">3</td>
-<td align="left">CS038515000042</td>
+<td align="left">CS003712000124</td>
 <td align="left">1</td>
-<td align="left">57</td>
+<td align="left">78</td>
 </tr>
 <tr class="even">
 <td align="left">4</td>
-<td align="left">CS006215000052</td>
+<td align="left">CS015213000020</td>
 <td align="left">1</td>
 <td align="left">27</td>
 </tr>
 <tr class="odd">
 <td align="left">5</td>
-<td align="left">CS028413000240</td>
+<td align="left">CS029411000007</td>
 <td align="left">1</td>
-<td align="left">44</td>
+<td align="left">42</td>
 </tr>
 <tr class="even">
 <td align="left">6</td>
-<td align="left">CS022713000075</td>
-<td align="left">1</td>
-<td align="left">73</td>
+<td align="left">CS004412000219</td>
+<td align="left">9</td>
+<td align="left">48</td>
 </tr>
 <tr class="odd">
 <td align="left">7</td>
-<td align="left">CS009511000040</td>
+<td align="left">CS004414000260</td>
 <td align="left">1</td>
-<td align="left">52</td>
+<td align="left">43</td>
 </tr>
 <tr class="even">
 <td align="left">8</td>
-<td align="left">CS009613000087</td>
-<td align="left">1</td>
-<td align="left">63</td>
+<td align="left">CS001304000004</td>
+<td align="left">0</td>
+<td align="left">38</td>
 </tr>
 <tr class="odd">
 <td align="left">9</td>
-<td align="left">CS018712000008</td>
+<td align="left">CS003214000054</td>
 <td align="left">1</td>
-<td align="left">78</td>
+<td align="left">22</td>
 </tr>
 <tr class="even">
 <td align="left">10</td>
-<td align="left">CS001413000679</td>
+<td align="left">CS018412000067</td>
 <td align="left">1</td>
 <td align="left">48</td>
 </tr>
@@ -5325,63 +5325,63 @@ select row_number() over() as id,* from(
 <tbody>
 <tr class="odd">
 <td align="left">1</td>
-<td align="left">CS013702000013</td>
+<td align="left">CS025603000031</td>
 <td align="left">0</td>
-<td align="left">71</td>
+<td align="left">67</td>
 </tr>
 <tr class="even">
 <td align="left">2</td>
-<td align="left">CS002501000004</td>
+<td align="left">CS003702000047</td>
 <td align="left">0</td>
-<td align="left">53</td>
+<td align="left">73</td>
 </tr>
 <tr class="odd">
 <td align="left">3</td>
-<td align="left">CS001403000033</td>
+<td align="left">CS035401000016</td>
 <td align="left">0</td>
-<td align="left">44</td>
+<td align="left">47</td>
 </tr>
 <tr class="even">
 <td align="left">4</td>
-<td align="left">CS013602000024</td>
+<td align="left">CS003303000073</td>
 <td align="left">0</td>
-<td align="left">62</td>
+<td align="left">31</td>
 </tr>
 <tr class="odd">
 <td align="left">5</td>
-<td align="left">CS010804000001</td>
+<td align="left">CS041402000003</td>
 <td align="left">0</td>
-<td align="left">88</td>
+<td align="left">43</td>
 </tr>
 <tr class="even">
 <td align="left">6</td>
-<td align="left">CS004303000001</td>
+<td align="left">CS030402000022</td>
 <td align="left">0</td>
-<td align="left">39</td>
+<td align="left">49</td>
 </tr>
 <tr class="odd">
 <td align="left">7</td>
-<td align="left">CS010505000016</td>
+<td align="left">CS040402000047</td>
 <td align="left">0</td>
-<td align="left">58</td>
+<td align="left">42</td>
 </tr>
 <tr class="even">
 <td align="left">8</td>
-<td align="left">CS023502000051</td>
+<td align="left">CS001405000036</td>
 <td align="left">0</td>
-<td align="left">58</td>
+<td align="left">45</td>
 </tr>
 <tr class="odd">
 <td align="left">9</td>
-<td align="left">CS038703000024</td>
+<td align="left">CS038402000054</td>
 <td align="left">0</td>
-<td align="left">78</td>
+<td align="left">47</td>
 </tr>
 <tr class="even">
 <td align="left">10</td>
-<td align="left">CS025603000027</td>
+<td align="left">CS035302000034</td>
 <td align="left">0</td>
-<td align="left">62</td>
+<td align="left">36</td>
 </tr>
 </tbody>
 </table>
@@ -5390,7 +5390,7 @@ select row_number() over() as id,* from(
 <div id="divide-data-to-learn-or-test-with-82-for-ml" class="section level4">
 <h4>divide data to learn or test with 8:2 for ML</h4>
 <pre class="sql"><code>select row_number() over() as id, customer_id
-  ,case when abs(random())%10&lt;8 then &#39;learn&#39; else &#39;test&#39; end as grp
+  , case when abs(random())%10&lt;8 then &#39;learn&#39; else &#39;test&#39; end as grp
 from customer
 where customer_id not like &#39;Z%&#39;;</code></pre>
 <div class="knitsql-table">
@@ -5417,7 +5417,7 @@ where customer_id not like &#39;Z%&#39;;</code></pre>
 <tr class="odd">
 <td align="left">3</td>
 <td align="left">CS031415000172</td>
-<td align="left">learn</td>
+<td align="left">test</td>
 </tr>
 <tr class="even">
 <td align="left">4</td>
@@ -5432,7 +5432,7 @@ where customer_id not like &#39;Z%&#39;;</code></pre>
 <tr class="even">
 <td align="left">6</td>
 <td align="left">CS020401000016</td>
-<td align="left">test</td>
+<td align="left">learn</td>
 </tr>
 <tr class="odd">
 <td align="left">7</td>
@@ -5442,12 +5442,12 @@ where customer_id not like &#39;Z%&#39;;</code></pre>
 <tr class="even">
 <td align="left">8</td>
 <td align="left">CS029403000008</td>
-<td align="left">test</td>
+<td align="left">learn</td>
 </tr>
 <tr class="odd">
 <td align="left">9</td>
 <td align="left">CS015804000004</td>
-<td align="left">learn</td>
+<td align="left">test</td>
 </tr>
 <tr class="even">
 <td align="left">10</td>
@@ -5461,7 +5461,7 @@ where customer_id not like &#39;Z%&#39;;</code></pre>
 <div id="divide-to-2-groups" class="section level4">
 <h4>divide to 2 groups</h4>
 <pre class="sql"><code>select row_number() over() as id, customer_id, gender_cd, age
-  ,case when abs(random())%2&lt;1 then &#39;A&#39; else &#39;B&#39; end as grp
+  , case when abs(random())%2&lt;1 then &#39;A&#39; else &#39;B&#39; end as grp
 from customer
 where customer_id not like &#39;Z%&#39;;</code></pre>
 <div class="knitsql-table">
@@ -5496,21 +5496,21 @@ where customer_id not like &#39;Z%&#39;;</code></pre>
 <td align="left">CS031415000172</td>
 <td align="left">1</td>
 <td align="left">42</td>
-<td align="left">A</td>
+<td align="left">B</td>
 </tr>
 <tr class="even">
 <td align="left">4</td>
 <td align="left">CS028811000001</td>
 <td align="left">1</td>
 <td align="left">86</td>
-<td align="left">B</td>
+<td align="left">A</td>
 </tr>
 <tr class="odd">
 <td align="left">5</td>
 <td align="left">CS001215000145</td>
 <td align="left">1</td>
 <td align="left">24</td>
-<td align="left">B</td>
+<td align="left">A</td>
 </tr>
 <tr class="even">
 <td align="left">6</td>
@@ -5524,21 +5524,21 @@ where customer_id not like &#39;Z%&#39;;</code></pre>
 <td align="left">CS015414000103</td>
 <td align="left">1</td>
 <td align="left">41</td>
-<td align="left">A</td>
+<td align="left">B</td>
 </tr>
 <tr class="even">
 <td align="left">8</td>
 <td align="left">CS029403000008</td>
 <td align="left">0</td>
 <td align="left">45</td>
-<td align="left">A</td>
+<td align="left">B</td>
 </tr>
 <tr class="odd">
 <td align="left">9</td>
 <td align="left">CS015804000004</td>
 <td align="left">0</td>
 <td align="left">87</td>
-<td align="left">B</td>
+<td align="left">A</td>
 </tr>
 <tr class="even">
 <td align="left">10</td>
@@ -5555,7 +5555,7 @@ where customer_id not like &#39;Z%&#39;;</code></pre>
 <h4>divide to 4 groups</h4>
 <pre class="sql"><code>create temp table tmp1 as
   select row_number() over() as id, customer_id, gender_cd, age
-    ,case when abs(random())%4&lt;1 then &#39;A&#39;
+    , case when abs(random())%4&lt;1 then &#39;A&#39;
       when abs(random())%3&lt;1 then &#39;B&#39;
       when abs(random())%2&lt;1 then &#39;C&#39; else &#39;D&#39; end as grp
   from customer
@@ -5576,62 +5576,62 @@ where customer_id not like &#39;Z%&#39;;</code></pre>
 <tr class="odd">
 <td align="left">A</td>
 <td align="left">0</td>
-<td align="right">758</td>
-<td align="right">52.59763</td>
+<td align="right">701</td>
+<td align="right">53.43081</td>
 </tr>
 <tr class="even">
 <td align="left">A</td>
 <td align="left">1</td>
-<td align="right">4532</td>
-<td align="right">50.62555</td>
+<td align="right">4444</td>
+<td align="right">50.55108</td>
 </tr>
 <tr class="odd">
 <td align="left">A</td>
 <td align="left">9</td>
-<td align="right">261</td>
-<td align="right">50.70498</td>
+<td align="right">306</td>
+<td align="right">50.65686</td>
 </tr>
 <tr class="even">
 <td align="left">B</td>
 <td align="left">0</td>
-<td align="right">787</td>
-<td align="right">53.02795</td>
+<td align="right">708</td>
+<td align="right">52.37571</td>
 </tr>
 <tr class="odd">
 <td align="left">B</td>
 <td align="left">1</td>
-<td align="right">4522</td>
-<td align="right">50.37572</td>
+<td align="right">4391</td>
+<td align="right">50.35459</td>
 </tr>
 <tr class="even">
 <td align="left">B</td>
 <td align="left">9</td>
-<td align="right">264</td>
-<td align="right">50.89773</td>
+<td align="right">259</td>
+<td align="right">50.79537</td>
 </tr>
 <tr class="odd">
 <td align="left">C</td>
 <td align="left">0</td>
-<td align="right">752</td>
-<td align="right">52.86037</td>
+<td align="right">806</td>
+<td align="right">52.58189</td>
 </tr>
 <tr class="even">
 <td align="left">C</td>
 <td align="left">1</td>
-<td align="right">4547</td>
-<td align="right">50.44029</td>
+<td align="right">4531</td>
+<td align="right">50.36703</td>
 </tr>
 <tr class="odd">
 <td align="left">C</td>
 <td align="left">9</td>
-<td align="right">290</td>
-<td align="right">51.25862</td>
+<td align="right">248</td>
+<td align="right">51.20968</td>
 </tr>
 <tr class="even">
 <td align="left">D</td>
 <td align="left">0</td>
-<td align="right">684</td>
-<td align="right">52.96199</td>
+<td align="right">766</td>
+<td align="right">53.08225</td>
 </tr>
 </tbody>
 </table>

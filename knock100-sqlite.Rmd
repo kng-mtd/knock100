@@ -307,10 +307,10 @@ group by store_cd order by med desc limit 5;
 with tmp1 as(
   select store_cd, product_cd, count(1) as count from receipt
   group by store_cd, product_cd
-),
-tmp2 as(
-  select store_cd, product_cd, count,
-    rank() over(partition by store_cd order by count desc) as rank
+)
+, tmp2 as(
+  select store_cd, product_cd, count
+  , rank() over(partition by store_cd order by count desc) as rank
   from tmp1
 )
 select store_cd, product_cd, count from tmp2 where rank=1 limit 10;
@@ -334,8 +334,8 @@ group by store_cd order by sd desc limit 5;
 
 ```{sql}
 with tmp1 as(
-  select amount-0 as val,
-    ntile(4) over(order by amount-0) as quartile from receipt
+  select amount-0 as val
+  , ntile(4) over(order by amount-0) as quartile from receipt
 )
 select quartile, min(val), max(val) from tmp1
 group by quartile;
@@ -374,8 +374,7 @@ where total>=(select avg(total) from tmp1) limit 10;
 
 ```{sql}
 select * from receipt
-inner join (select store_cd,store_name from store)
-  using (store_cd) limit 10;
+inner join (select store_cd,store_name from store) using (store_cd) limit 10;
 ```
 
 #### S-037: 商品データ（product）とカテゴリデータ（category）を内部結合し、商品データの全項目とカテゴリデータのカテゴリ小区分名（category_small_name）を10件表示せよ。
@@ -402,8 +401,8 @@ with tmp1 as(
   select customer_id,count(distinct sales_ymd) as n from receipt 
   where customer_id not like 'Z%'
   group by customer_id order by n desc limit 20
-),
-tmp2 as(
+)
+, tmp2 as(
   select customer_id,sum(amount) as total from receipt 
   where customer_id not like 'Z%'
   group by customer_id order by total desc limit 20
@@ -424,8 +423,8 @@ with tmp1 as(
   select sales_ymd, sum(amount) as total from receipt
   group by sales_ymd
 )
-select sales_ymd,
-  total-lag(total,1) over(order by sales_ymd) from tmp1 limit 10;
+select sales_ymd
+, total-lag(total,1) over(order by sales_ymd) from tmp1 limit 10;
 ```
 
 #### S-042: レシート明細データ（receipt）の売上金額（amount）を日付（sales_ymd）ごとに集計し、各日付のデータに対し、前回、前々回、3回前に売上があった日のデータを結合せよ。そして結果を10件表示せよ。
@@ -435,10 +434,10 @@ with tmp1 as(
   select sales_ymd, sum(amount) as total from receipt
   group by sales_ymd
 )
-select sales_ymd, total,
-  lag(total,1) over(order by sales_ymd) as yesterday,
-  lag(total,2) over(order by sales_ymd) as two_days_ago,
-  lag(total,3) over(order by sales_ymd) as three_days_ago
+select sales_ymd, total
+, lag(total,1) over(order by sales_ymd) as yesterday
+, lag(total,2) over(order by sales_ymd) as two_days_ago
+, lag(total,3) over(order by sales_ymd) as three_days_ago
 from tmp1 limit 10;
 ```
 
@@ -450,10 +449,10 @@ with tmp1 as(
   select gender_cd, age/10*10 as ages, amount from receipt
   inner join customer using (customer_id)
 )
-select ages,
-  sum(case when gender_cd=0 then amount else 0 end) as male,
-  sum(case when gender_cd=1 then amount else 0 end) as female,
-  sum(case when gender_cd=9 then amount else 0 end) as unknown
+select ages
+, sum(case when gender_cd=0 then amount else 0 end) as male
+, sum(case when gender_cd=1 then amount else 0 end) as female
+, sum(case when gender_cd=9 then amount else 0 end) as unknown
 from tmp1
 group by ages order by ages;
 ```
@@ -465,10 +464,10 @@ with tmp1 as(
   select gender_cd, age/10*10 as ages, amount from receipt
   inner join customer using (customer_id)
 )
-select ages,
-  case when gender_cd=0 then '00' when gender_cd=1 then '01'
-  else '99' end as gender_c,
-  sum(amount)
+select ages
+, case when gender_cd=0 then '00' when gender_cd=1 then '01'
+  else '99' end as gender_c
+, sum(amount)
 from tmp1
 group by ages, gender_cd order by ages, gender_c;
 ```
@@ -612,8 +611,8 @@ from customer limit 10;
 #### S-046: 顧客データ（customer）の申し込み日（application_date）はYYYYMMDD形式の文字列型でデータを保有している。これを日付型に変換し、顧客ID（customer_id）とともに10件表示せよ。
 
 ```{sql}
-select customer_id,
-  substr(application_date, 1, 4) || '-' ||
+select customer_id
+, substr(application_date, 1, 4) || '-' ||
     substr(application_date, 5, 2) || '-' || 
     substr(application_date, 7, 2) as "yyyy-mm-dd"
 from customer limit 10;
@@ -622,8 +621,8 @@ from customer limit 10;
 #### S-047: レシート明細データ（receipt）の売上日（sales_ymd）はYYYYMMDD形式の数値型でデータを保有している。これを日付型に変換し、レシート番号(receipt_no)、レシートサブ番号（receipt_sub_no）とともに10件表示せよ。
 
 ```{sql}
-select receipt_no, receipt_sub_no,
-  substr(sales_ymd, 1, 4) || '-' ||
+select receipt_no, receipt_sub_no
+, substr(sales_ymd, 1, 4) || '-' ||
     substr(sales_ymd, 5, 2) || '-' || 
     substr(sales_ymd, 7, 2) as "yyyy-mm-dd"
 from receipt limit 10;
@@ -632,40 +631,40 @@ from receipt limit 10;
 #### S-048: レシート明細データ（receipt）の売上エポック秒（sales_epoch）は数値型のUNIX秒でデータを保有している。これを日付型に変換し、レシート番号(receipt_no)、レシートサブ番号（receipt_sub_no）とともに10件表示せよ。
 
 ```{sql}
-select receipt_no, receipt_sub_no,
-  date(sales_epoch, 'unixepoch') as "yyyy-mm-dd"
+select receipt_no, receipt_sub_no
+, date(sales_epoch, 'unixepoch') as "yyyy-mm-dd"
 from receipt limit 10;
 ```
 
 #### S-049: レシート明細データ（receipt）の売上エポック秒（sales_epoch）を日付型に変換し、「年」だけ取り出してレシート番号(receipt_no)、レシートサブ番号（receipt_sub_no）とともに10件表示せよ。
 
 ```{sql}
-select receipt_no, receipt_sub_no,
-  strftime('%Y', date(sales_epoch, 'unixepoch')) as year
+select receipt_no, receipt_sub_no
+, strftime('%Y', date(sales_epoch, 'unixepoch')) as year
 from receipt limit 10;
 ```
 
 #### S-050: レシート明細データ（receipt）の売上エポック秒（sales_epoch）を日付型に変換し、「月」だけ取り出してレシート番号(receipt_no)、レシートサブ番号（receipt_sub_no）とともに10件表示せよ。なお、「月」は0埋め2桁で取り出すこと。
 
 ```{sql}
-select receipt_no, receipt_sub_no,
-  strftime('%m', date(sales_epoch, 'unixepoch')) as month
+select receipt_no, receipt_sub_no
+, strftime('%m', date(sales_epoch, 'unixepoch')) as month
 from receipt limit 10;
 ```
 
 #### S-051: レシート明細データ（receipt）の売上エポック秒を日付型に変換し、「日」だけ取り出してレシート番号(receipt_no)、レシートサブ番号（receipt_sub_no）とともに10件表示せよ。なお、「日」は0埋め2桁で取り出すこと。
 
 ```{sql}
-select receipt_no, receipt_sub_no,
-  strftime('%d', date(sales_epoch, 'unixepoch')) as day 
+select receipt_no, receipt_sub_no
+, strftime('%d', date(sales_epoch, 'unixepoch')) as day 
 from receipt limit 10;
 ```
 
 #### S-052: レシート明細データ（receipt）の売上金額（amount）を顧客ID（customer_id）ごとに合計の上、売上金額合計に対して2,000円以下を0、2,000円より大きい金額を1に二値化し、顧客ID、売上金額合計とともに10件表示せよ。ただし、顧客IDが"Z"から始まるのものは非会員を表すため、除外して計算すること。
 
 ```{sql}
-select customer_id, sum(amount),
-  case when sum(amount)>2000 then 1 else 0 end as binary
+select customer_id, sum(amount)
+, case when sum(amount)>2000 then 1 else 0 end as binary
 from receipt
 where customer_id not like 'Z%'
 group by customer_id limit 10;
@@ -675,25 +674,24 @@ group by customer_id limit 10;
 
 ```{sql}
 with tmp1 as(
-  select customer_id,
-    case when substr(postal_cd, 1, 3) between '100' and '209' then 1
+  select customer_id
+  , case when substr(postal_cd, 1, 3) between '100' and '209' then 1
     else 0 end as binary
   from customer
 )
 select binary, count(1) from tmp1
-inner join(select distinct customer_id from receipt)
-  using(customer_id)
+inner join(select distinct customer_id from receipt) using(customer_id)
 group by binary;
 ```
 
 #### S-054: 顧客データ（customer）の住所（address）は、埼玉県、千葉県、東京都、神奈川県のいずれかとなっている。都道府県毎にコード値を作成し、顧客ID、住所とともに10件表示せよ。値は埼玉県を11、千葉県を12、東京都を13、神奈川県を14とすること。
 
 ```{sql}
-select customer_id, address,
-  case when address like '埼玉県%' then 11
-    when address like '千葉県%' then 12
-    when address like '東京都%' then 13
-    else 14 end as pref_cd
+select customer_id, address
+, case when address like '埼玉県%' then 11
+  when address like '千葉県%' then 12
+  when address like '東京都%' then 13
+  else 14 end as pref_cd
 from customer limit 10;
 ```
 
@@ -704,8 +702,8 @@ from customer limit 10;
 第3四分位以上 ・・・ 4を付与\
 
 ```{sql}
-select customer_id,
-  sum(amount), ntile(4) over (order by sum(amount)) as quartile from receipt
+select customer_id
+, sum(amount), ntile(4) over (order by sum(amount)) as quartile from receipt
 group by customer_id
 order by random();
 ```
@@ -713,8 +711,8 @@ order by random();
 #### S-056: 顧客データ（customer）の年齢（age）をもとに10歳刻みで年代を算出し、顧客ID（customer_id）、生年月日（birth_day）とともに10件表示せよ。ただし、60歳以上は全て60歳代とすること。年代を表すカテゴリ名は任意とする。
 
 ```{sql}
-select customer_id, birth_day,
-  case when age>=60 then 60 else age/10*10 end as ages
+select customer_id, birth_day
+, case when age>=60 then 60 else age/10*10 end as ages
 from customer limit 10;
 ```
 
@@ -722,23 +720,23 @@ from customer limit 10;
 
 ```{sql}
 with tmp1 as(
-  select customer_id, birth_day, gender_cd,
-    case when age>=60 then 60 else age/10*10 end as ages
+  select customer_id, birth_day, gender_cd
+  , case when age>=60 then 60 else age/10*10 end as ages
   from customer
 )
-select customer_id, birth_day, 
-  case when gender_cd=0 then ages||'M'
-    when gender_cd=1 then ages||'F'
-    else ages||'U' end as class
+select customer_id, birth_day
+, case when gender_cd=0 then ages||'M'
+  when gender_cd=1 then ages||'F'
+  else ages||'U' end as class
 from tmp1 limit 10;
 ```
 
 #### S-058: 顧客データ（customer）の性別コード（gender_cd）をダミー変数化し、顧客ID（customer_id）とともに10件表示せよ。
 
 ```{sql}
-select customer_id,
-  case when gender_cd=0 then 1 else 0 end as male,
-  case when gender_cd=1 then 1 else 0 end as female
+select customer_id
+, case when gender_cd=0 then 1 else 0 end as male
+, case when gender_cd=1 then 1 else 0 end as female
 from customer limit 10;
 ```
 
@@ -753,8 +751,8 @@ with tmp1 as(
 tmp2 as(
   select avg(total) as mean, sqrt(avg(sq)-avg(total)*avg(total)) as sd from tmp1
 )
-select customer_id, total,
-  (total-mean)/sd as normalize
+select customer_id, total
+, (total-mean)/sd as normalize
 from tmp1,tmp2 limit 10;
 ```
 
@@ -765,12 +763,12 @@ with tmp1 as(
   select customer_id, sum(amount) as total from receipt
   where customer_id not like 'Z%'
   group by customer_id
-),
-tmp2 as(
+)
+, tmp2 as(
   select max(total) as max, min(total) as min from tmp1
 )
-select customer_id, total,
-  (total-min)*1.0/(max-min) normalize
+select customer_id, total
+, (total-min)*1.0/(max-min) normalize
 from tmp1,tmp2 limit 10;
 ```
 
@@ -847,10 +845,10 @@ with tmp1 as(
   select customer_id, category_major_cd, sum(amount) as subtotal from receipt
   left join product using(product_cd) 
   group by customer_id, category_major_cd
-),
-tmp2 as(
-  select customer_id, sum(subtotal) as total,
-  case when category_major_cd='07' then subtotal else 0 end as 'code07'
+)
+, tmp2 as(
+  select customer_id, sum(subtotal) as total
+  , case when category_major_cd='07' then subtotal else 0 end as 'code07'
   from tmp1
   group by customer_id
 )
@@ -861,11 +859,11 @@ where code07!=0 limit 10;
 #### S-070: レシート明細データ（receipt）の売上日（sales_ymd）に対し、顧客データ（customer）の会員申込日（application_date）からの経過日数を計算し、顧客ID（customer_id）、売上日、会員申込日とともに10件表示せよ。\ xxx（sales_ymdは数値、application_dateは文字列でデータを保持している点に注意）。
 
 ```{sql}
-select customer_id, sales_ymd, application_date,
-  julianday(substr(sales_ymd,1,4)||'-'||
+select customer_id, sales_ymd, application_date
+, julianday(substr(sales_ymd,1,4)||'-'||
     substr(sales_ymd,5,2)||'-'|| 
-    substr(sales_ymd,7,2))-
-  julianday(substr(application_date, 1, 4)||'-'||
+    substr(sales_ymd,7,2))
+  -julianday(substr(application_date, 1, 4)||'-'||
     substr(application_date,5,2)||'-'|| 
     substr(application_date,7,2)) as elapsed_days
 from receipt
@@ -878,11 +876,11 @@ xxx（sales_ymdは数値、application_dateは文字列でデータを保持し�
 
 ```{sql}
 with tmp1 as(
-  select customer_id,
-    substr(sales_ymd,1,4)||'-'||
+  select customer_id
+  , substr(sales_ymd,1,4)||'-'||
       substr(sales_ymd,5,2)||'-'|| 
-      substr(sales_ymd,7,2) as sale,
-    substr(application_date, 1, 4)||'-'||
+      substr(sales_ymd,7,2) as sale
+  , substr(application_date, 1, 4)||'-'||
       substr(application_date,5,2)||'-'|| 
       substr(application_date,7,2) as apply
   from receipt
@@ -900,11 +898,11 @@ xxx（sales_ymdは数値、application_dateは文字列でデータを保持し�
 
 ```{sql}
 with tmp1 as(
-  select customer_id,
-    substr(sales_ymd,1,4)||'-'||
+  select customer_id
+  , substr(sales_ymd,1,4)||'-'||
       substr(sales_ymd,5,2)||'-'|| 
-      substr(sales_ymd,7,2) as sale,
-    substr(application_date, 1, 4)||'-'||
+      substr(sales_ymd,7,2) as sale
+  , substr(application_date, 1, 4)||'-'||
       substr(application_date,5,2)||'-'|| 
       substr(application_date,7,2) as apply
   from receipt
@@ -919,11 +917,11 @@ xxx（なお、sales_ymdは数値、application_dateは文字列でデータを�
 
 ```{sql}
 with tmp1 as(
-  select customer_id,
-    substr(sales_ymd,1,4)||'-'||
+  select customer_id
+  , substr(sales_ymd,1,4)||'-'||
       substr(sales_ymd,5,2)||'-'|| 
-      substr(sales_ymd,7,2) as sale,
-    substr(application_date, 1, 4)||'-'||
+      substr(sales_ymd,7,2) as sale
+  , substr(application_date, 1, 4)||'-'||
       substr(application_date,5,2)||'-'|| 
       substr(application_date,7,2) as apply
   from receipt
@@ -943,9 +941,9 @@ with tmp1 as(
     substr(sales_ymd,7,2) as sale
   from receipt
 )
-select *,
-  (strftime('%w',sale)+6)%7 as from_monday,
-  date(julianday(sale)-(strftime('%w',sale)+6)%7) as monday
+select *
+  , (strftime('%w',sale)+6)%7 as from_monday
+  , date(julianday(sale)-(strftime('%w',sale)+6)%7) as monday
 from tmp1 limit 10;
 ```
 
@@ -977,8 +975,8 @@ select gender_cd, count(1) from tmp1 group by gender_cd;
 with tmp1 as(
   select customer_id, log(sum(amount)) as x from receipt
   group by customer_id
-),
-tmp2 as(
+)
+, tmp2 as(
   select avg(x) as mean, sqrt(avg(x*x)-avg(x)*avg(x)) as sd from tmp1
 )
 select customer_id, x, (x-mean)/sd as z, exp(x) from tmp1,tmp2
@@ -992,14 +990,14 @@ with tmp1 as(
   select customer_id, sum(amount) as total from receipt
   where customer_id not like 'Z%'
   group by customer_id
-),
-tmp2 as(
+)
+, tmp2 as(
   select median(total) as q2 from tmp1
-),
-tmp3 as(
+)
+, tmp3 as(
   select median(total) as q1 from tmp1,tmp2 where total<q2 
-),
-tmp4 as(
+)
+, tmp4 as(
   select median(total) as q3 from tmp1,tmp2 where total>q2
 )
 select customer_id, total from tmp1,tmp3,tmp4,tmp2
@@ -1010,12 +1008,12 @@ where total<q1-(q3-q1)*1.5 or total>q3+(q3-q1)*1.5 limit 10;
 
 ```{sql}
 select
-  sum(case when product_cd is null then 1 else 0 end) as code,
-  sum(case when category_major_cd is null then 1 else 0 end) as major,
-  sum(case when category_medium_cd is null then 1 else 0 end) as medium,
-  sum(case when category_small_cd is null then 1 else 0 end) as small,
-  sum(case when unit_price is null then 1 else 0 end) as price,
-  sum(case when unit_cost is null then 1 else 0 end) as cost
+  sum(case when product_cd is null then 1 else 0 end) as code
+  , sum(case when category_major_cd is null then 1 else 0 end) as major
+  , sum(case when category_medium_cd is null then 1 else 0 end) as medium
+  , sum(case when category_small_cd is null then 1 else 0 end) as small
+  , sum(case when unit_price is null then 1 else 0 end) as price
+  , sum(case when unit_cost is null then 1 else 0 end) as cost
 from product; 
 ```
 
@@ -1040,11 +1038,11 @@ drop table product_new;
 
 ```{sql}
 create table if not exists product_new as
-  select product_cd,category_major_cd,category_medium_cd,category_small_cd,
-    coalesce(unit_price,
-      round((select avg(unit_price) from product))) AS unit_price,
-    coalesce(unit_cost,
-      round((select avg(unit_cost) from product))) AS unit_costprice
+  select product_cd,category_major_cd,category_medium_cd,category_small_cd
+  , coalesce(unit_price
+    , round((select avg(unit_price) from product))) AS unit_price
+  , coalesce(unit_cost
+    , round((select avg(unit_cost) from product))) AS unit_costprice
   from product;
 ```
 
@@ -1056,11 +1054,11 @@ drop table product_new;
 
 ```{sql}
 create table if not exists product_new as
-  select product_cd,category_major_cd,category_medium_cd,category_small_cd,
-    coalesce(unit_price,
-      round((select median(unit_price) from product))) AS unit_price,
-    coalesce(unit_cost,
-      round((select median(unit_cost) from product))) AS unit_costprice
+  select product_cd,category_major_cd,category_medium_cd,category_small_cd
+  , coalesce(unit_price
+    , round((select median(unit_price) from product))) AS unit_price
+  , coalesce(unit_cost
+    , round((select median(unit_cost) from product))) AS unit_costprice
   from product;
 ```
 
@@ -1072,18 +1070,18 @@ drop table product_new;
 
 ```{sql}
 create temp table if not exists median as
-  select category_small_cd,
-    round(median(unit_price)) as price_mean,
-    round(median(unit_cost)) as cost_mean
+  select category_small_cd
+  , round(median(unit_price)) as price_mean
+  , round(median(unit_cost)) as cost_mean
   from product
   group by category_small_cd;
 ```
 
 ```{sql}
 create table if not exists product_new as
-  select product_cd,category_major_cd,category_medium_cd,category_small_cd,
-    coalesce(unit_price, price_mean) as unit_price,
-    coalesce(unit_cost, cost_mean) as unit_cost
+  select product_cd,category_major_cd,category_medium_cd,category_small_cd
+  , coalesce(unit_price, price_mean) as unit_price
+  , coalesce(unit_cost, cost_mean) as unit_cost
   from product left join median using(category_small_cd);
 ```
 
@@ -1099,8 +1097,8 @@ drop table product_new;
 
 ```{sql}
 with tmp1 as(
-  select customer_id, sum(amount) as total,
-    sum(case when date(sales_epoch, 'unixepoch')
+  select customer_id, sum(amount) as total
+  , sum(case when date(sales_epoch, 'unixepoch')
       between '2019-01-01' and '2019-12-31' then amount else 0 end) as sum2019
   from receipt
   group by customer_id
@@ -1136,20 +1134,20 @@ with tmp1 as(
   from geocode
   group by postal_cd)
   using(postal_cd)
-),
-tmp2 as(
-  select customer_id, address, address_s,
-    lat, long, lat_s, long_s from tmp1
+)
+, tmp2 as(
+  select customer_id, address, address_s
+  , lat, long, lat_s, long_s from tmp1
   left join(
-    select store_cd, address as address_s,
-      longitude as long_s ,latitude as lat_s
+    select store_cd, address as address_s
+    , longitude as long_s ,latitude as lat_s
     from store) as store
     on tmp1.application_store_cd=store.store_cd
 )
-select customer_id, address, address_s,
-  6371*acos(sin(lat/180*pi())*sin(lat_s/180*pi())+
+select customer_id, address, address_s
+  , 6371*acos(sin(lat/180*pi())*sin(lat_s/180*pi())+
     cos(lat/180*pi())*cos(lat_s/180*pi())*
-    cos(long/180*pi()-long_s/180*pi())) as distance
+      cos(long/180*pi()-long_s/180*pi())) as distance
 from tmp2 limit 10;
 ```
 
@@ -1228,19 +1226,19 @@ group by customer_id
 
 ```{sql}
 with tmp1 as(
-  select strftime('%Y%m',date(sales_epoch, 'unixepoch'))as ym,
-    sum(amount) as total
+  select strftime('%Y%m',date(sales_epoch, 'unixepoch'))as ym
+  , sum(amount) as total
   from receipt
   group by ym
 )
-select *,
-  case when ym between '201701' and '201712' then 'learn'
+select *
+, case when ym between '201701' and '201712' then 'learn'
     when ym between '201801' and '201806' then 'test'
-    else null end as set1,
-  case when ym between '201709' and '201808' then 'learn'
+    else null end as set1
+, case when ym between '201709' and '201808' then 'learn'
     when ym between '201809' and '201902' then 'test'
-    else null end as set2,
-  case when ym between '201805' and '201904' then 'learn'
+    else null end as set2
+, case when ym between '201805' and '201904' then 'learn'
     when ym between '201905' and '201910' then 'test'
     else null end as set3    
 from tmp1;
