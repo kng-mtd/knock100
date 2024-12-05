@@ -66,6 +66,13 @@ select * from customer limit 5;
 
 ## see duplication
 ```{sql}
+select customer_name, postal_cd, count(1) as no
+from customer
+group by customer_name, postal_cd
+having no!=1;
+```
+
+```{sql}
 with tmp1 as(
   select customer_id, customer_name, postal_cd
     , row_number() over (partition by customer_name, postal_cd order by customer_id) as no
@@ -74,35 +81,62 @@ with tmp1 as(
 select * from tmp1 where no!=1;
 ```
 
+### reject duplication
+```{sql}
+select customer_name, postal_cd from customer
+union
+select customer_name, postal_cd from customer
+```
+
+
 
 ## process to null
-```{sql}
-create temp table tmp1 (col1 int, col2 int, col3 int, col4 text);
-```
-```{sql}
-insert into tmp1 (col1 ,col2, col3, col4) values
-  (1,10,10,'aaa')
-  , (2,20,20,null)
-  , (3,null,'','ccc')
-  , (4,40,40,'');
+```{r}
+dbExecute(con,
+          "create temp table tmp1 (chr1 text, num1 int, num2 int, num3 int)")
+sql0="insert into tmp1 (chr1, num1, num2, num3) values "
+sql=paste0(sql0,"('a',0,10,100)")
+dbExecute(con,sql)
+sql=paste0(sql0,"('a',1,20,200)")
+dbExecute(con,sql)
+sql=paste0(sql0,"('b',null,30,300)")
+dbExecute(con,sql)
+sql=paste0(sql0,"('b',3,null,400)")
+dbExecute(con,sql)
+sql=paste0(sql0,"('b',4,40,500)")
+dbExecute(con,sql)
 ```
 ```{sql}
 select * from tmp1;
 ```
 
+### don't count null
 ```{sql}
-select count(1), count(col1), count(col2), count(col3), count(col4)
-  , sum(col1), sum(col2), sum(col3), sum(col4)
-  , avg(col1), avg(col2), avg(col3), avg(col4) from tmp1;
+select count(1), count(chr1), count(num1), count(num2), count(num3)
+  , sum(chr1), sum(num1), sum(num2), sum(num3)
+  , avg(chr1), avg(num1), avg(num2), avg(num3) from tmp1;
 ```
 
+### rows have null
+answer of alithmetic  includes null is null,  
+text type column's value is 0 when its used alithmetic
+```{sql}
+select * from tmp1
+  where chr1+num1+num2 is null;
+```
+
+### groups have null in specified column
+```{sql}
+select chr1 from tmp1
+group by chr1
+having count(1)!=count(num1);
+```
 ```{sql}
 drop table tmp1;
 ```
 
 
 ## aggregation
-
 ```{sql}
 with tmp1 as(
   select store_cd, count(1) as n, sum(amount) as sum
@@ -140,6 +174,16 @@ select store_cd, n, sum(amount) as sum
   , sqrt(avg(sq)-avg(amount)*avg(amount))/avg(amount) as cv
 from tmp2
 group by store_cd;
+```
+
+
+## mode
+```{sql}
+select amount, count(1) as n from receipt
+group by amount
+having count(1)>=(select max(n)
+                  from(select count(1) as n from receipt
+                  group by amount));
 ```
 
 
@@ -181,7 +225,6 @@ drop table tmp0;
 
 
 ## make dummy var. from category var.
-
 ```{sql}
 select customer_id
   , max(case when gender_cd='0' then 1 else 0 end) as male
@@ -193,7 +236,6 @@ group by customer_id;
 
 
 ## invalid date value(YYYYmmdd) is made to null
-
 ```{sql}
 select '20000123' as str
   , date(substr('20000123',1,4)||'-'||
@@ -218,7 +260,6 @@ from receipt;
 
 
 ## invalid time value(HHMMSS) is made to null
-
 ```{sql}
 select '123456' as str
   , time(substr('123456',1,2)||':'||
@@ -235,7 +276,6 @@ select '234567' as str
 
 
 ## interval of date
-
 ```{sql}
 select customer_id, birth_day, apply
   , julianday(apply)-julianday(birth_day) as days
@@ -250,7 +290,6 @@ from(
 
 
 ## add row has 0 instead of no row in time series
-
 ```{sql}
 select customer_id
   , row_number() over(partition by customer_id order by sales_ymd) as times
@@ -275,7 +314,6 @@ order by ym;
 
 
 ## standardization, normalization
-
 ```{sql}
 with tmp1 as(
   select sales_ymd, sum(quantity) as qty, sum(amount) as amt
@@ -299,7 +337,6 @@ from tmp1,tmp2;
 
 
 ## difference to previous period, rate to previous period
-
 ```{sql}
 with tmp1 as(
   select sales_ymd, sum(quantity) as qty, sum(amount) as amt
@@ -322,7 +359,6 @@ from tmp2;
 
 
 ## cumulative sum, moving average
-
 ```{sql}
 with tmp1 as(
   select sales_ymd, sum(quantity) as qty, sum(amount) as amt
@@ -340,7 +376,6 @@ from tmp1;
 
 
 ## node and edge graph
-
 ```{sql}
 create temp table edges0 as
   with recursive tmp1 as (
@@ -355,7 +390,6 @@ create temp table edges0 as
 create temp table edges as
   select * from edges0 where org!=dst;
 ```
-
 ```{sql}
 select * from edges;
 ```
@@ -387,7 +421,6 @@ create temp table edges as
     , case when org>dst then org else dst end as node2
   from edges0
 ```
-
 ```{sql}
 select * from edges;
 ```
@@ -411,14 +444,12 @@ inner join tmp2 using(node2);
 ```{sql}
 drop table edges;
 ```
-
 ```{sql}
 drop table edges0;
 ```
 
 
 ## basket analysis, collaborative filtering
-
 ```{sql}
 create temp table basket0 as
   with recursive tmp1 as (
@@ -481,14 +512,12 @@ from basket;
 ```{sql}
 drop table basket;
 ```
-
 ```{sql}
 drop table basket0;
 ```
 
 
 ## process of categorical variable
-
 ```{sql}
 select gender_cd, count(1), count(1)*1.0/max(rowid) as proportion
 from customer group by gender_cd;
@@ -562,7 +591,6 @@ drop table cross;
 
 
 ## histgram on Sturges' rule
-
 ```{sql}
 with tmp1 as(
  select ceil(log(count(1)/log(2))+1) as k, min(amount-0) as min, max(amount-0) as max
@@ -647,3 +675,5 @@ select grp, gender_cd, count(1), avg(age) from tmp1 group by grp, gender_cd;
 ```{sql}
 drop table tmp1
 ```
+
+
