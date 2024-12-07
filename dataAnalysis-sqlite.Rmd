@@ -89,51 +89,84 @@ select customer_name, postal_cd from customer
 ```
 
 
-
 ## process to null
 ```{r}
 dbExecute(con,
-          "create temp table tmp1 (chr1 text, num1 int, num2 int, num3 int)")
-sql0="insert into tmp1 (chr1, num1, num2, num3) values "
+          "create temp table tmp01 (chr1 text, num1 int, num2 int, num3 int)")
+sql0="insert into tmp01 (chr1, num1, num2, num3) values "
 sql=paste0(sql0,"('a',0,10,100)")
 dbExecute(con,sql)
 sql=paste0(sql0,"('a',1,20,200)")
 dbExecute(con,sql)
 sql=paste0(sql0,"('b',null,30,300)")
 dbExecute(con,sql)
-sql=paste0(sql0,"('b',3,null,400)")
+sql=paste0(sql0,"('b',2,null,400)")
 dbExecute(con,sql)
-sql=paste0(sql0,"('b',4,40,500)")
+sql=paste0(sql0,"('c',3,40,500)")
 dbExecute(con,sql)
 ```
 ```{sql}
-select * from tmp1;
+select * from tmp01;
 ```
 
 ### don't count null
 ```{sql}
 select count(1), count(chr1), count(num1), count(num2), count(num3)
   , sum(chr1), sum(num1), sum(num2), sum(num3)
-  , avg(chr1), avg(num1), avg(num2), avg(num3) from tmp1;
+  , avg(chr1), avg(num1), avg(num2), avg(num3) from tmp01;
 ```
 
 ### rows have null
 answer of alithmetic  includes null is null,  
 text type column's value is 0 when its used alithmetic
 ```{sql}
-select * from tmp1
+select * from tmp01
   where chr1+num1+num2 is null;
 ```
 
 ### groups have null in specified column
 ```{sql}
-select chr1 from tmp1
+select chr1 from tmp01
 group by chr1
 having count(1)!=count(num1);
 ```
+
+
+## difference of tables
 ```{sql}
-drop table tmp1;
+create temp table tmp02 as
+select * from tmp01;
 ```
+```{sql}
+update tmp02 set num3=0 where chr1='c';
+```
+```{sql}
+select * from tmp02;
+```
+
+```{sql}
+with tmp1 as(
+  select * from tmp01
+  except
+  select * from tmp02
+)
+, tmp2 as(
+  select * from tmp02
+  except
+  select * from tmp01
+)
+select 'old',* from tmp1
+union all
+select 'new',* from tmp2
+```
+
+```{sql}
+drop table tmp01;
+```
+```{sql}
+drop table tmp02;
+```
+
 
 
 ## aggregation
