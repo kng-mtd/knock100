@@ -180,8 +180,8 @@ with tmp1 as(
   group by store_cd
 )
 select store_cd, n,sum, min, max, med, mean
-  , sqrt(sq-mean*mean) as sd
-  , sqrt(sq-mean*mean)/mean as cv
+  , sqrt((sq-mean*mean)*n/(n-1)) as sd
+  , sqrt((sq-mean*mean)*n/(n-1))/mean as cv
 from tmp1;
 ```
 
@@ -203,8 +203,8 @@ select store_cd, n, sum(amount) as sum
   , max(case when rank=round(n*0.75) then amount else 0 end) as q3
   , max(amount-0) as max
   , avg(amount) as mean
-  , sqrt(avg(sq)-avg(amount)*avg(amount)) as sd
-  , sqrt(avg(sq)-avg(amount)*avg(amount))/avg(amount) as cv
+  , sqrt((avg(sq)-avg(amount)*avg(amount))*n/(n-1)) as sd
+  , sqrt((avg(sq)-avg(amount)*avg(amount))*n/(n-1))/avg(amount) as cv
 from tmp2
 group by store_cd;
 ```
@@ -225,19 +225,24 @@ having count(1)>=(select max(n)
 create temp table tmp0 as
   with tmp1 as(
     select count(1) as n0, avg(age) as mean0
-      , sqrt(avg(age*age)) as sd0 from customer
+      , avg(age*age) as sq0 from customer
   )
   , tmp2 as(
     select count(1) as na, avg(age) as mean_a
-      , sqrt(avg(age*age)) as sd_a from customer
+      , avg(age*age) as sq_a from customer
     where gender_cd='0'
   )
   , tmp3 as(
     select count(1) as nb, avg(age) as mean_b
-      , sqrt(avg(age*age)) as sd_b from customer
+      , avg(age*age) as sq_b from customer
     where gender_cd='1' 
   )
-  select n0, mean0, sd0, na, mean_a, sd_a, nb, mean_b, sd_b
+  select n0, mean0
+  , sqrt((sq0-mean0*mean0)*n0/(n0-1)) as sd0
+  , na, mean_a
+  , sqrt((sq_a-mean_a*mean_a)*na/(na-1)) as sd_a
+  , nb, mean_b
+  , sqrt((sq_b-mean_b*mean_b)*nb/(nb-1)) as sd_b
   from tmp1, tmp2, tmp3;
 ```
 
