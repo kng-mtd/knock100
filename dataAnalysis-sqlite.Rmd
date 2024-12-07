@@ -91,18 +91,13 @@ select customer_name, postal_cd from customer
 
 ## process to null
 ```{r}
-dbExecute(con,
-          "create temp table tmp01 (chr1 text, num1 int, num2 int, num3 int)")
-sql0="insert into tmp01 (chr1, num1, num2, num3) values "
-sql=paste0(sql0,"('a',0,10,100)")
-dbExecute(con,sql)
-sql=paste0(sql0,"('a',1,20,200)")
-dbExecute(con,sql)
-sql=paste0(sql0,"('b',null,30,300)")
-dbExecute(con,sql)
-sql=paste0(sql0,"('b',2,null,400)")
-dbExecute(con,sql)
-sql=paste0(sql0,"('c',3,40,500)")
+dbExecute(con,"create temp table tmp01 (chr1 text, num1 int, num2 int, num3 int)")
+sql=paste0("insert into tmp01 (chr1, num1, num2, num3) values "
+           ,"('a',0,10,100),"
+           ,"('a',1,20,200),"
+           ,"('b',null,30,300),"
+           ,"('b',2,null,400),"
+           ,"('c',3,40,500)")
 dbExecute(con,sql)
 ```
 ```{sql}
@@ -218,6 +213,17 @@ having count(1)>=(select max(n)
                   from(select count(1) as n from receipt
                   group by amount));
 ```
+
+
+## median absolute deviation, MAD
+```{sql}
+with tmp1 as(
+  select median(amount) as med from receipt 
+)
+select median(abs(amount-med))*1.4826 as mad
+from receipt,tmp1;
+```
+
 
 
 ## see difference
