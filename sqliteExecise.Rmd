@@ -29,6 +29,11 @@ tb=tibble(
 )
 dbWriteTable(con,'table0',tb)
 dbReadTable(con,'table0')
+```
+
+```{r}
+dbWriteTable(con,'table0',tb,append=T,row.names=F)
+dbReadTable(con,'table0')
 dbRemoveTable(con,'table0')
 ```
 
@@ -464,4 +469,129 @@ drop table table1;
 
 
 
+## full text search
+```{r}
+tb=tribble(~id,~txt1,~txt2,
+           1,"Actions speak louder than words.","What you do has more impact than what you say.",
+           2,"What goes around, comes around.","Your actions, good or bad, will eventually come back to affect you.",
+           3,"A stitch in time saves nine.","Taking timely action prevents bigger problems later.",
+           4,"When in Rome, do as the Romans do.","Adapt to the customs and behaviors of the place or culture you are in.",
+           5,"You can’t have your cake and eat it too.","You can’t enjoy two contradictory benefits at the same time.",
+           6,"Better late than never.","It’s better to do something late than not at all.",
+           7,"Don’t put all your eggs in one basket.","Diversify your efforts or investments to reduce risk.",
+           8,"The grass is always greener on the other side.","People often think others have it better, even when it’s not true.",
+           9,"Many hands make light work.","Tasks are easier to accomplish when many people work together.",
+           10,"It’s no use crying over spilled milk.","Don’t waste time worrying about things that cannot be changed.")
 
+dbWriteTable(con,'table1',tb)
+dbReadTable(con,'table1')
+```
+
+```{sql}
+create virtual table vrt1 using fts5 (id,txt1,txt2);
+```
+```{sql}
+insert into vrt1 (id,txt1,txt2)
+  select * from table1;
+```
+
+```{sql}
+select * from vrt1 where vrt1 match 'you';
+```
+
+```{sql}
+select *
+, rank --bm25(vrt1)
+from vrt1 where vrt1 match 'you'
+order by rank;
+```
+
+```{sql}
+select *
+, rank --bm25(vrt1)
+from vrt1 where vrt1 match 'you' or vrt1 match 'better'
+order by rank;
+```
+
+```
+1. What is BM25?
+
+BM25 (Best Matching 25) is a widely-used ranking algorithm in information retrieval. Key features include:
+
+    Higher scores for more relevant documents.
+    Based on term frequency (TF) and inverse document frequency (IDF).
+    Adjusts for document length to ensure fairness.
+
+In SQLite, BM25 scores are accessible via the FTS5 module when performing full-text searches.
+
+2. Setting Up BM25 in SQLite
+(1) Enable the FTS5 Module
+
+First, create a virtual table using the FTS5 module:
+
+CREATE VIRTUAL TABLE documents USING fts5(content);
+
+Here, documents is the virtual table name, and content is the column for storing text data.
+(2) Insert Data
+
+Insert some text data into the table:
+
+INSERT INTO documents (content) VALUES
+('SQLite is a C library that provides a lightweight database engine.'),
+('SQLite supports full-text search using the FTS5 module.'),
+('BM25 is a ranking function used by search engines.');
+
+(3) Perform a Search
+
+Run a query using the bm25() function to calculate relevance scores for the results:
+
+SELECT content, bm25(documents) AS score
+FROM documents
+WHERE documents MATCH 'SQLite'
+ORDER BY score;
+
+3. How to Interpret BM25 Scores
+Example Output
+
+The result of the above query might look like this:
+content	score
+SQLite supports full-text search using the FTS5 module.	0.22314355
+SQLite is a C library that provides a lightweight database engine.	0.10536052
+Score Explanation
+
+    Lower scores indicate higher relevance.
+    In SQLite's implementation of BM25, smaller scores mean the document is more relevant to the search query.
+
+    Factors affecting scores:
+        Frequency of the search term in the document (higher frequency = higher relevance).
+        Document length (shorter documents are favored).
+        Overall term rarity across all documents (rare terms have more weight).
+
+4. Customizing BM25 in SQLite
+
+SQLite allows you to adjust the weighting of columns and scoring behavior:
+Adjusting Column Weights
+
+You can specify different weights for columns in the FTS5 table. For example:
+
+CREATE VIRTUAL TABLE documents USING fts5(content, title, bm25_weights=1.0, 2.0);
+
+In this case:
+
+    content column has a weight of 1.0.
+    title column has a weight of 2.0, making matches in the title more impactful.
+
+5. Practical Examples
+Search for Multiple Terms
+
+You can perform searches with multiple terms and retrieve scores:
+
+SELECT content, bm25(documents) AS score
+FROM documents
+WHERE documents MATCH 'SQLite database'
+ORDER BY score;
+```
+
+```{sql}
+drop table table1;
+```
