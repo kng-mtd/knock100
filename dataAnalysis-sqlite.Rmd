@@ -207,14 +207,53 @@ group by bin order by bin;
 
 ## correlation
 ```{sql}
-with tmp1 as(
+create temp table tmp0 as
   select store_cd, floor_area as area, sum(amount) as amount
   from store left join receipt using(store_cd)
-  group by store_cd, area
-)
+  group by store_cd, area;
+```
+```{sql}
+select * from tmp0;
+```
+
+#### Peason's correlation
+```{sql}
 select (avg(area*amount)-avg(area)*avg(amount))
   /stdev(area)/stdev(amount) as corr
-from tmp1;
+from tmp0;
+```
+
+#### Kendall's correlation
+```{sql}
+with tmp1 as(
+  select area, amount from tmp0
+  where area is not null and amount is not null
+)
+, tmp2 as(
+  select sign(t1.area-t2.area) as s1, sign(t1.amount-t2.amount) as s2
+  from tmp1 as t1 cross join tmp1 as t2
+)
+select sum(s1*s2)/count(1) as Kendall_corr
+from tmp2;
+```
+
+#### sign correlation
+```{sql}
+with tmp1 as(
+  select median(area) as med1, median(amount) as med2
+  from tmp0
+)
+, tmp2 as(
+  select sign(area-med1) as s1, sign(amount-med2) as s2
+  from tmp0, tmp1
+  where area not null and amount is not null
+)
+select sum(s1*s2)/count(1) as sign_corr
+from tmp2;
+```
+
+```{sql}
+drop table tmp0;
 ```
 
 
@@ -245,15 +284,9 @@ create temp table tmp0 as
   select n0, mean0, sd0, na, mean_a, sd_a, nb, mean_b, sd_b
   from tmp1, tmp2, tmp3;
 ```
-
-
 ```{sql}
 select * from tmp0;
 ```
-
-
-
-
 
 #### Glass's delta
 ```{sql}
@@ -269,6 +302,7 @@ from tmp0;
 ```{sql}
 drop table tmp0;
 ```
+
 
 
 ## make dummy var. from category var.
