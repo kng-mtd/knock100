@@ -11,6 +11,7 @@ output:
 ```{r setup, include=FALSE}
 library(DBI)
 library(RSQLite)
+library(tidyverse)
 library(palmerpenguins)
 
 
