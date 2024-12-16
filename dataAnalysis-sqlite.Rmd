@@ -66,19 +66,19 @@ select * from customer limit 5;
 
 ## see duplication
 ```{sql}
-select customer_name, postal_cd, count(1) as no
+select customer_name, postal_cd, count(1) as n
 from customer
 group by customer_name, postal_cd
-having no!=1;
+having n!=1;
 ```
 
 ```{sql}
 with tmp1 as(
   select customer_id, customer_name, postal_cd
-    , row_number() over (partition by customer_name, postal_cd order by customer_id) as no
+    , row_number() over (partition by customer_name, postal_cd order by customer_id) as n
   from customer
 )
-select * from tmp1 where no!=1;
+select * from tmp1 where n!=1;
 ```
 
 ### reject duplication
@@ -223,27 +223,37 @@ from tmp1;
 ```{sql}
 create temp table tmp0 as
   with tmp1 as(
-    select count(1) as n0, avg(age) as mean0
-      , avg(age*age) as sq0 from customer
+    select count(1) as n0
+    , avg(age) as mean0
+    , stdev(age) as sd0
+    from customer
   )
   , tmp2 as(
-    select count(1) as na, avg(age) as mean_a
-      , avg(age*age) as sq_a from customer
+    select count(1) as na
+    , avg(age) as mean_a
+    , stdev(age) as sd_a
+    from customer
     where gender_cd='0'
   )
   , tmp3 as(
-    select count(1) as nb, avg(age) as mean_b
-      , avg(age*age) as sq_b from customer
+    select count(1) as nb
+    , avg(age) as mean_b
+    , stdev(age) as sd_b
+    from customer
     where gender_cd='1' 
   )
-  select n0, mean0
-  , sqrt((sq0-mean0*mean0)*n0/(n0-1)) as sd0
-  , na, mean_a
-  , sqrt((sq_a-mean_a*mean_a)*na/(na-1)) as sd_a
-  , nb, mean_b
-  , sqrt((sq_b-mean_b*mean_b)*nb/(nb-1)) as sd_b
+  select n0, mean0, sd0, na, mean_a, sd_a, nb, mean_b, sd_b
   from tmp1, tmp2, tmp3;
 ```
+
+
+```{sql}
+select * from tmp0;
+```
+
+
+
+
 
 #### Glass's delta
 ```{sql}
@@ -252,7 +262,7 @@ select (mean_a-mean0)/sd0 as G_delta from tmp0;
 
 #### Cohen's d
 ```{sql}
-select (mean_a-mean_b)/sqrt(((na-1)*sd_a*sd_a+(nb-1)*sd_b*sd_b)/(na+nb-2)) as d
+select (mean_a-mean_b)/sqrt(((na-1)*sd_a*sd_a+(nb-1)*sd_b*sd_b)/(na+nb-2)) as Cohen_d
 from tmp0;
 ```
 
