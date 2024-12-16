@@ -1,5 +1,5 @@
 ---
-title: "Data analysis by SQLite"
+title: "Data analysis on SQLite"
 output:
   html_document:
     toc: true
@@ -166,52 +166,20 @@ drop table tmp02;
 
 ## aggregation
 ```{sql}
-with tmp1 as(
-  select store_cd, count(1) as n, sum(amount) as sum
-    , min(amount-0) as min, max(amount-0) as max
-    , median(amount) as med
-    , avg(amount) as mean, avg(amount*amount) as sq
-  from receipt
-  group by store_cd
-)
-select store_cd, n,sum, min, max, med, mean
-  , sqrt((sq-mean*mean)*n/(n-1)) as sd
-  , sqrt((sq-mean*mean)*n/(n-1))/mean as cv
-from tmp1;
-```
-
-
-```{sql}
-with tmp1 as(
-  select store_cd, count(1) as n from receipt group by store_cd
-)
-, tmp2 as(
-  select store_cd, amount, amount*amount as sq, n
-    , row_number() over(partition by store_cd order by amount-0) as rank
-    from receipt
-  inner join tmp1 using(store_cd)
-)
-select store_cd, n, sum(amount) as sum
+select store_cd, count(1) as n, sum(amount) as sum
+  , mode(amount) as mode
   , min(amount-0) as min
-  , max(case when rank=round(n*0.25) then amount else 0 end) as q1
-  , max(case when rank=round(n*0.5) then amount else 0 end) as q2 
-  , max(case when rank=round(n*0.75) then amount else 0 end) as q3
+  , lower_quartile(amount) as q1
+  , median(amount) as med
+  , upper_quartile(amount) as q3
   , max(amount-0) as max
+  
   , avg(amount) as mean
-  , sqrt((avg(sq)-avg(amount)*avg(amount))*n/(n-1)) as sd
-  , sqrt((avg(sq)-avg(amount)*avg(amount))*n/(n-1))/avg(amount) as cv
-from tmp2
-group by store_cd;
-```
-
-
-## mode
-```{sql}
-select amount, count(1) as n from receipt
-group by amount
-having count(1)>=(select max(n)
-                  from(select count(1) as n from receipt
-                  group by amount));
+  , variance(amount) as var
+  , stdev(amount) as sd
+  , stdev(amount)/avg(amount) as cv
+from receipt
+group by store_cd
 ```
 
 
@@ -222,6 +190,31 @@ with tmp1 as(
 )
 select median(abs(amount-med))*1.4826 as mad
 from receipt,tmp1;
+```
+
+
+## histgram on Sturges' rule
+```{sql}
+with tmp1 as(
+ select ceil(log(count(1)/log(2))+1) as k, min(amount-0) as min, max(amount-0) as max
+ from receipt
+)
+select bin, min(amount-0) as left, max(amount-0) as right, count(1) from(
+ select amount, round((amount-min-0.0)/(max-min)* k ) as bin from receipt, tmp1)
+group by bin order by bin;
+```
+
+
+## correlation
+```{sql}
+with tmp1 as(
+  select store_cd, floor_area as area, sum(amount) as amount
+  from store left join receipt using(store_cd)
+  group by store_cd, area
+)
+select (avg(area*amount)-avg(area)*avg(amount))
+  /stdev(area)/stdev(amount) as corr
+from tmp1;
 ```
 
 
@@ -633,31 +626,6 @@ from cross,tmp1;
 drop table cross;
 ```
 
-
-## histgram on Sturges' rule
-```{sql}
-with tmp1 as(
- select ceil(log(count(1)/log(2))+1) as k, min(amount-0) as min, max(amount-0) as max
- from receipt
-)
-select bin, min(amount-0) as left, max(amount-0) as right, count(1) from(
- select amount, round((amount-min-0.0)/(max-min)* k ) as bin from receipt, tmp1)
-group by bin order by bin;
-```
-
-
-## correlation
-```{sql}
-with tmp1 as(
-  select store_cd, floor_area as area, sum(amount) as amount
-  from store left join receipt using(store_cd)
-  group by store_cd, area
-)
-select (count(1)*sum(area*amount)-sum(area)*sum(amount))/
-  sqrt(count(1)*sum(area*area)-sum(area)*sum(area))/
-  sqrt(count(1)*sum(amount*amount)-sum(amount)*sum(amount)) as corr
-from tmp1;
-```
 
 
 ## sampling
