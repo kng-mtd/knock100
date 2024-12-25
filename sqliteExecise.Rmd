@@ -267,6 +267,19 @@ select *
 from tmp1;
 ```
 
+
+## see consequtive meet conditions
+```{sql}
+select *
+, case
+  when num3>lag(num3,1) over(order by day)
+    and lag(num3,1) over(order by day)>lag(num3,2) over(order by day) then 1 else null
+  end as up2
+from table1
+order by day;
+```
+
+
 ```{sql}
 drop table table1;
 ```
