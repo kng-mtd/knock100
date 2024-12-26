@@ -186,6 +186,42 @@ where not exists(
 select chr1, chr2, min(day), max(day) from table1 group by chr1, chr2;
 ```
 
+
+## convert string to date type(ISO)
+```{sql}
+with tmp1 as (
+    --select '2025-01-01' as str
+    --select '2025/01/01' as str
+    --select '2025/1/1' as str
+    --select '2025/01/1' as str
+    --select '2025/1/01' as str
+    select '2025年1月23日' as str
+)
+select str
+, case
+  when str like '____-__-__' or str like '____/__/__'
+    then replace(str, '/', '-')
+  when str like '____-__-_' or str like '____/__/_'
+    then leftstr(str,4)||'-'||substr(str,6,2)||'-0'||rightstr(str,1)
+  when str like '____-_-__' or str like '____/_/__'
+    then leftstr(str,4)||'-0'||substr(str,6,1)||'-'||rightstr(str,2)
+  when str like '____-_-_' or str like '____/_/_'
+    then leftstr(str,4)||'-0'||substr(str,6,1)||'-0'||rightstr(str,1)
+  when str like '%年__月__日'
+    then replace(replace(replace(str,'年','-'), '月','-'), '日','')
+  when str like '%年_月__日'
+    then replace(replace(replace(str,'年','-0'), '月','-'), '日','')
+  when str like '%年__月_日'
+    then replace(replace(replace(str,'年','-'), '月','-0'), '日','')
+  when str like '%年_月_日'
+    then replace(replace(replace(str,'年','-0'), '月','-0'), '日','')
+  else 'not date'
+end as date
+from tmp1;
+```
+
+
+
 ## cross aggregation by 2 categories
 ```{sql}
 select chr1
