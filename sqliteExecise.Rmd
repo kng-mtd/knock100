@@ -288,8 +288,9 @@ drop table table0;
 ```
 
 
+## recursive CTE
 
-## make sequence table
+### make number sequence
 ```{sql}
 with tmp1 as(
   select 1 as num
@@ -301,7 +302,7 @@ with tmp1 as(
 select * from tmp1;
 ```
 
-
+### make date sequence
 ```{sql}
 with tmp1 as(
   select '2024-01-01' as date
@@ -310,6 +311,96 @@ with tmp1 as(
   where date<'2024-01-10'
 )
 select * from tmp1;
+```
+
+### Fibonacci sequece
+```{sql}
+with tmp1 as(
+  select 1 as n, 0 as val, 1 as pre
+  union all
+  select n+1, val+pre, val
+  from tmp1
+  where n<10
+)
+select n, val from tmp1
+;
+```
+ 
+### hierarchy level
+```{sql}
+create table if not exists table0 (id,child,parent);
+```
+```{sql}
+insert into table0 (id,child,parent) values
+(1,'a',null)
+,(2,'aa','a')
+,(3,'ab','a')
+,(4,'ac','a')
+,(5,'aaa','aa')
+,(6,'aab','aa')
+,(7,'aba','ab')
+,(8,'abb','ab')
+,(9,'aca','ac')
+,(10,'acac','aca')
+;
+```
+```{sql}
+select * from table0;
+```
+ 
+```{sql}
+with table1 as(
+  select id,child as name,parent,1 as lv
+  from table0
+  where parent is null --parent of root is null
+  union all
+  select t1.id,t1.child,t1.parent,t2.lv+1
+  from table0 as t1
+  inner join table1 as t2 on t1.parent=t2.name
+)
+select * from table1;
+```
+ 
+```{sql}
+drop table table0;
+```
+
+### minimum distance on graph
+```{sql}
+create table if not exists table0 (node1,node2);
+```
+```{sql}
+insert into table0 (node1,node2) values
+('a','b')
+,('a','c')
+,('b','d')
+,('c','e')
+,('c','f')
+,('e','g')
+,('f','h')
+,('g','i')
+,('i','j')
+,('c','j')
+;
+```
+```{sql}
+select * from table0;
+```
+ 
+```{sql}
+with table1 as(
+  select node1,node2,1 as depth
+  from table0
+  where node1='a' --start node
+  union all
+  select t1.node1,t1.node2,t2.depth+1
+  from table0 as t1
+  inner join table1 as t2 on t1.node1=t2.node2
+  where t2.depth<10 --max search depth
+)
+select node2 as goal,min(depth) as depth from table1
+group by goal order by depth
+;
 ```
 
 
