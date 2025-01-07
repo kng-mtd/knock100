@@ -313,7 +313,7 @@ with tmp1 as(
 select * from tmp1;
 ```
 
-### Fibonacci sequece
+### Fibonacci sequence
 ```{sql}
 with tmp1 as(
   select 1 as n, 0 as val, 1 as pre
@@ -431,17 +431,23 @@ select * from table0;
 
 ```{sql}
 with tmp1 as(
-  select node1,node2,weight
+  select node1, node2
+  , weight
+  , '>' as path
   from table0
   where node1='a' --start node
   union all
-  select t0.node1,t0.node2,tmp1.weight+t0.weight
+  select t0.node1,t0.node2
+  , tmp1.weight+t0.weight
+  , path||t0.node1||' >'
   from table0 as t0
   inner join tmp1 on t0.node1=tmp1.node2
   where tmp1.weight<100 --max search depth
 )
-select node2 as goal,min(weight) as distance from tmp1
-group by goal order by distance
+select node2 as goal
+, min(weight) as distance
+, path||node2 as path from tmp1
+group by goal order by goal
 ;
 ```
 
