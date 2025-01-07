@@ -328,7 +328,7 @@ select n, val from tmp1
  
 ### hierarchy level
 ```{sql}
-create table if not exists table0 (id,child,parent);
+create table table0 (id,child,parent);
 ```
 ```{sql}
 insert into table0 (id,child,parent) values
@@ -349,25 +349,25 @@ select * from table0;
 ```
  
 ```{sql}
-with table1 as(
+with tmp1 as(
   select id,child as name,parent,1 as lv
   from table0
   where parent is null --parent of root is null
   union all
-  select t1.id,t1.child,t1.parent,t2.lv+1
-  from table0 as t1
-  inner join table1 as t2 on t1.parent=t2.name
+  select t0.id,t0.child,t0.parent,tmp1.lv+1
+  from table0 as t0
+  inner join tmp1 on t0.parent=tmp1.name
 )
-select * from table1;
+select * from tmp1;
 ```
  
 ```{sql}
 drop table table0;
 ```
 
-### minimum distance on graph
+### minimum depth on graph
 ```{sql}
-create table if not exists table0 (node1,node2);
+create table table0 (node1,node2);
 ```
 ```{sql}
 insert into table0 (node1,node2) values
@@ -388,20 +388,67 @@ select * from table0;
 ```
  
 ```{sql}
-with table1 as(
+with tmp1 as(
   select node1,node2,1 as depth
   from table0
   where node1='a' --start node
   union all
-  select t1.node1,t1.node2,t2.depth+1
-  from table0 as t1
-  inner join table1 as t2 on t1.node1=t2.node2
-  where t2.depth<10 --max search depth
+  select t0.node1,t0.node2,tmp1.depth+1
+  from table0 as t0
+  inner join tmp1 on t0.node1=tmp1.node2
+  where tmp1.depth<10 --max search depth
 )
-select node2 as goal,min(depth) as depth from table1
+select node2 as goal,min(depth) as depth from tmp1
 group by goal order by depth
 ;
 ```
+
+```{sql}
+drop table table0;
+```
+
+### minimum depth on graph
+```{sql}
+create table if not exists table0 (node1,node2,weight);
+```
+```{sql}
+insert into table0 (node1,node2,weight) values
+('a','b',1)
+,('a','c',2)
+,('b','d',3)
+,('c','e',2)
+,('c','f',1)
+,('e','g',2)
+,('f','h',3)
+,('g','i',2)
+,('i','j',1)
+,('c','j',2)
+;
+```
+```{sql}
+select * from table0;
+```
+
+```{sql}
+with tmp1 as(
+  select node1,node2,weight
+  from table0
+  where node1='a' --start node
+  union all
+  select t0.node1,t0.node2,tmp1.weight+t0.weight
+  from table0 as t0
+  inner join tmp1 on t0.node1=tmp1.node2
+  where tmp1.weight<100 --max search depth
+)
+select node2 as goal,min(weight) as distance from tmp1
+group by goal order by distance
+;
+```
+
+```{sql}
+drop table table0;
+```
+
 
 
 
