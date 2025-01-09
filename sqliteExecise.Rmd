@@ -564,12 +564,9 @@ with tmp1(path, current, depth) as (
   join table0 on tmp1.current=table0.node1
   where depth<100
 )
-, tmp2 as (
-  select path from tmp1
-  where path like current||' >% >'||current
-    and path not like current||' >% >'||current||' >%'
-)
-select * from tmp2
+select path from tmp1
+where path like current||' >% >'||current
+  and path not like current||' >% >'||current||' >%'
 ;
 ```
 
