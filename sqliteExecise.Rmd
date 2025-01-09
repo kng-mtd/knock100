@@ -70,7 +70,7 @@ select * from table1;
 drop table table1;
 ```
 
-## create table by vanilla SQlite
+## create table by vanilla SQLite
 ### master table: table0
 ```{sql}
 create table table0 (chr1 text, num1 int, num2 real);
