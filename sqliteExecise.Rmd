@@ -325,6 +325,7 @@ with tmp1 as(
 select n, val from tmp1
 ;
 ```
+
  
 ### hierarchy level
 ```{sql}
@@ -402,6 +403,47 @@ order by era
 ```{sql}
 drop table table0;
 ```
+
+### count components
+```{sql}
+create table table0 (id,child,qty);
+```
+```{sql}
+insert into table0 (id,child,qty) values
+  ('a', 'b', 2)
+, ('a', 'c', 1)
+, ('b', 'd', 4)
+, ('b', 'e', 2)
+, ('c', 'f', 3)
+, ('c', 'g', 2)
+;
+```
+```{sql}
+select * from table0;
+```
+
+```{sql}
+with recursive tmp1 as (
+  select id, child, qty, qty as acm
+  from table0
+  where id='a' -- specify parent
+  union all
+  select table0.id, table0.child, table0.qty
+  , tmp1.acm*table0.qty as acm
+  from table0
+  inner join tmp1 on table0.id=tmp1.child
+)
+select child
+, sum(acm) as total
+from tmp1
+group by child
+;
+```
+
+```{sql}
+drop table table0;
+```
+
 
 ### minimum depth on graph
 ```{sql}
@@ -492,6 +534,49 @@ group by goal order by goal
 ```{sql}
 drop table table0;
 ```
+
+### see cycle on graph
+```{sql}
+create table table0 (node1, node2);
+```
+```{sql}
+insert into table0 (node1, node2) values
+  ('a', 'b')
+, ('b', 'c')
+, ('c', 'd')
+, ('d', 'b') -- cycle b >c >d >b
+, ('e', 'f')
+, ('f', 'g')
+, ('g', 'e') -- cycle e >f >g >e
+;
+```
+```{sql}
+select * from table0;
+```
+
+```{sql}
+with tmp1(path, current, depth) as (
+  select node1 ||' >'|| node2, node2, 1
+  from table0
+  union all
+  select path ||' >'|| node2, node2, depth+1
+  from tmp1
+  join table0 on tmp1.current=table0.node1
+  where depth<100
+)
+, tmp2 as (
+  select path from tmp1
+  where path like current||' >% >'||current
+    and path not like current||' >% >'||current||' >%'
+)
+select * from tmp2
+;
+```
+
+```{sql}
+drop table table0;
+```
+
 
 ### split text by some characters
 ```{sql}
