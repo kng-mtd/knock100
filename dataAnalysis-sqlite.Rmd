@@ -218,9 +218,12 @@ select * from tmp0;
 
 #### Peason's correlation
 ```{sql}
+with tmp1 as(
+  select count(1) as n from tmp0
+)
 select (avg(area*amount)-avg(area)*avg(amount))
-  /stdev(area)/stdev(amount) as corr
-from tmp0;
+  /stdev(area)/stdev(amount)*tmp1.n/(tmp1.n-1) as corr
+from tmp0,tmp1;
 ```
 
 #### Kendall's correlation
