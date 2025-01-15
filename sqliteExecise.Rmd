@@ -583,3 +583,70 @@ ORDER BY score;
 ```{sql}
 drop table table1;
 ```
+
+
+
+## covariance, correlation matrix
+
+```{sql}
+drop table if exists table0;
+```
+```{sql}
+create table table0 (col1,col2,col3);
+```
+```{sql}
+insert into table0 (col1,col2,col3) values
+(2,3,5),(7,11,13),(17,19,23);
+```
+```{sql}
+select * from table0;
+```
+```{sql}
+with tmp1 (x1,x2,x3) as(
+  select * from table0
+)
+select * from tmp1
+;
+```
+
+```{sql}
+with tmp1 (x1,x2,x3) as(
+  select * from table0
+)
+, tmp2 as(
+  select count(1) as n from tmp1
+)
+, tmp3 (row,col,val) as(
+  select 1,1,power(stdev(x1),2) from tmp1
+  union all select 1,2,(avg(x1*x2)-avg(x1)*avg(x2))*tmp2.n/(tmp2.n-1) from tmp1,tmp2
+  union all select 1,3,(avg(x1*x3)-avg(x1)*avg(x3))*tmp2.n/(tmp2.n-1) from tmp1,tmp2
+  union all select 2,2,power(stdev(x2),2) from tmp1
+  union all select 2,3,(avg(x2*x3)-avg(x2)*avg(x3))*tmp2.n/(tmp2.n-1) from tmp1,tmp2
+  union all select 3,3,power(stdev(x3),2) from tmp1
+)
+select * from tmp3
+;
+```
+
+
+```{sql}
+with tmp1 (x1,x2,x3) as(
+  select * from table0
+)
+, tmp2 as(
+  select count(1) as n from tmp1
+)
+, tmp3 (row,col,val) as(
+  select 1,1,1
+  union all select 1,2
+  ,(avg(x1*x2)-avg(x1)*avg(x2))/stdev(x1)/stdev(x2)*tmp2.n/(tmp2.n-1) from tmp1,tmp2
+  union all select 1,3
+  ,(avg(x1*x3)-avg(x1)*avg(x3))/stdev(x1)/stdev(x3)*tmp2.n/(tmp2.n-1) from tmp1,tmp2
+  union all select 2,2,1
+  union all select 2,3
+  ,(avg(x2*x3)-avg(x2)*avg(x3))/stdev(x2)/stdev(x3)*tmp2.n/(tmp2.n-1) from tmp1,tmp2
+  union all select 3,3,1
+)
+select * from tmp3
+;
+```
