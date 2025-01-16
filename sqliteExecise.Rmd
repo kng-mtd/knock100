@@ -268,7 +268,7 @@ from tmp1;
 ```
 
 
-## see consequtive meet conditions
+## see consecutive meet conditions
 ```{sql}
 select *
 , case
