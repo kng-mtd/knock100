@@ -103,7 +103,7 @@ where customer_id='CS018205000001';
   int {+,-,*,/,%} int -> int
   int {+,-,*,/} real -> real
   text-0, text*1 -> int
-  text*1.0 -> real
+  text-0.0, text*1.0 -> real
 ```
 
 #### S-005: レシート明細データ（receipt）から売上日（sales_ymd）、顧客ID（customer_id）、商品コード（product_cd）、売上金額（amount）の順に列を指定し、以下の全ての条件を満たすデータを抽出せよ。\
@@ -473,7 +473,7 @@ group by ages, gender_cd order by ages, gender_c;
 ```
 \
 
-https://www.sqlite.org/lang_datefunc.html
+https://www.sqlite.org/lang_datefunc.html \
 https://www.javadrive.jp/sqlite/function/index6.html
 
 ```
@@ -481,7 +481,7 @@ SQLiteの日時データ処理
 1. 日時データの保存形式
   TEXT形式: YYYY-MM-DD HH:MM:SS（ISO 8601形式）
   REAL形式: ユリウス日（Julian day number）
-  INTEGER形式: Unixタイムスタンプ（1970年1月1日からの秒数）
+  INTEGER形式: UNIXタイムスタンプ（1970年1月1日からの秒数）
 
 文字列'YYYYMMDD'を日時データTEXT形式に変換
   substr(yyyymmdd, 1, 4) || '-' ||
@@ -768,7 +768,7 @@ with tmp1 as(
   select max(total) as max, min(total) as min from tmp1
 )
 select customer_id, total
-, (total-min)*1.0/(max-min) normalize
+, (total-min)*1.0/(max-min) as normalize
 from tmp1,tmp2 limit 10;
 ```
 
@@ -1040,9 +1040,9 @@ drop table product_new;
 create table if not exists product_new as
   select product_cd,category_major_cd,category_medium_cd,category_small_cd
   , coalesce(unit_price
-    , round((select avg(unit_price) from product))) AS unit_price
+    , round((select avg(unit_price) from product))) as unit_price
   , coalesce(unit_cost
-    , round((select avg(unit_cost) from product))) AS unit_costprice
+    , round((select avg(unit_cost) from product))) as unit_costprice
   from product;
 ```
 
@@ -1056,9 +1056,9 @@ drop table product_new;
 create table if not exists product_new as
   select product_cd,category_major_cd,category_medium_cd,category_small_cd
   , coalesce(unit_price
-    , round((select median(unit_price) from product))) AS unit_price
+    , round((select median(unit_price) from product))) as unit_price
   , coalesce(unit_cost
-    , round((select median(unit_cost) from product))) AS unit_costprice
+    , round((select median(unit_cost) from product))) as unit_costprice
   from product;
 ```
 
