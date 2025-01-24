@@ -1575,7 +1575,7 @@ border-radius: 0px;
 <pre class="sql"><code>pragma table_list;</code></pre>
 <div class="knitsql-table">
 <table>
-<caption>Displaying records 1 - 10</caption>
+<caption>8 records</caption>
 <thead>
 <tr class="header">
 <th align="left">schema</th>
@@ -1589,57 +1589,9 @@ border-radius: 0px;
 <tbody>
 <tr class="odd">
 <td align="left">main</td>
-<td align="left">tb3</td>
-<td align="left">table</td>
-<td align="right">3</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">main</td>
-<td align="left">sqlite_schema</td>
-<td align="left">table</td>
-<td align="right">5</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="left">main</td>
-<td align="left">customer</td>
-<td align="left">table</td>
-<td align="right">11</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">main</td>
-<td align="left">product</td>
-<td align="left">table</td>
-<td align="right">6</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="left">main</td>
 <td align="left">store</td>
 <td align="left">table</td>
 <td align="right">10</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">main</td>
-<td align="left">category</td>
-<td align="left">table</td>
-<td align="right">6</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="left">main</td>
-<td align="left">geocode</td>
-<td align="left">table</td>
-<td align="right">9</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
@@ -1653,17 +1605,49 @@ border-radius: 0px;
 </tr>
 <tr class="odd">
 <td align="left">main</td>
-<td align="left">tb1</td>
+<td align="left">product</td>
 <td align="left">table</td>
-<td align="right">3</td>
+<td align="right">6</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">main</td>
-<td align="left">tb2</td>
+<td align="left">geocode</td>
 <td align="left">table</td>
-<td align="right">3</td>
+<td align="right">9</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">main</td>
+<td align="left">customer</td>
+<td align="left">table</td>
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">main</td>
+<td align="left">category</td>
+<td align="left">table</td>
+<td align="right">6</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">main</td>
+<td align="left">sqlite_schema</td>
+<td align="left">table</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">temp</td>
+<td align="left">sqlite_temp_schema</td>
+<td align="left">table</td>
+<td align="right">5</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
@@ -5340,8 +5324,8 @@ group by goal order by depth
 </div>
 <pre class="sql"><code>drop table table0;</code></pre>
 </div>
-<div id="minimum-depth-on-graph-1" class="section level3">
-<h3>minimum depth on graph</h3>
+<div id="minimum-distance-on-graph" class="section level3">
+<h3>minimum distance on graph</h3>
 <pre class="sql"><code>create table table0 (node1,node2,weight);</code></pre>
 <pre class="sql"><code>insert into table0 (node1,node2,weight) values
 (&#39;a&#39;,&#39;b&#39;,1)
@@ -5813,44 +5797,44 @@ order by id, pos
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">8</td>
-<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">9</td>
 </tr>
 <tr class="even">
+<td align="right">10</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
 <td align="right">1</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
 <td align="right">4</td>
-</tr>
-<tr class="odd">
-<td align="right">5</td>
-<td align="right">3</td>
-</tr>
-<tr class="even">
 <td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="right">5</td>
 <td align="right">7</td>
 </tr>
 <tr class="odd">
+<td align="right">6</td>
 <td align="right">5</td>
-<td align="right">10</td>
 </tr>
 <tr class="even">
+<td align="right">9</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="right">8</td>
 <td align="right">3</td>
-<td align="right">10</td>
-</tr>
-<tr class="odd">
-<td align="right">2</td>
-<td align="right">6</td>
 </tr>
 <tr class="even">
-<td align="right">7</td>
-<td align="right">10</td>
-</tr>
-<tr class="odd">
-<td align="right">7</td>
-<td align="right">2</td>
-</tr>
-<tr class="even">
+<td align="right">4</td>
 <td align="right">6</td>
-<td align="right">5</td>
 </tr>
 </tbody>
 </table>
@@ -5887,92 +5871,92 @@ inner join tmp2 using(dst);</code></pre>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">2</td>
-<td align="right">5</td>
-<td align="right">27</td>
-<td align="right">0.1851852</td>
-<td align="right">28</td>
-<td align="right">0.1785714</td>
+<td align="right">4</td>
+<td align="right">29</td>
+<td align="right">0.1379310</td>
+<td align="right">19</td>
+<td align="right">0.2105263</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">3</td>
-<td align="right">2</td>
-<td align="right">27</td>
-<td align="right">0.0740741</td>
-<td align="right">25</td>
-<td align="right">0.0800000</td>
+<td align="right">5</td>
+<td align="right">29</td>
+<td align="right">0.1724138</td>
+<td align="right">31</td>
+<td align="right">0.1612903</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">4</td>
-<td align="right">3</td>
-<td align="right">27</td>
-<td align="right">0.1111111</td>
-<td align="right">27</td>
-<td align="right">0.1111111</td>
+<td align="right">1</td>
+<td align="right">29</td>
+<td align="right">0.0344828</td>
+<td align="right">21</td>
+<td align="right">0.0476190</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">5</td>
-<td align="right">1</td>
-<td align="right">27</td>
-<td align="right">0.0370370</td>
-<td align="right">24</td>
-<td align="right">0.0416667</td>
+<td align="right">4</td>
+<td align="right">29</td>
+<td align="right">0.1379310</td>
+<td align="right">36</td>
+<td align="right">0.1111111</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">6</td>
-<td align="right">3</td>
-<td align="right">27</td>
-<td align="right">0.1111111</td>
+<td align="right">5</td>
+<td align="right">29</td>
+<td align="right">0.1724138</td>
 <td align="right">33</td>
-<td align="right">0.0909091</td>
+<td align="right">0.1515152</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">7</td>
-<td align="right">6</td>
-<td align="right">27</td>
-<td align="right">0.2222222</td>
-<td align="right">26</td>
-<td align="right">0.2307692</td>
+<td align="right">2</td>
+<td align="right">29</td>
+<td align="right">0.0689655</td>
+<td align="right">21</td>
+<td align="right">0.0952381</td>
 </tr>
 <tr class="odd">
-<td align="right">1</td>
-<td align="right">8</td>
-<td align="right">4</td>
-<td align="right">27</td>
-<td align="right">0.1481481</td>
-<td align="right">28</td>
-<td align="right">0.1428571</td>
-</tr>
-<tr class="even">
 <td align="right">1</td>
 <td align="right">9</td>
-<td align="right">1</td>
-<td align="right">27</td>
-<td align="right">0.0370370</td>
+<td align="right">3</td>
+<td align="right">29</td>
+<td align="right">0.1034483</td>
 <td align="right">25</td>
-<td align="right">0.0400000</td>
+<td align="right">0.1200000</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="right">1</td>
 <td align="right">10</td>
+<td align="right">5</td>
+<td align="right">29</td>
+<td align="right">0.1724138</td>
+<td align="right">26</td>
+<td align="right">0.1923077</td>
+</tr>
+<tr class="odd">
 <td align="right">2</td>
-<td align="right">27</td>
-<td align="right">0.0740741</td>
-<td align="right">27</td>
-<td align="right">0.0740741</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">31</td>
+<td align="right">0.0967742</td>
+<td align="right">26</td>
+<td align="right">0.1153846</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">27</td>
-<td align="right">0.0740741</td>
+<td align="right">3</td>
+<td align="right">5</td>
 <td align="right">31</td>
-<td align="right">0.0645161</td>
+<td align="right">0.1612903</td>
+<td align="right">31</td>
+<td align="right">0.1612903</td>
 </tr>
 </tbody>
 </table>
@@ -5994,44 +5978,44 @@ inner join tmp2 using(dst);</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
+<td align="right">2</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="right">3</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
 <td align="right">1</td>
-<td align="right">8</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">2</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">4</td>
 </tr>
 <tr class="odd">
-<td align="right">3</td>
 <td align="right">5</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right">7</td>
-</tr>
-<tr class="odd">
-<td align="right">5</td>
-<td align="right">10</td>
-</tr>
-<tr class="even">
-<td align="right">3</td>
-<td align="right">10</td>
-</tr>
-<tr class="odd">
-<td align="right">2</td>
-<td align="right">6</td>
-</tr>
-<tr class="even">
-<td align="right">7</td>
-<td align="right">10</td>
-</tr>
-<tr class="odd">
-<td align="right">2</td>
 <td align="right">7</td>
 </tr>
 <tr class="even">
 <td align="right">5</td>
 <td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="right">7</td>
+<td align="right">7</td>
 </tr>
 </tbody>
 </table>
@@ -6065,72 +6049,72 @@ inner join tmp2 using(node2);</code></pre>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">1</td>
-<td align="right">3</td>
-<td align="right">64</td>
-<td align="right">0.0468750</td>
+<td align="right">4</td>
+<td align="right">63</td>
+<td align="right">0.0634921</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">2</td>
 <td align="right">7</td>
-<td align="right">74</td>
-<td align="right">0.0945946</td>
+<td align="right">69</td>
+<td align="right">0.1014493</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">3</td>
-<td align="right">8</td>
-<td align="right">80</td>
-<td align="right">0.1000000</td>
+<td align="right">6</td>
+<td align="right">73</td>
+<td align="right">0.0821918</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">4</td>
-<td align="right">5</td>
-<td align="right">76</td>
-<td align="right">0.0657895</td>
+<td align="right">6</td>
+<td align="right">77</td>
+<td align="right">0.0779221</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">5</td>
-<td align="right">5</td>
-<td align="right">88</td>
-<td align="right">0.0568182</td>
+<td align="right">6</td>
+<td align="right">89</td>
+<td align="right">0.0674157</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">6</td>
-<td align="right">5</td>
-<td align="right">93</td>
-<td align="right">0.0537634</td>
+<td align="right">8</td>
+<td align="right">101</td>
+<td align="right">0.0792079</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">7</td>
-<td align="right">11</td>
-<td align="right">108</td>
-<td align="right">0.1018519</td>
+<td align="right">6</td>
+<td align="right">94</td>
+<td align="right">0.0638298</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">8</td>
-<td align="right">7</td>
-<td align="right">92</td>
-<td align="right">0.0760870</td>
+<td align="right">2</td>
+<td align="right">98</td>
+<td align="right">0.0204082</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">9</td>
-<td align="right">4</td>
-<td align="right">106</td>
-<td align="right">0.0377358</td>
+<td align="right">5</td>
+<td align="right">104</td>
+<td align="right">0.0480769</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">10</td>
-<td align="right">6</td>
-<td align="right">129</td>
-<td align="right">0.0465116</td>
+<td align="right">9</td>
+<td align="right">122</td>
+<td align="right">0.0737705</td>
 </tr>
 </tbody>
 </table>
@@ -6175,53 +6159,53 @@ inner join tmp2 using(node2);</code></pre>
 <tbody>
 <tr class="odd">
 <td align="right">1</td>
+<td align="right">1</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">1</td>
 <td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">11</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">11</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">7</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">7</td>
 <td align="right">11</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">10</td>
-<td align="right">13</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
 <td align="right">11</td>
-<td align="right">13</td>
-</tr>
-<tr class="even">
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">6</td>
-</tr>
-<tr class="odd">
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">8</td>
-</tr>
-<tr class="even">
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">9</td>
-</tr>
-<tr class="odd">
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">11</td>
-</tr>
-<tr class="even">
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">12</td>
-</tr>
-<tr class="odd">
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">15</td>
-</tr>
-<tr class="even">
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">16</td>
 </tr>
 </tbody>
 </table>
@@ -6242,7 +6226,7 @@ order by item1, item2; </code></pre>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">2</td>
-<td align="right">4</td>
+<td align="right">3</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
@@ -6257,32 +6241,32 @@ order by item1, item2; </code></pre>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">5</td>
-<td align="right">1</td>
+<td align="right">2</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">6</td>
-<td align="right">3</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">7</td>
-<td align="right">1</td>
+<td align="right">2</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">8</td>
-<td align="right">4</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">9</td>
-<td align="right">3</td>
+<td align="right">2</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">10</td>
-<td align="right">2</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
@@ -6325,71 +6309,71 @@ from basket;</code></pre>
 <td align="right">1</td>
 <td align="right">1</td>
 <td align="right">NA</td>
-<td align="right">10</td>
+<td align="right">4</td>
 <td align="right">11</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
 <td align="right">2</td>
-<td align="right">10</td>
+<td align="right">4</td>
 <td align="right">11</td>
-<td align="right">13</td>
+<td align="right">10</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
 <td align="right">3</td>
 <td align="right">11</td>
-<td align="right">13</td>
+<td align="right">10</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">10</td>
+<td align="right">7</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">5</td>
+<td align="right">7</td>
+<td align="right">1</td>
 <td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
 <td align="right">1</td>
 <td align="right">NA</td>
-<td align="right">15</td>
-<td align="right">12</td>
+<td align="right">1</td>
+<td align="right">2</td>
 </tr>
 <tr class="odd">
 <td align="right">2</td>
 <td align="right">2</td>
-<td align="right">15</td>
-<td align="right">12</td>
+<td align="right">1</td>
 <td align="right">2</td>
+<td align="right">5</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
 <td align="right">3</td>
-<td align="right">12</td>
 <td align="right">2</td>
-<td align="right">6</td>
+<td align="right">5</td>
+<td align="right">19</td>
 </tr>
 <tr class="odd">
 <td align="right">2</td>
 <td align="right">4</td>
-<td align="right">2</td>
-<td align="right">6</td>
-<td align="right">8</td>
+<td align="right">5</td>
+<td align="right">19</td>
+<td align="right">3</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
 <td align="right">5</td>
-<td align="right">6</td>
-<td align="right">8</td>
-<td align="right">16</td>
-</tr>
-<tr class="odd">
-<td align="right">2</td>
-<td align="right">6</td>
-<td align="right">8</td>
-<td align="right">16</td>
 <td align="right">19</td>
-</tr>
-<tr class="even">
-<td align="right">2</td>
-<td align="right">7</td>
-<td align="right">16</td>
-<td align="right">19</td>
-<td align="right">17</td>
+<td align="right">3</td>
+<td align="right">8</td>
 </tr>
 </tbody>
 </table>
@@ -6766,63 +6750,63 @@ from cross,tmp1;</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">1</td>
-<td align="left">CS027513000098</td>
+<td align="left">CS004515000278</td>
 <td align="left">1</td>
-<td align="left">59</td>
+<td align="left">57</td>
 </tr>
 <tr class="even">
 <td align="left">2</td>
-<td align="left">CS014411000065</td>
-<td align="left">1</td>
-<td align="left">42</td>
+<td align="left">CS008513000183</td>
+<td align="left">9</td>
+<td align="left">52</td>
 </tr>
 <tr class="odd">
 <td align="left">3</td>
-<td align="left">CS002315000254</td>
+<td align="left">CS039713000068</td>
 <td align="left">1</td>
-<td align="left">39</td>
+<td align="left">76</td>
 </tr>
 <tr class="even">
 <td align="left">4</td>
-<td align="left">CS001415000288</td>
-<td align="left">1</td>
-<td align="left">42</td>
+<td align="left">CS015503000042</td>
+<td align="left">0</td>
+<td align="left">51</td>
 </tr>
 <tr class="odd">
 <td align="left">5</td>
-<td align="left">CS007412000229</td>
-<td align="left">1</td>
-<td align="left">49</td>
-</tr>
-<tr class="even">
-<td align="left">6</td>
-<td align="left">CS004515000436</td>
-<td align="left">1</td>
-<td align="left">54</td>
-</tr>
-<tr class="odd">
-<td align="left">7</td>
-<td align="left">CS011512000182</td>
+<td align="left">CS012511000019</td>
 <td align="left">1</td>
 <td align="left">58</td>
 </tr>
 <tr class="even">
-<td align="left">8</td>
-<td align="left">CS001413000601</td>
-<td align="left">1</td>
-<td align="left">47</td>
-</tr>
-<tr class="odd">
-<td align="left">9</td>
-<td align="left">CS021412000110</td>
+<td align="left">6</td>
+<td align="left">CS028414000097</td>
 <td align="left">1</td>
 <td align="left">49</td>
 </tr>
+<tr class="odd">
+<td align="left">7</td>
+<td align="left">CS024815000009</td>
+<td align="left">1</td>
+<td align="left">84</td>
+</tr>
+<tr class="even">
+<td align="left">8</td>
+<td align="left">CS021412000027</td>
+<td align="left">1</td>
+<td align="left">42</td>
+</tr>
+<tr class="odd">
+<td align="left">9</td>
+<td align="left">CS005815000048</td>
+<td align="left">1</td>
+<td align="left">83</td>
+</tr>
 <tr class="even">
 <td align="left">10</td>
-<td align="left">CS029713000022</td>
+<td align="left">CS004411000197</td>
 <td align="left">1</td>
-<td align="left">79</td>
+<td align="left">42</td>
 </tr>
 </tbody>
 </table>
@@ -6855,63 +6839,63 @@ select row_number() over() as id,* from(
 <tbody>
 <tr class="odd">
 <td align="left">1</td>
-<td align="left">CS020705000001</td>
+<td align="left">CS021601000009</td>
 <td align="left">0</td>
-<td align="left">76</td>
+<td align="left">65</td>
 </tr>
 <tr class="even">
 <td align="left">2</td>
-<td align="left">CS002503000119</td>
-<td align="left">0</td>
-<td align="left">54</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="left">CS039302000014</td>
+<td align="left">CS003302000076</td>
 <td align="left">0</td>
 <td align="left">36</td>
 </tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">CS028405000002</td>
+<td align="left">0</td>
+<td align="left">49</td>
+</tr>
 <tr class="even">
 <td align="left">4</td>
-<td align="left">CS008404000002</td>
+<td align="left">CS001401000052</td>
 <td align="left">0</td>
 <td align="left">44</td>
 </tr>
 <tr class="odd">
 <td align="left">5</td>
-<td align="left">CS002401000013</td>
+<td align="left">CS001402000128</td>
 <td align="left">0</td>
-<td align="left">43</td>
+<td align="left">42</td>
 </tr>
 <tr class="even">
 <td align="left">6</td>
-<td align="left">CS006405000016</td>
+<td align="left">CS039502000060</td>
 <td align="left">0</td>
-<td align="left">44</td>
+<td align="left">56</td>
 </tr>
 <tr class="odd">
 <td align="left">7</td>
-<td align="left">CS021503000053</td>
+<td align="left">CS001303000049</td>
 <td align="left">0</td>
-<td align="left">52</td>
+<td align="left">39</td>
 </tr>
 <tr class="even">
 <td align="left">8</td>
-<td align="left">CS004503000060</td>
+<td align="left">CS007701000010</td>
 <td align="left">0</td>
-<td align="left">58</td>
+<td align="left">73</td>
 </tr>
 <tr class="odd">
 <td align="left">9</td>
-<td align="left">CS040403000045</td>
+<td align="left">CS026601000008</td>
 <td align="left">0</td>
-<td align="left">49</td>
+<td align="left">70</td>
 </tr>
 <tr class="even">
 <td align="left">10</td>
-<td align="left">CS010703000018</td>
+<td align="left">CS027203000001</td>
 <td align="left">0</td>
-<td align="left">75</td>
+<td align="left">28</td>
 </tr>
 </tbody>
 </table>
@@ -6937,17 +6921,17 @@ where customer_id not like &#39;Z%&#39;;</code></pre>
 <tr class="odd">
 <td align="left">1</td>
 <td align="left">CS021313000114</td>
-<td align="left">learn</td>
+<td align="left">test</td>
 </tr>
 <tr class="even">
 <td align="left">2</td>
 <td align="left">CS037613000071</td>
-<td align="left">test</td>
+<td align="left">learn</td>
 </tr>
 <tr class="odd">
 <td align="left">3</td>
 <td align="left">CS031415000172</td>
-<td align="left">test</td>
+<td align="left">learn</td>
 </tr>
 <tr class="even">
 <td align="left">4</td>
@@ -6957,7 +6941,7 @@ where customer_id not like &#39;Z%&#39;;</code></pre>
 <tr class="odd">
 <td align="left">5</td>
 <td align="left">CS001215000145</td>
-<td align="left">learn</td>
+<td align="left">test</td>
 </tr>
 <tr class="even">
 <td align="left">6</td>
@@ -6967,7 +6951,7 @@ where customer_id not like &#39;Z%&#39;;</code></pre>
 <tr class="odd">
 <td align="left">7</td>
 <td align="left">CS015414000103</td>
-<td align="left">test</td>
+<td align="left">learn</td>
 </tr>
 <tr class="even">
 <td align="left">8</td>
@@ -6977,7 +6961,7 @@ where customer_id not like &#39;Z%&#39;;</code></pre>
 <tr class="odd">
 <td align="left">9</td>
 <td align="left">CS015804000004</td>
-<td align="left">test</td>
+<td align="left">learn</td>
 </tr>
 <tr class="even">
 <td align="left">10</td>
@@ -7012,7 +6996,7 @@ where customer_id not like &#39;Z%&#39;;</code></pre>
 <td align="left">CS021313000114</td>
 <td align="left">1</td>
 <td align="left">37</td>
-<td align="left">A</td>
+<td align="left">B</td>
 </tr>
 <tr class="even">
 <td align="left">2</td>
@@ -7054,7 +7038,7 @@ where customer_id not like &#39;Z%&#39;;</code></pre>
 <td align="left">CS015414000103</td>
 <td align="left">1</td>
 <td align="left">41</td>
-<td align="left">B</td>
+<td align="left">A</td>
 </tr>
 <tr class="even">
 <td align="left">8</td>
@@ -7075,7 +7059,7 @@ where customer_id not like &#39;Z%&#39;;</code></pre>
 <td align="left">CS033513000180</td>
 <td align="left">1</td>
 <td align="left">56</td>
-<td align="left">A</td>
+<td align="left">B</td>
 </tr>
 </tbody>
 </table>
@@ -7106,62 +7090,62 @@ where customer_id not like &#39;Z%&#39;;</code></pre>
 <tr class="odd">
 <td align="left">A</td>
 <td align="left">0</td>
-<td align="right">787</td>
-<td align="right">52.63024</td>
+<td align="right">744</td>
+<td align="right">53.07124</td>
 </tr>
 <tr class="even">
 <td align="left">A</td>
 <td align="left">1</td>
-<td align="right">4509</td>
-<td align="right">50.14637</td>
+<td align="right">4495</td>
+<td align="right">50.43359</td>
 </tr>
 <tr class="odd">
 <td align="left">A</td>
 <td align="left">9</td>
-<td align="right">264</td>
-<td align="right">50.57576</td>
+<td align="right">282</td>
+<td align="right">50.57801</td>
 </tr>
 <tr class="even">
 <td align="left">B</td>
 <td align="left">0</td>
-<td align="right">728</td>
-<td align="right">53.81456</td>
+<td align="right">739</td>
+<td align="right">52.17185</td>
 </tr>
 <tr class="odd">
 <td align="left">B</td>
 <td align="left">1</td>
-<td align="right">4451</td>
-<td align="right">50.23860</td>
+<td align="right">4454</td>
+<td align="right">50.15020</td>
 </tr>
 <tr class="even">
 <td align="left">B</td>
 <td align="left">9</td>
-<td align="right">256</td>
-<td align="right">50.96484</td>
+<td align="right">287</td>
+<td align="right">51.06272</td>
 </tr>
 <tr class="odd">
 <td align="left">C</td>
 <td align="left">0</td>
-<td align="right">718</td>
-<td align="right">52.19638</td>
+<td align="right">749</td>
+<td align="right">52.93057</td>
 </tr>
 <tr class="even">
 <td align="left">C</td>
 <td align="left">1</td>
-<td align="right">4418</td>
-<td align="right">50.59190</td>
+<td align="right">4461</td>
+<td align="right">50.74714</td>
 </tr>
 <tr class="odd">
 <td align="left">C</td>
 <td align="left">9</td>
-<td align="right">271</td>
-<td align="right">50.21033</td>
+<td align="right">257</td>
+<td align="right">49.21790</td>
 </tr>
 <tr class="even">
 <td align="left">D</td>
 <td align="left">0</td>
-<td align="right">748</td>
-<td align="right">52.81417</td>
+<td align="right">749</td>
+<td align="right">53.26302</td>
 </tr>
 </tbody>
 </table>

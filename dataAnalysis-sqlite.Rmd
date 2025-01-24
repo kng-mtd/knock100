@@ -660,7 +660,7 @@ group by goal order by depth
 drop table table0;
 ```
 
-### minimum depth on graph
+### minimum distance on graph
 ```{sql}
 create table table0 (node1,node2,weight);
 ```
