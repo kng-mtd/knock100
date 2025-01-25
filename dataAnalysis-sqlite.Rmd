@@ -596,7 +596,7 @@ select * from table0;
 ```
 
 ```{sql}
-with recursive tmp1 as (
+with tmp1 as (
   select id, child, qty, qty as acm
   from table0
   where id='a' -- specify parent
@@ -639,21 +639,23 @@ insert into table0 (node1,node2) values
 ```{sql}
 select * from table0;
 ```
- 
+
 ```{sql}
-with tmp1 as(
-  select node1,node2,1 as depth
+with tmp1 AS (
+  select node1, node2, 1 as depth, node1||','||node2 as visited
   from table0
   where node1='a' --start node
   union all
-  select t0.node1,t0.node2,tmp1.depth+1
+  select t0.node1, t0.node2, tmp1.depth+1
+  , tmp1.visited||','||t0.node2 as visited
   from table0 as t0
   inner join tmp1 on t0.node1=tmp1.node2
-  where tmp1.depth<10 --max search depth
+  where tmp1.depth<10 -- Limit search depth
+    and ','||tmp1.visited||',' not like '%,'||t0.node2||',%'
 )
-select node2 as goal,min(depth) as depth from tmp1
-group by goal order by depth
-;
+select node2 AS goal, min(depth) as depth
+, visited from tmp1
+group by goal order by depth;
 ```
 
 ```{sql}
@@ -684,29 +686,35 @@ select * from table0;
 
 ```{sql}
 with tmp1 as(
-  select node1, node2
-  , weight
-  , '>' as path
+  select node1, node2, 1 as depth, weight
+  , '>'||node2 as path
+  , ','||node1||','||node2 as visited
   from table0
   where node1='a' --start node
   union all
-  select t0.node1,t0.node2
+  select t0.node1, t0.node2
+  , tmp1.depth+1
   , tmp1.weight+t0.weight
-  , path||t0.node1||' >'
+  , tmp1.path||' >'||t0.node2 as path
+  , tmp1.visited||','||t0.node2 as visited
   from table0 as t0
   inner join tmp1 on t0.node1=tmp1.node2
   where tmp1.weight<100 --max search depth
+    and ','||tmp1.visited||','  not like '%,'||t0.node2||',%'
 )
 select node2 as goal
+, depth
 , min(weight) as distance
-, path||node2 as path from tmp1
-group by goal order by goal
+, path
+from tmp1
+group by goal order by distance
 ;
 ```
 
 ```{sql}
 drop table table0;
 ```
+
 
 ### see cycle on graph
 ```{sql}
@@ -737,7 +745,7 @@ with tmp1 as(
   select path ||' >'|| node2, node2, depth+1
   from tmp1
   inner join table0 on tmp1.current=table0.node1
-  where depth<100 --less than #node
+  where depth<30 --less than #node
 )
 select path from tmp1
 where path like current||' >% >'||current
