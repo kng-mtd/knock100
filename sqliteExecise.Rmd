@@ -309,8 +309,8 @@ select * from mx0;
 ### add rowid and change variable name, make design matrix 
 ```{sql}
 create table mx1 as
-with tmp1(id,x0,x1,x2,y) as(
-  select rowid,1,* from mx0
+with tmp1(id,x0,x1,x2) as(
+  select rowid,1, col1, col2 from mx0
 )
 select * from tmp1;
 ```
@@ -336,7 +336,7 @@ select * from smx;
 ```{sql}
 create table smy as
 with tmp1(row,col,val) as(
-  select id,1, y from mx1
+  select rowid,1, col3 from mx0
 )
 select * from tmp1;
 ```
@@ -485,7 +485,7 @@ drop table table1;
 
 
 
-## full text search
+## full text search with FTS5 extension
 ```{r}
 tb=tribble(~id,~txt1,~txt2,
            1,"Actions speak louder than words.","What you do has more impact than what you say.",
@@ -504,31 +504,60 @@ dbReadTable(con,'table1')
 ```
 
 ```{sql}
-create virtual table vrt1 using fts5 (id,txt1,txt2);
+create virtual table vrt1 using fts5 (txt1,txt2);
 ```
 ```{sql}
-insert into vrt1 (id,txt1,txt2)
-  select * from table1;
+insert into vrt1 (txt1,txt2)
+  select txt1,txt2 from table1;
+```
+```{sql}
+select * from vrt1;
 ```
 
 ```{sql}
-select * from vrt1 where vrt1 match 'you';
+select rowid,* from vrt1 where vrt1 match 'you';
+```
+
+
+### count term
+count term by row in all column
+```{sql}
+create virtual table vrt1_row using fts5vocab('vrt1', 'row');
+```
+```{sql}
+select * from vrt1_row;
 ```
 
 ```{sql}
-select *
-, rank --bm25(vrt1)
-from vrt1 where vrt1 match 'you'
-order by rank;
+drop table vrt1_row;
+```
+
+count term by row, column
+```{sql}
+create virtual table vrt1_col using fts5vocab('vrt1', 'col');
+```
+```{sql}
+select * from vrt1_col;
 ```
 
 ```{sql}
-select *
-, rank --bm25(vrt1)
-from vrt1 where vrt1 match 'you' or vrt1 match 'better'
-order by rank;
+drop table vrt1_col;
 ```
 
+count term by row in all column and their position
+```{sql}
+create virtual table vrt1_inst using fts5vocab('vrt1', 'instance');
+```
+```{sql}
+select * from vrt1_inst;
+```
+
+```{sql}
+drop table vrt1_inst;
+```
+
+
+### BM25 score
 ```
 1. What is BM25?
 
@@ -609,13 +638,30 @@ ORDER BY score;
 ```
 
 ```{sql}
+select *
+, rank --bm25(vrt1)
+from vrt1 where vrt1 match 'you'
+order by rank;
+```
+
+```{sql}
+select *
+, rank --bm25(vrt1)
+from vrt1 where vrt1 match 'you' or vrt1 match 'better'
+order by rank;
+```
+
+
+```{sql}
+drop table vrt1;
+```
+```{sql}
 drop table table1;
 ```
 
 
 
 ## covariance, correlation matrix
-
 ```{sql}
 drop table if exists table0;
 ```
