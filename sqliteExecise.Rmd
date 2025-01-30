@@ -520,7 +520,7 @@ select rowid,* from vrt1 where vrt1 match 'you';
 
 
 ### count term
-count term by row in all column
+count term and document include it in all column and row
 ```{sql}
 create virtual table vrt1_row using fts5vocab('vrt1', 'row');
 ```
@@ -532,7 +532,7 @@ select * from vrt1_row;
 drop table vrt1_row;
 ```
 
-count term by row, column
+count term and document include it by column in all row
 ```{sql}
 create virtual table vrt1_col using fts5vocab('vrt1', 'col');
 ```
@@ -544,7 +544,7 @@ select * from vrt1_col;
 drop table vrt1_col;
 ```
 
-count term by row in all column and their position
+count term and document include it by column and row
 ```{sql}
 create virtual table vrt1_inst using fts5vocab('vrt1', 'instance');
 ```
