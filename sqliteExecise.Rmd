@@ -504,7 +504,7 @@ dbReadTable(con,'table1')
 ```
 
 ```{sql}
-create virtual table vrt1 using fts5 (txt1,txt2);
+create virtual table vrt1 using fts5 (txt1,txt2,tokenize='ascii'); -- ascii keep apostropy
 ```
 ```{sql}
 insert into vrt1 (txt1,txt2)
@@ -520,7 +520,7 @@ select rowid,* from vrt1 where vrt1 match 'you';
 
 
 ### count term
-count term and document include it in all column and row
+count terms and documents include them in all columns and rows
 ```{sql}
 create virtual table vrt1_row using fts5vocab('vrt1', 'row');
 ```
@@ -528,11 +528,12 @@ create virtual table vrt1_row using fts5vocab('vrt1', 'row');
 select * from vrt1_row;
 ```
 
+
 ```{sql}
 drop table vrt1_row;
 ```
 
-count term and document include it by column in all row
+count terms and documents include them by column in all row
 ```{sql}
 create virtual table vrt1_col using fts5vocab('vrt1', 'col');
 ```
@@ -544,13 +545,123 @@ select * from vrt1_col;
 drop table vrt1_col;
 ```
 
-count term and document include it by column and row
+count terms and documents include them, position of the term by column and row
 ```{sql}
 create virtual table vrt1_inst using fts5vocab('vrt1', 'instance');
 ```
 ```{sql}
 select * from vrt1_inst;
 ```
+
+```{sql}
+drop table vrt1_inst;
+```
+
+```{sql}
+drop table vrt1;
+```
+
+
+### Bag of Word
+```{sql}
+create virtual table vrt1 using fts5 (txt,tokenize='ascii'); -- ascii keep apostropy
+```
+```{sql}
+insert into vrt1 (txt)
+  select txt1 from table1;
+```
+```{sql}
+select * from vrt1;
+```
+```{sql}
+create virtual table vrt1_inst using fts5vocab('vrt1', 'instance');
+```
+```{sql}
+select doc, term from vrt1_inst
+order by doc;
+```
+
+BoW
+```{sql}
+select doc, term, count(1) as tbyd from vrt1_inst
+group by doc, term order by doc, term 
+```
+
+BoW with terms meets with some conditions
+```{sql}
+with tmp1 as(
+    select term from vrt1_inst
+    where term glob '[a-z]*' and term not glob '*[0-9]*'
+    group by term
+)
+, tmp2 as(
+    select term,doc,count(1) as n from vrt1_inst
+    where term glob '[a-z]*' and term not glob '*[0-9]*'
+    group by term,doc
+)
+select doc, tmp1.term as term, n
+from tmp1 inner join tmp2 on tmp1.term=tmp2.term 
+order by doc, term;
+```
+
+
+### tf-idf
+
+tf(t,d)=#term t in doc d / #all terms in doc d
+idf(t)=log(#all docs / 1+#doc with term t)
+tf-idf(t,d)=tf*idf
+
+
+sum of all docs: na
+```{sql}
+select count(distinct doc) as na from vrt1_inst;
+```
+
+sum of all terms in doc d: tabyd
+```{sql}
+select doc, count(1) as tabyd from vrt1_inst
+group by doc;
+```
+
+sum of term t in doc d: tbyd (original BoW)
+```{sql}
+select doc, term, count(1) as tbyd from vrt1_inst
+group by doc, term order by doc, term 
+```
+
+sum of doc with term t: dwitht
+```{sql}
+select term, count(distinct doc) as dwitht from vrt1_inst
+group by term order by term 
+```
+
+
+tf-idf
+```{sql}
+with doc_word_count as (
+    select doc, sum(n) as total_words
+    from wiki_bow
+    group by doc
+),
+term_doc_freq as (
+    select term, count(distinct doc) as doc_freq
+    from wiki_bow
+    group by term
+),
+tfidf as (
+    select 
+        b.term, 
+        b.doc, 
+        (b.n * log((select count(distinct doc) from wiki_bow) / (1.0 + tdf.doc_freq))) / dwc.total_words as tfidf_score
+    from wiki_bow b
+    join term_doc_freq tdf on b.term = tdf.term
+    join doc_word_count dwc on b.doc = dwc.doc
+)
+select * from tfidf;
+```
+
+
+
 
 ```{sql}
 drop table vrt1_inst;
