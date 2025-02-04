@@ -504,7 +504,7 @@ dbReadTable(con,'table1')
 ```
 
 ```{sql}
-create virtual table vrt1 using fts5 (txt1,txt2,tokenize='ascii'); -- ascii keep apostropy
+create virtual table vrt1 using fts5 (txt1,txt2,tokenize='ascii'); -- ascii keeps apostropy
 ```
 ```{sql}
 insert into vrt1 (txt1,txt2)
@@ -564,7 +564,7 @@ drop table vrt1;
 
 ### Bag of Word
 ```{sql}
-create virtual table vrt1 using fts5 (txt,tokenize='ascii'); -- ascii keep apostropy
+create virtual table vrt1 using fts5 (txt,tokenize='ascii'); -- ascii keeps apostropy
 ```
 ```{sql}
 insert into vrt1 (txt)
@@ -590,18 +590,13 @@ group by doc, term order by doc, term
 BoW with terms meets with some conditions
 ```{sql}
 with tmp1 as(
-    select term from vrt1_inst
-    where term glob '[a-z]*' and term not glob '*[0-9]*'
-    group by term
+  select term from vrt1_inst
+  where term glob '[a-z]*' and term not glob '*[0-9]*'
+  group by term
 )
-, tmp2 as(
-    select term,doc,count(1) as n from vrt1_inst
-    where term glob '[a-z]*' and term not glob '*[0-9]*'
-    group by term,doc
-)
-select doc, tmp1.term as term, n
-from tmp1 inner join tmp2 on tmp1.term=tmp2.term 
-order by doc, term;
+select doc, term, count(1) as n from vrt1_inst as t1
+where exists(select 1 from tmp1 where term=t1.term)
+group by term, doc order by doc, term;
 ```
 
 
@@ -612,9 +607,9 @@ idf(t)=log(#all docs / 1+#doc with term t)
 tf-idf(t,d)=tf*idf
 
 
-sum of all docs: na
+sum of all docs: da
 ```{sql}
-select count(distinct doc) as na from vrt1_inst;
+select count(distinct doc) as da from vrt1_inst;
 ```
 
 sum of all terms in doc d: tabyd
@@ -638,26 +633,29 @@ group by term order by term
 
 tf-idf
 ```{sql}
-with doc_word_count as (
-    select doc, sum(n) as total_words
-    from wiki_bow
-    group by doc
-),
-term_doc_freq as (
-    select term, count(distinct doc) as doc_freq
-    from wiki_bow
-    group by term
-),
-tfidf as (
-    select 
-        b.term, 
-        b.doc, 
-        (b.n * log((select count(distinct doc) from wiki_bow) / (1.0 + tdf.doc_freq))) / dwc.total_words as tfidf_score
-    from wiki_bow b
-    join term_doc_freq tdf on b.term = tdf.term
-    join doc_word_count dwc on b.doc = dwc.doc
+with bow as(
+  select doc, term, count(1) as tbyd from vrt1_inst
+  group by doc, term
 )
-select * from tfidf;
+, da as(
+  select count(distinct doc)-0.0 as da from bow
+)
+, tabyd as(
+  select doc, sum(tbyd)-0.0 as tabyd from bow
+  group by doc
+)
+, dwitht as(
+  select term, count(distinct doc)-0.0 as dwitht from bow
+  group by term
+)
+, tfidf as (
+  select bow.doc, bow.term
+    , (tbyd-0.0) / tabyd * log(da / (1.0+dwitht)) as tfidf
+    from bow, da
+    join dwitht on bow.term=dwitht.term
+    join tabyd on bow.doc=tabyd.doc
+)
+select * from tfidf order by doc, term;
 ```
 
 
