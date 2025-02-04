@@ -763,16 +763,16 @@ with bow as (
   group by doc, term
 ),
 da as (
-  select cast(count(distinct doc) as numeric) as da 
+  select count(distinct doc)-0.0 as da 
   from bow
 ),
 tabyd as (
-  select doc, cast(sum(tbyd) as numeric) as tabyd 
+  select doc, sum(tbyd)-0.0 as tabyd 
   from bow
   group by doc
 ),
 dwitht as (
-  select term, cast(count(distinct doc) as numeric) as dwitht 
+  select term, count(distinct doc)-0.0 as dwitht 
   from bow
   group by term
 ),
