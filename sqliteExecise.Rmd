@@ -600,12 +600,13 @@ group by term, doc order by doc, term;
 ```
 
 
-### tf-idf
 
+### tf-idf
+```
 tf(t,d)=#term t in doc d / #all terms in doc d
 idf(t)=log(#all docs / 1+#doc with term t)
 tf-idf(t,d)=tf*idf
-
+```
 
 sum of all docs: da
 ```{sql}
@@ -631,7 +632,7 @@ group by term order by term
 ```
 
 
-tf-idf
+tf-idf BoW
 ```{sql}
 with bow as(
   select doc, term, count(1) as tbyd from vrt1_inst
@@ -658,12 +659,6 @@ with bow as(
 select * from tfidf order by doc, term;
 ```
 
-
-
-
-```{sql}
-drop table vrt1_inst;
-```
 
 
 ### BM25 score
@@ -749,18 +744,57 @@ ORDER BY score;
 ```{sql}
 select *
 , rank --bm25(vrt1)
-from vrt1 where vrt1 match 'you'
+from vrt1 where vrt1 match 'do'
 order by rank;
 ```
 
 ```{sql}
 select *
 , rank --bm25(vrt1)
-from vrt1 where vrt1 match 'you' or vrt1 match 'better'
+from vrt1 where vrt1 match 'do' or vrt1 match 'you'
 order by rank;
 ```
 
+BM25 score BoW
+```{sql}
+with bow as (
+  select doc, term, count(1) as tbyd 
+  from vrt1_inst
+  group by doc, term
+),
+da as (
+  select cast(count(distinct doc) as numeric) as da 
+  from bow
+),
+tabyd as (
+  select doc, cast(sum(tbyd) as numeric) as tabyd 
+  from bow
+  group by doc
+),
+dwitht as (
+  select term, cast(count(distinct doc) as numeric) as dwitht 
+  from bow
+  group by term
+),
+avgd as (
+  select avg(tabyd) as avgd from tabyd
+),
+bm25 as (
+  select bow.doc, bow.term,
+    ((tbyd * (1.2 + 1)) / (tbyd + 1.2 * (0.25 + 0.75 * (tabyd / avgd)))) * 
+    log((da - dwitht + 0.5) / (dwitht + 0.5)) as bm25
+  from bow, da, avgd
+  join dwitht on bow.term = dwitht.term
+  join tabyd on bow.doc = tabyd.doc
+)
+select * from bm25
+order by doc, term;
+```
 
+
+```{sql}
+drop table vrt1_inst;
+```
 ```{sql}
 drop table vrt1;
 ```
