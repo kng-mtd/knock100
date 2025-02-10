@@ -592,7 +592,6 @@ BoW with terms meets with some conditions
 with tmp1 as(
   select term from vrt1_inst
   where term glob '[a-z]*' and term not glob '*[0-9]*'
-  group by term
 )
 select doc, term, count(1) as n from vrt1_inst as t1
 where exists(select 1 from tmp1 where term=t1.term)
