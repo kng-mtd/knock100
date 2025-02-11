@@ -393,6 +393,39 @@ drop table tsmx;
 
 
 
+## regular expression
+```
+install sqlite extension functions on bash
+
+sudo apt install sqlite3-pcre
+```
+
+```{r}
+# specify extension's path
+dbExecute(con, "SELECT load_extension('/usr/lib/sqlite3/pcre.so')")
+```
+
+```{r}
+dbExecute(con, "CREATE TABLE users (id INTEGER, name TEXT)")
+dbExecute(con, "INSERT INTO users (id, name) VALUES (1, 'Alice')")
+dbExecute(con, "INSERT INTO users (id, name) VALUES (2, 'Bob')")
+dbExecute(con, "INSERT INTO users (id, name) VALUES (3, 'Charlie')")
+```
+
+use regexp
+```{sql}
+select * from users where name regexp '^B';
+```
+```{sql}
+select * from users where name regexp 'e$';
+```
+
+```{sql}
+drop table users;
+```
+
+
+
 ## process to JSON
 https://www.sqlite.org/json1.html
 ```{r}
