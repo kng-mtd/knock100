@@ -226,6 +226,10 @@ select chr1
 from tmp01 group by chr1;
 ```
 
+```{sql}
+drop table tmp01;
+```
+
 
 ## histgram on Sturges' rule
 ```{sql}
