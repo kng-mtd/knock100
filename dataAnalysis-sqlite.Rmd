@@ -193,6 +193,40 @@ from receipt,tmp1;
 ```
 
 
+## cross aggregation by 2 categories
+```{r}
+dbExecute(con,"create temp table tmp01 (chr1, chr2, num1, num2, num3, day)")
+
+x1=sample(c('a','b','c','d'),100,replace=T,prob=c(0.6,0.3,0.15,0.05))
+x2=sample(c('c1','c2'),100,replace=T,prob=c(0.7,0.3))
+x3=floor(runif(100,0,10))
+x4=floor(runif(100,0,100))
+x5=runif(100,0,1)
+
+date_seq=seq.Date(as.Date('2020-01-01'),as.Date('2021-12-31'),by='day')
+x6=sample(date_seq,100,replace=T)
+
+sql0="insert into tmp01 (chr1, chr2, num1, num2, num3, day) values "
+sql1=paste0("('",x1,"','",x2,"',",x3,",",x4,",",x5,",'",x6,"');")
+
+sql=paste0(sql0,sql1)
+
+for(i in sql) dbExecute(con,i)
+```
+```{sql}
+select * from tmp01;
+```
+
+```{sql}
+select chr1
+, count(case when chr2='c1' then 1 else null end) as n_c1
+, sum(case when chr2='c1' then num1 else 0 end) as sum_c1
+, count(case when chr2='c2' then 1 else null end) as n_c2
+, sum(case when chr2='c2' then num1 else 0 end) as sum_c2
+from tmp01 group by chr1;
+```
+
+
 ## histgram on Sturges' rule
 ```{sql}
 with tmp1 as(
@@ -616,6 +650,49 @@ group by child
 ```{sql}
 drop table table0;
 ```
+
+
+
+### fill null by previous row value 
+```{sql}
+create table table0 (id,val1,val2);
+```
+```{sql}
+insert into table0 (id,val1,val2) values
+ (2, 20, 200)
+,(1, 10, 100)
+,(NULL, 200, NULL)
+,(4, 40, 400)
+,(NULL, NULL, 4000)
+,(NULL, NULL, 40000)
+,(3, 30, 300)
+;
+```
+```{sql}
+select * from table0;
+```
+
+```{sql}
+with recursive tmp1 as(
+ select rowid, id, val1, val2 from table0
+ where id is not null
+ union all
+ select table0.rowid
+ ,coalesce(table0.id, tmp1.id)
+ ,table0.val1, table0.val2
+ from table0
+ inner join tmp1 on table0.rowid=tmp1.rowid+1
+ where table0.id is null
+)
+select id, val1, val2 from tmp1
+order by rowid
+;
+```
+
+```{sql}
+drop table table0;
+```
+
 
 
 ### minimum depth on graph
