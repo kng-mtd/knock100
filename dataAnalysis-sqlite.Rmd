@@ -537,7 +537,25 @@ select n, val from tmp1
 ;
 ```
 
- 
+### prime number
+```{sql}
+with tmp1 as (
+  select 2 as n
+  union all
+  select n+1 from tmp1 where n<1000
+),
+tmp2 as (
+  select t1.n from tmp1 as t1
+  where not exists (
+    select 1 from tmp1 as t2
+    where t2.n<t1.n and t1.n%t2.n=0
+    --where t2.n*t2.n<=t1.n and t1.n%t2.n=0
+  )
+)
+select n from tmp2 limit 10;
+```
+
+
 ### hierarchy level
 ```{sql}
 create table table0 (id,child,parent);
