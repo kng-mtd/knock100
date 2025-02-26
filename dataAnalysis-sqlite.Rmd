@@ -555,32 +555,19 @@ tmp2 as (
 select n from tmp2 limit 10;
 ```
 
-### prime number using rowid instead of recursive sql
+### prime number using rowid
 ```{sql}
 drop table if exists dum;
 ```
 ```{sql}
-create table if not exists dum (dum int);
+create table if not exists dum (dum int) as
+with tmp1 as (
+  select 1 as n
+  union all
+  select n+1 from tmp1 where n<1000000
+)
+select null from tmp1;
 ```
-```{sql}
-insert into dum (dum)
-	select null from (select 0 union all select 0 union all select 0 union all select 0)
-	cross join (select 0 union all select 0 union all select 0 union all select 0)
-	cross join (select 0 union all select 0 union all select 0 union all select 0)
-	cross join (select 0 union all select 0 union all select 0 union all select 0)
-	cross join (select 0 union all select 0 union all select 0 union all select 0)
-	cross join (select 0 union all select 0 union all select 0 union all select 0)
-	cross join (select 0 union all select 0 union all select 0 union all select 0)
-	cross join (select 0 union all select 0 union all select 0 union all select 0)
-	cross join (select 0 union all select 0 union all select 0 union all select 0)
-	cross join (select 0 union all select 0 union all select 0 union all select 0)
-	--limit 1000000
-;
-```
-```{sql}
-select min(rowid), max(rowid) from dum;
-```
-
 ```{sql}
 with tmp1 as (
   select t1.rowid as n from dum as t1
