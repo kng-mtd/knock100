@@ -560,13 +560,16 @@ select n from tmp2 limit 10;
 drop table if exists dum;
 ```
 ```{sql}
-create table if not exists dum (dum int) as
+create table if not exists dum (dum int)
+```
+```{sql}
 with tmp1 as (
   select 1 as n
   union all
   select n+1 from tmp1 where n<1000000
 )
-select null from tmp1;
+insert into dum (dum)
+  select null from tmp1;
 ```
 ```{sql}
 with tmp1 as (
@@ -578,6 +581,10 @@ with tmp1 as (
   )
 )
 select n from tmp1 limit 10;
+```
+
+```{sql}
+drop table dum;
 ```
 
 
