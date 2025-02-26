@@ -555,6 +555,44 @@ tmp2 as (
 select n from tmp2 limit 10;
 ```
 
+### prime number using rowid instead of recursive sql
+```{sql}
+drop table if exists dum;
+```
+```{sql}
+create table if not exists dum (dum int);
+```
+```{sql}
+insert into dum (dum)
+	select null from (select 0 union all select 0 union all select 0 union all select 0)
+	cross join (select 0 union all select 0 union all select 0 union all select 0)
+	cross join (select 0 union all select 0 union all select 0 union all select 0)
+	cross join (select 0 union all select 0 union all select 0 union all select 0)
+	cross join (select 0 union all select 0 union all select 0 union all select 0)
+	cross join (select 0 union all select 0 union all select 0 union all select 0)
+	cross join (select 0 union all select 0 union all select 0 union all select 0)
+	cross join (select 0 union all select 0 union all select 0 union all select 0)
+	cross join (select 0 union all select 0 union all select 0 union all select 0)
+	cross join (select 0 union all select 0 union all select 0 union all select 0)
+	--limit 1000000
+;
+```
+```{sql}
+select min(rowid), max(rowid) from dum;
+```
+
+```{sql}
+with tmp1 as (
+  select t1.rowid as n from dum as t1
+  where t1.rowid>1
+  and not exists (
+    select 1 from dum as t2
+    where t2.rowid>1 and t2.rowid<t1.rowid and t1.rowid%t2.rowid=0
+  )
+)
+select n from tmp1 limit 10;
+```
+
 
 ### hierarchy level
 ```{sql}
