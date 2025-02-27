@@ -560,7 +560,7 @@ select n from tmp2 limit 10;
 drop table if exists dum;
 ```
 ```{sql}
-create table if not exists dum (dum int)
+create table if not exists dum (dum int);
 ```
 ```{sql}
 with tmp1 as (
