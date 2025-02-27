@@ -537,7 +537,14 @@ select n, val from tmp1
 ;
 ```
 
+
 ### prime number
+```{sql}
+drop table if exists prime;
+```
+```{sql}
+create table prime (p);
+```
 ```{sql}
 with tmp1 as (
   select 2 as n
@@ -548,25 +555,40 @@ tmp2 as (
   select t1.n from tmp1 as t1
   where not exists (
     select 1 from tmp1 as t2
-    --where t2.n<t1.n and t1.n%t2.n=0
-    where t2.n*t2.n<=t1.n and t1.n%t2.n=0
+    where t2.n<t1.n and t1.n%t2.n=0
+    --where t2.n*t2.n<=t1.n and t1.n%t2.n=0
   )
 )
-select n from tmp2 limit 10;
+insert into prime (p)
+  select n from tmp2;
+```
+
+```{sql}
+select * from prime limit 10;
+```
+
+```{sql}
+drop table prime;
 ```
 
 ### prime number using rowid
 ```{sql}
+drop table if exists prime;
+```
+```{sql}
+create table prime (p);
+```
+```{sql}
 drop table if exists dum;
 ```
 ```{sql}
-create table if not exists dum (dum int);
+create table dum (dum int);
 ```
 ```{sql}
 with tmp1 as (
   select 1 as n
   union all
-  select n+1 from tmp1 where n<1000000
+  select n+1 from tmp1 where n<1000
 )
 insert into dum (dum)
   select null from tmp1;
@@ -580,11 +602,32 @@ with tmp1 as (
     where t2.rowid>1 and t2.rowid<t1.rowid and t1.rowid%t2.rowid=0
   )
 )
-select n from tmp1 limit 10;
+insert into prime (p)
+  select n from tmp1;
+```
+
+```{sql}
+select * from prime limit 10;
 ```
 
 ```{sql}
 drop table dum;
+```
+
+### prime factorization
+```{sql}
+with tmp1(n,p) as(
+  select 360, 1 -- n, 1
+  union all
+  select n/(select min(p) from prime where n%p=0)
+  , (select min(p) from prime where n%p=0)
+  from tmp1 where n>1
+)
+select * from tmp1;
+```
+
+```{sql}
+drop table prime;
 ```
 
 
