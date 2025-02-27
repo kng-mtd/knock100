@@ -548,8 +548,8 @@ tmp2 as (
   select t1.n from tmp1 as t1
   where not exists (
     select 1 from tmp1 as t2
-    where t2.n<t1.n and t1.n%t2.n=0
-    --where t2.n*t2.n<=t1.n and t1.n%t2.n=0
+    --where t2.n<t1.n and t1.n%t2.n=0
+    where t2.n*t2.n<=t1.n and t1.n%t2.n=0
   )
 )
 select n from tmp2 limit 10;
