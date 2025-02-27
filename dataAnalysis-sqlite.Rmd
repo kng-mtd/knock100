@@ -617,7 +617,7 @@ drop table dum;
 ### prime factorization
 ```{sql}
 with tmp1(n,p) as(
-  select 360, 1 -- n, 1
+  select 111111, 1 -- n, 1
   union all
   select n/(select min(p) from prime where n%p=0)
   , (select min(p) from prime where n%p=0)
