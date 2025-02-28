@@ -626,18 +626,18 @@ with tmp1(n,p) as(
 select * from tmp1;
 ```
 
-#### prime factorization using recursive twice
+#### prime factorization using conditional union
 ```{sql}
 with tmp1(n, p) as(
   select 11111111, 2 -- n, 2 minimum prime
 
   union all
   select n/p, p
-  from tmp1 where n%p=0 --step1 keep dividing n by p 
+  from tmp1 where n%p=0 --case1 keep dividing n by p 
 
   union all
-  select n, (select p from prime where p>tmp1.p limit 1) --step2 get next minimum prime 
-  from tmp1 where n%p<>0 and n>1
+  select n, (select p from prime where p>tmp1.p limit 1)  
+  from tmp1 where n%p<>0 --case2 get next minimum prime
 )
 select * from tmp1 where n%p=0;
 ```
@@ -648,11 +648,6 @@ drop table prime;
 
 
 ### hierarchy level
-```{sql}
-drop table table0;
-```
-
-
 ```{sql}
 create table table0 (id,child,parent);
 ```
@@ -706,6 +701,9 @@ insert into table0 (id,name,parent) values
 , (5, 'Eve', 2)
 , (6, 'Frank', 3)
 , (7, 'Grace', 5)
+, (8, 'Hannah', 4)
+, (9, 'Ivy', 4)
+, (10, 'Jack', 5)
 ;  
 ```
 ```{sql}
