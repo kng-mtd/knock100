@@ -647,7 +647,6 @@ drop table prime;
 ```
 
 
-
 ### hierarchy level
 ```{sql}
 drop table table0;
