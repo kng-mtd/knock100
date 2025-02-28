@@ -617,7 +617,7 @@ drop table dum;
 ### prime factorization
 ```{sql}
 with tmp1(n,p) as(
-  select 111111, 1 -- n, 1
+  select 11111111, 1 -- n, 1
   union all
   select n/(select min(p) from prime where n%p=0)
   , (select min(p) from prime where n%p=0)
@@ -626,12 +626,34 @@ with tmp1(n,p) as(
 select * from tmp1;
 ```
 
+#### prime factorization using recursive twice
+```{sql}
+with tmp1(n, p) as(
+  select 11111111, 2 -- n, 2 minimum prime
+
+  union all
+  select n/p, p
+  from tmp1 where n%p=0 --step1 keep dividing n by p 
+
+  union all
+  select n, (select p from prime where p>tmp1.p limit 1) --step2 get next minimum prime 
+  from tmp1 where n%p<>0 and n>1
+)
+select * from tmp1 where n%p=0;
+```
+
 ```{sql}
 drop table prime;
 ```
 
 
+
 ### hierarchy level
+```{sql}
+drop table table0;
+```
+
+
 ```{sql}
 create table table0 (id,child,parent);
 ```
@@ -646,7 +668,9 @@ insert into table0 (id,child,parent) values
 ,(7,'aba','ab')
 ,(8,'abb','ab')
 ,(9,'aca','ac')
-,(10,'acac','aca')
+,(10,'aaaa','aaa')
+,(11,'aaab','aaa')
+,(12,'acac','aca')
 ;
 ```
 ```{sql}
