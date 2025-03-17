@@ -332,11 +332,7 @@ drop table smy;
 
 ### transpose matrix
 ```{sql}
-create table tsmx as
 select col as row, row as col, val from smx
-```
-```{sql}
-select * from tsmx;
 ```
 
 ### matrix addition
@@ -381,7 +377,7 @@ select * from tmp3 order by col_x, col_y
 ;
 ```
 
-
+### correlation matrix
 ```{sql}
 with tmp1 as (
     select col, avg(val) as mean from smx
@@ -410,12 +406,8 @@ order by tmp3.col_x, tmp3.col_y
 ;
 ```
 
-
 ```{sql}
 drop table smx;
-```
-```{sql}
-drop table tsmx;
 ```
 
 
