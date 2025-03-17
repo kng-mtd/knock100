@@ -320,6 +320,16 @@ select * from tmp1;
 select * from smy;
 ```
 
+```{sql}
+drop table mx0;
+```
+```{sql}
+drop table mx1;
+```
+```{sql}
+drop table smy;
+```
+
 ### transpose matrix
 ```{sql}
 create table tsmx as
@@ -339,29 +349,70 @@ from smx as t1 natural join smx as t2
 ### matrix multiplication
 ```{sql}
 select t1.row,t2.col,sum(t1.val*t2.val) as val
-from tsmx as t1 inner join smx as t2 on t1.col=t2.row
+from smx as t1 inner join smx as t2 on t1.col=t2.row
 group by t1.row,t2.col;
 ```
 
 #### to fasten multiplication 
 ```
-create index idx1 on tsmx(col);
+create index idx1 on smx(col);
 create index idx2 on smx(row);
-delete from tsmx where val=0;
+delete from smx where val=0;
 delete from smx where val=0;
 ```
 
+### covariance matrix
 ```{sql}
-drop table mx0;
+with tmp1 as (
+    select col, avg(val) as mean from smx
+    group by col
+),
+tmp2 as (
+    select smx.row, smx.col, smx.val-tmp1.mean as dev
+    from smx join tmp1 on smx.col=tmp1.col
+),
+tmp3 as (
+    select d1.col as col_x, d2.col as col_y
+    , avg(d1.dev*d2.dev) as cov
+    from tmp2 d1 join tmp2 d2 on d1.row=d2.row
+    group by d1.col, d2.col
+)
+select * from tmp3 order by col_x, col_y
+;
 ```
+
+
 ```{sql}
-drop table mx1;
+with tmp1 as (
+    select col, avg(val) as mean from smx
+    group by col
+),
+tmp2 as (
+    select smx.row, smx.col, smx.val-tmp1.mean as dev
+    from smx join tmp1 on smx.col=tmp1.col
+),
+tmp3 as (
+    select d1.col as col_x, d2.col as col_y
+    , avg(d1.dev*d2.dev) as cov
+    from tmp2 d1 join tmp2 d2 on d1.row=d2.row
+    group by d1.col, d2.col
+),
+tmp4 as (
+    select col, sqrt(avg(dev*dev)) as sd from tmp2
+    group by col
+)
+select tmp3.col_x, tmp3.col_y,
+       tmp3.cov/(s1.sd*s2.sd) as cor
+from tmp3
+join tmp4 s1 on tmp3.col_x=s1.col
+join tmp4 s2 on tmp3.col_y=s2.col
+order by tmp3.col_x, tmp3.col_y
+;
 ```
+
+
 ```{sql}
 drop table smx;
-```
-```{sql}
-drop table smy;
 ```
 ```{sql}
 drop table tsmx;
