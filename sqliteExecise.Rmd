@@ -265,6 +265,78 @@ drop table table0;
 
 
 
+## see vacant time
+```{sql}
+drop table if exists rooms;
+```
+```{sql}
+create table rooms(
+id integer primary key
+, room text not null
+);
+```
+```{sql}
+insert into rooms(id, room) values
+(1, 'Room A')
+, (2, 'Room B')
+, (3, 'Room C');
+```
+```{sql}
+select * from rooms;
+```
+
+```{sql}
+drop table if exists reservations;
+```
+```{sql}
+create table reservations(
+id integer primary key
+, roomID integer not null
+, start_time not null
+, end_time not null
+, foreign key (roomID) references rooms(id)
+);
+```
+```{sql}
+insert into reservations (roomID, start_time, end_time) values
+(1, '2025-03-28 09:00:00', '2025-03-28 10:30:00')
+, (1, '2025-03-28 12:30:00', '2025-03-28 14:30:00')
+, (1, '2025-03-28 15:00:00', '2025-03-28 17:30:00')
+, (2, '2025-03-28 10:00:00', '2025-03-28 11:30:00')
+, (2, '2025-03-28 13:00:00', '2025-03-28 14:30:00')
+, (2, '2025-03-28 15:00:00', '2025-03-28 17:00:00')
+, (3, '2025-03-28 09:30:00', '2025-03-28 11:00:00')
+, (3, '2025-03-28 12:00:00', '2025-03-28 14:00:00')
+, (3, '2025-03-28 16:00:00', '2025-03-28 18:00:00');
+```
+```{sql}
+select * from reservations;
+```
+
+```{sql}
+with tmp1 as (
+    select id, room, datetime('2025-03-28 09:00:00') as start_time
+    from rooms
+    union all
+    select id, room, datetime(start_time, '+30 minutes')
+    from tmp1
+    where start_time < datetime('2025-03-28 17:30:00')
+)
+, tmp2 as (
+    select t.room, t.start_time, datetime(t.start_time, '+30 minutes') as end_time
+    from tmp1 t
+    left join reservations r
+    on t.id = r.roomID
+       and t.start_time >= r.start_time
+       and t.start_time < r.end_time
+    where r.roomID is null
+)
+select * from tmp2 order by room;
+```
+
+
+
+
 
 ## matrix on SQLite
 ```{sql}
