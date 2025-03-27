@@ -70,7 +70,7 @@ select * from table1;
 drop table table1;
 ```
 
-## create table by vanilla SQLite
+## create table with vanilla SQLite
 ### master table: table0
 ```{sql}
 create table table0 (chr1 text, num1 int, num2 real);
@@ -102,7 +102,7 @@ delete from table1;
 ```
 
 
-## create table by R
+## create table with R
 ```{r}
 x1=sample(c('a','b','c','d'),100,replace=T,prob=c(0.6,0.3,0.15,0.05))
 x2=sample(c('c1','c2'),100,replace=T,prob=c(0.7,0.3))
