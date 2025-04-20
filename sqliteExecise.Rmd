@@ -336,6 +336,45 @@ select * from tmp2 order by room;
 
 
 
+## widen hierarchy (child-parant) table
+```{sql}
+drop table if exists table0;
+```
+```{sql}
+create table table0 (id,pid);
+```
+```{sql}
+insert into table0 (id,pid) values
+  ('a',null), ('b',null), ('c',null), ('aa','a'), ('ab','a')
+, ('ba','b'), ('ba','b'), ('ca','c'), ('aaa','aa'),('aab','aa')
+, ('aba','ab'), ('baa','ba'), ('bab','ba'), ('caa','ca'), ('cab','ca')
+, ('aaaa','aaa');
+```
+```{sql}
+select * from table0;
+```
+
+```{sql}
+with tmp1 as(
+  select id as lv1 from table0 where pid is null
+)
+, tmp2 as(
+  select lv1, table0.id as lv2
+  from tmp1 left join table0 on tmp1.lv1=table0.pid
+)
+, tmp3 as(
+  select lv1, lv2, table0.id as lv3
+  from tmp2 left join table0 on tmp2.lv2=table0.pid
+)
+, tmp4 as(
+  select lv1, lv2, lv3, table0.id as lv4
+  from tmp3 left join table0 on tmp3.lv3=table0.pid
+)
+select * from tmp4;
+```
+
+
+
 
 
 ## matrix on SQLite
