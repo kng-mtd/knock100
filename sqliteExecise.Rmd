@@ -346,7 +346,7 @@ create table table0 (id,pid);
 ```{sql}
 insert into table0 (id,pid) values
   ('a',null), ('b',null), ('c',null), ('aa','a'), ('ab','a')
-, ('ba','b'), ('ba','b'), ('ca','c'), ('aaa','aa'),('aab','aa')
+, ('ba','b'), ('bb','b'), ('ca','c'), ('aaa','aa'),('aab','aa')
 , ('aba','ab'), ('baa','ba'), ('bab','ba'), ('caa','ca'), ('cab','ca')
 , ('aaaa','aaa');
 ```
