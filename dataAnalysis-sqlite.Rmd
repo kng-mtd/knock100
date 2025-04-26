@@ -612,13 +612,13 @@ select n, val from tmp1
 drop table if exists prime;
 ```
 ```{sql}
-create table prime (p);
+create table prime (p int);
 ```
 ```{sql}
 with tmp1 as (
   select 2 as n
   union all
-  select n+1 from tmp1 where n<1000
+  select n+1 from tmp1 where n<100000
 ),
 tmp2 as (
   select t1.n from tmp1 as t1
@@ -635,6 +635,9 @@ insert into prime (p)
 ```{sql}
 select * from prime limit 10;
 ```
+```{sql}
+select count(1) from prime;
+```
 
 ```{sql}
 drop table prime;
@@ -645,7 +648,7 @@ drop table prime;
 drop table if exists prime;
 ```
 ```{sql}
-create table prime (p);
+create table prime (p int);
 ```
 ```{sql}
 drop table if exists dum;
@@ -657,7 +660,7 @@ create table dum (dum int);
 with tmp1 as (
   select 1 as n
   union all
-  select n+1 from tmp1 where n<1000
+  select n+1 from tmp1 where n<100000
 )
 insert into dum (dum)
   select null from tmp1;
@@ -678,6 +681,9 @@ insert into prime (p)
 ```{sql}
 select * from prime limit 10;
 ```
+```{sql}
+select count(1) from prime;
+```
 
 ```{sql}
 drop table dum;
@@ -686,7 +692,7 @@ drop table dum;
 ### prime factorization
 ```{sql}
 with tmp1(n,p) as(
-  select 11111111, 1 -- n, 1
+  select 1111111111, 1 -- n, 1
   union all
   select n/(select min(p) from prime where n%p=0)
   , (select min(p) from prime where n%p=0)
@@ -698,7 +704,7 @@ select * from tmp1;
 #### prime factorization using conditional union
 ```{sql}
 with tmp1(n, p) as(
-  select 11111111, 2 -- n, 2 minimum prime
+  select 1111111111, 2 -- n, 2 minimum prime
 
   union all
   select n/p, p
