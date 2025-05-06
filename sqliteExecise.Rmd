@@ -127,6 +127,7 @@ select * from table1;
 
 
 ## rows in table0 exist in table1
+When the column to be output is in table0, and the condition is based on a column in table1, but no columns from table1 need to be output, using WHERE EXISTS or WHERE NOT EXISTS is faster than using a JOIN.
 ```{sql}
 select * from table0
 where exists (select 1 from table1 where table0.chr1=table1.chr1);
