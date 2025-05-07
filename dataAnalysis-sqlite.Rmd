@@ -615,13 +615,32 @@ select * from tmp1;
 ### make date sequence
 ```{sql}
 with tmp1 as(
-  select '2024-01-01' as date
+  select '2024-01-01' as day
   union all
-  select date(julianday(date)+1) from tmp1
-  where date<'2024-01-10'
+  select date(day, '+1 days') from tmp1
+  where day<'2024-01-10'
 )
 select * from tmp1;
 ```
+
+```{sql}
+with tmp1 as(
+	select  '2025-01-01 'as day
+	union all
+	select date(day, '+1 months') as day from tmp1
+	where day<'2025-03-01'
+)
+--select * from tmp1;
+, tmp2 as(
+	select *, 1 as seq from tmp1
+	union all
+	select date(day, '+3 days') as day, seq+1 as seq from tmp2
+	where seq<3
+)
+select  * from tmp2 order by day
+;
+```
+
 
 ### Fibonacci sequence
 ```{sql}
