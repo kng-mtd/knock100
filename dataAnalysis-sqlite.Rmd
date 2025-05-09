@@ -193,6 +193,38 @@ from receipt,tmp1;
 ```
 
 
+## mode
+```{sql}
+with tmp1 as(
+  select (min(amount)- max(amount))/100-0 as tick from receipt
+)
+, tmp2 as(
+  select (amount/tick-0)*tick as grp from receipt, tmp1
+)
+select grp, count(1) as n from tmp2
+group by grp order by n desc limit 1
+;
+```
+
+
+## histgram on Sturges' rule
+```{sql}
+with tmp1 as(
+ select ceil(log(count(1)/log(2))+1) as k
+ , min(amount-0) as min, max(amount-0) as max
+ from receipt
+)
+, tmp2 as(
+ select amount
+ , round((amount-min-0.0)/(max-min)* k ) as bin from receipt, tmp1
+)
+select bin, min(amount-0) as left, max(amount-0) as right, count(1)
+from tmp2
+group by bin order by bin;
+;
+```
+
+
 ## cross aggregation by 2 categories
 ```{r}
 dbExecute(con,"create temp table tmp01 (chr1, chr2, num1, num2, num3, day)")
@@ -228,18 +260,6 @@ from tmp01 group by chr1;
 
 ```{sql}
 drop table tmp01;
-```
-
-
-## histgram on Sturges' rule
-```{sql}
-with tmp1 as(
- select ceil(log(count(1)/log(2))+1) as k, min(amount-0) as min, max(amount-0) as max
- from receipt
-)
-select bin, min(amount-0) as left, max(amount-0) as right, count(1) from(
- select amount, round((amount-min-0.0)/(max-min)* k ) as bin from receipt, tmp1)
-group by bin order by bin;
 ```
 
 
