@@ -1582,7 +1582,7 @@ font-size: 12pt;
 with  tmp1 as (
     select 1 as x
     union all
-    select x+1 from tmp1 where x&lt;1000
+    select x+1 from tmp1 where x&lt;1e3
   )
 select 
     x as id
@@ -1624,38 +1624,38 @@ select
 <tbody>
 <tr class="odd">
 <td align="left">1</td>
-<td align="left">1f375307</td>
-<td align="left">68561a184a2fc1277dd94ca1cf813ca0</td>
-<td align="right">3353561921</td>
-<td align="right">73</td>
+<td align="left">15769e23</td>
+<td align="left">0524daab841dadfcb5fa11a38e7d4cc6</td>
+<td align="right">4098018130</td>
+<td align="right">22</td>
 </tr>
 <tr class="even">
 <td align="left">2</td>
-<td align="left">1f8ef345</td>
-<td align="left">fbb0280c90b2d9abff5b2b4919d24299</td>
-<td align="right">7467000476</td>
-<td align="right">7</td>
+<td align="left">ff22bb33</td>
+<td align="left">c2a7c339651ba9c3700eb27d732ecf1c</td>
+<td align="right">116778087</td>
+<td align="right">50</td>
 </tr>
 <tr class="odd">
 <td align="left">3</td>
-<td align="left">43497316</td>
-<td align="left">432e8b105797cbe804127fb810f8f61d</td>
-<td align="right">2739981812</td>
-<td align="right">1</td>
+<td align="left">d05009f9</td>
+<td align="left">e8cbe0a118bd418170316b2376146827</td>
+<td align="right">1108206077</td>
+<td align="right">87</td>
 </tr>
 <tr class="even">
 <td align="left">4</td>
-<td align="left">8e3fa8d3</td>
-<td align="left">98576de1165578767caad1c334324fe2</td>
-<td align="right">7882291229</td>
-<td align="right">16</td>
+<td align="left">9b01023a</td>
+<td align="left">34f2d613acced4385bf455f22b17f8fc</td>
+<td align="right">3847584590</td>
+<td align="right">33</td>
 </tr>
 <tr class="odd">
 <td align="left">5</td>
-<td align="left">f84d9c14</td>
-<td align="left">d6f1c0d4da8a85f663f5cc016a04dabf</td>
-<td align="right">8592544146</td>
-<td align="right">65</td>
+<td align="left">fd71e188</td>
+<td align="left">b05b4f6a10b416a7aae0d8bdf1b3c579</td>
+<td align="right">3446687015</td>
+<td align="right">40</td>
 </tr>
 </tbody>
 </table>
@@ -1668,7 +1668,7 @@ with  tmp1 as (
     select x+1 from tmp1 where x&lt;1e7
   )
 select 
-    abs(random()%900) as id
+    abs(random()%900)+1 as id
     , date(&#39;now&#39;, printf(&#39;-%d days&#39;, abs(random()%365))) as day
     , abs(random()%10)+1 as val
     from tmp1
@@ -1702,34 +1702,34 @@ select
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">84</td>
-<td align="left">2024-07-31</td>
+<td align="right">528</td>
+<td align="left">2024-11-09</td>
 <td align="right">8</td>
 </tr>
 <tr class="even">
-<td align="right">453</td>
-<td align="left">2024-10-06</td>
-<td align="right">6</td>
+<td align="right">64</td>
+<td align="left">2025-04-14</td>
+<td align="right">10</td>
 </tr>
 <tr class="odd">
-<td align="right">800</td>
-<td align="left">2025-05-26</td>
-<td align="right">5</td>
+<td align="right">724</td>
+<td align="left">2025-03-30</td>
+<td align="right">4</td>
 </tr>
 <tr class="even">
-<td align="right">15</td>
-<td align="left">2024-08-07</td>
-<td align="right">8</td>
+<td align="right">511</td>
+<td align="left">2025-04-18</td>
+<td align="right">2</td>
 </tr>
 <tr class="odd">
-<td align="right">499</td>
-<td align="left">2024-10-06</td>
-<td align="right">3</td>
+<td align="right">300</td>
+<td align="left">2024-12-26</td>
+<td align="right">7</td>
 </tr>
 </tbody>
 </table>
 </div>
-<pre class="sql"><code>select count(distinct id) from long limit 5;</code></pre>
+<pre class="sql"><code>select count(distinct id) from long;</code></pre>
 <div class="knitsql-table">
 <table>
 <caption>1 records</caption>
@@ -1746,12 +1746,12 @@ select
 </table>
 </div>
 </div>
-<div id="without-indexing" class="section level2">
-<h2>without indexing</h2>
+<div id="before-indexing" class="section level2">
+<h2>before indexing</h2>
 <pre class="sql"><code>explain query plan
 select id, name, address, tel, age, day, val from short
 join long using(id)
-limit 5;</code></pre>
+;</code></pre>
 <div class="knitsql-table">
 <table>
 <caption>3 records</caption>
@@ -1771,441 +1771,13 @@ limit 5;</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">4</td>
+<td align="right">3</td>
 <td align="right">0</td>
 <td align="right">216</td>
 <td align="left">SCAN short</td>
 </tr>
 <tr class="even">
-<td align="right">8</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">BLOOM FILTER ON long (id=?)</td>
-</tr>
-<tr class="odd">
-<td align="right">19</td>
-<td align="right">0</td>
-<td align="right">53</td>
-<td align="left">SEARCH long USING AUTOMATIC COVERING INDEX (id=?)</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Run Time: real 48.401 user 24.587553 sys 23.559817</p>
-<pre class="sql"><code>explain query plan
-select id, name, address, tel, age, day, val from long
-join short using(id)
-limit 5;</code></pre>
-<div class="knitsql-table">
-<table>
-<caption>3 records</caption>
-<colgroup>
-<col width="4%" />
-<col width="10%" />
-<col width="11%" />
-<col width="73%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="right">id</th>
-<th align="right">parent</th>
-<th align="right">notused</th>
-<th align="left">detail</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">4</td>
-<td align="right">0</td>
-<td align="right">216</td>
-<td align="left">SCAN long</td>
-</tr>
-<tr class="even">
-<td align="right">8</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">BLOOM FILTER ON short (id=?)</td>
-</tr>
-<tr class="odd">
-<td align="right">21</td>
-<td align="right">0</td>
-<td align="right">53</td>
-<td align="left">SEARCH short USING AUTOMATIC COVERING INDEX (id=?)</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Run Time: real 0.001 user 0.000648 sys 0.000000</p>
-<pre class="sql"><code>explain query plan
-select id, name, address, tel, age, count(1) as n from long
-join short using(id)
-group by id
-limit 5;</code></pre>
-<div class="knitsql-table">
-<table>
-<caption>4 records</caption>
-<colgroup>
-<col width="4%" />
-<col width="10%" />
-<col width="11%" />
-<col width="73%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="right">id</th>
-<th align="right">parent</th>
-<th align="right">notused</th>
-<th align="left">detail</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">8</td>
-<td align="right">0</td>
-<td align="right">216</td>
-<td align="left">SCAN long</td>
-</tr>
-<tr class="even">
-<td align="right">12</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">BLOOM FILTER ON short (id=?)</td>
-</tr>
-<tr class="odd">
-<td align="right">25</td>
-<td align="right">0</td>
-<td align="right">53</td>
-<td align="left">SEARCH short USING AUTOMATIC COVERING INDEX (id=?)</td>
-</tr>
-<tr class="even">
-<td align="right">31</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Run Time: real 6.736 user 6.385133 sys 0.349644</p>
-<pre class="sql"><code>explain query plan
-select id, name, address, tel, age, count(1) as n from long
-join short using(id)
-group by id having n&lt;11000
-limit 5;</code></pre>
-<div class="knitsql-table">
-<table>
-<caption>4 records</caption>
-<colgroup>
-<col width="4%" />
-<col width="10%" />
-<col width="11%" />
-<col width="73%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="right">id</th>
-<th align="right">parent</th>
-<th align="right">notused</th>
-<th align="left">detail</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">8</td>
-<td align="right">0</td>
-<td align="right">216</td>
-<td align="left">SCAN long</td>
-</tr>
-<tr class="even">
-<td align="right">12</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">BLOOM FILTER ON short (id=?)</td>
-</tr>
-<tr class="odd">
-<td align="right">25</td>
-<td align="right">0</td>
-<td align="right">53</td>
-<td align="left">SEARCH short USING AUTOMATIC COVERING INDEX (id=?)</td>
-</tr>
-<tr class="even">
-<td align="right">31</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Run Time: real 6.911 user 6.532281 sys 0.377541</p>
-<pre class="sql"><code>explain query plan
-select id, name, address, tel, age, sum(val) as cum from long
-join short using(id)
-group by id
-limit 5;</code></pre>
-<div class="knitsql-table">
-<table>
-<caption>4 records</caption>
-<colgroup>
-<col width="4%" />
-<col width="10%" />
-<col width="11%" />
-<col width="73%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="right">id</th>
-<th align="right">parent</th>
-<th align="right">notused</th>
-<th align="left">detail</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">8</td>
-<td align="right">0</td>
-<td align="right">216</td>
-<td align="left">SCAN long</td>
-</tr>
-<tr class="even">
-<td align="right">12</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">BLOOM FILTER ON short (id=?)</td>
-</tr>
-<tr class="odd">
-<td align="right">25</td>
-<td align="right">0</td>
-<td align="right">53</td>
-<td align="left">SEARCH short USING AUTOMATIC COVERING INDEX (id=?)</td>
-</tr>
-<tr class="even">
-<td align="right">31</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Run Time: real 7.062 user 6.650269 sys 0.411151</p>
-<pre class="sql"><code>explain query plan
-select id, name, address, tel, age, sum(val) as cum from long
-join short using(id)
-group by id having cum&lt;61000
-limit 5;</code></pre>
-<div class="knitsql-table">
-<table>
-<caption>4 records</caption>
-<colgroup>
-<col width="4%" />
-<col width="10%" />
-<col width="11%" />
-<col width="73%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="right">id</th>
-<th align="right">parent</th>
-<th align="right">notused</th>
-<th align="left">detail</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">8</td>
-<td align="right">0</td>
-<td align="right">216</td>
-<td align="left">SCAN long</td>
-</tr>
-<tr class="even">
-<td align="right">12</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">BLOOM FILTER ON short (id=?)</td>
-</tr>
-<tr class="odd">
-<td align="right">25</td>
-<td align="right">0</td>
-<td align="right">53</td>
-<td align="left">SEARCH short USING AUTOMATIC COVERING INDEX (id=?)</td>
-</tr>
-<tr class="even">
-<td align="right">31</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Run Time: real 7.614 user 7.055088 sys 0.554595</p>
-<pre class="sql"><code>explain query plan
-with tmp1 as(
-    select *, count(1) as n from long
-    group by id
-)
-select short.id, name, address, tel, age
-from short
-join tmp1 on short.id=tmp1.id and n&lt;11000
-limit 5;</code></pre>
-<div class="knitsql-table">
-<table>
-<caption>6 records</caption>
-<colgroup>
-<col width="3%" />
-<col width="9%" />
-<col width="10%" />
-<col width="76%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="right">id</th>
-<th align="right">parent</th>
-<th align="right">notused</th>
-<th align="left">detail</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">2</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">CO-ROUTINE tmp1</td>
-</tr>
-<tr class="even">
-<td align="right">8</td>
-<td align="right">2</td>
-<td align="right">216</td>
-<td align="left">SCAN long</td>
-</tr>
-<tr class="odd">
-<td align="right">10</td>
-<td align="right">2</td>
-<td align="right">0</td>
-<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
-</tr>
-<tr class="even">
-<td align="right">52</td>
-<td align="right">0</td>
-<td align="right">216</td>
-<td align="left">SCAN short</td>
-</tr>
-<tr class="odd">
-<td align="right">56</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">BLOOM FILTER ON tmp1 (id=?)</td>
-</tr>
-<tr class="even">
-<td align="right">70</td>
-<td align="right">0</td>
-<td align="right">47</td>
-<td align="left">SEARCH tmp1 USING AUTOMATIC PARTIAL COVERING INDEX
-(id=?)</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Run Time: real 5.479 user 5.254691 sys 0.224727</p>
-<pre class="sql"><code>explain query plan
-with tmp1 as(
-    select *, sum(val) as cum from long
-    group by id
-)
-select short.id, name, address, tel, age
-from short
-join tmp1 on short.id=tmp1.id and cum&lt;61000
-limit 5;</code></pre>
-<div class="knitsql-table">
-<table>
-<caption>6 records</caption>
-<colgroup>
-<col width="3%" />
-<col width="9%" />
-<col width="10%" />
-<col width="76%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="right">id</th>
-<th align="right">parent</th>
-<th align="right">notused</th>
-<th align="left">detail</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">2</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">CO-ROUTINE tmp1</td>
-</tr>
-<tr class="even">
-<td align="right">8</td>
-<td align="right">2</td>
-<td align="right">216</td>
-<td align="left">SCAN long</td>
-</tr>
-<tr class="odd">
-<td align="right">10</td>
-<td align="right">2</td>
-<td align="right">0</td>
-<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
-</tr>
-<tr class="even">
-<td align="right">52</td>
-<td align="right">0</td>
-<td align="right">216</td>
-<td align="left">SCAN short</td>
-</tr>
-<tr class="odd">
-<td align="right">56</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">BLOOM FILTER ON tmp1 (id=?)</td>
-</tr>
-<tr class="even">
-<td align="right">70</td>
-<td align="right">0</td>
-<td align="right">47</td>
-<td align="left">SEARCH tmp1 USING AUTOMATIC PARTIAL COVERING INDEX
-(id=?)</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Run Time: real 5.786 user 5.546627 sys 0.238967</p>
-<pre class="sql"><code>explain query plan
-select distinct id, name, address, tel, age from short
-join long using(id)
-limit 5;</code></pre>
-<div class="knitsql-table">
-<table>
-<caption>4 records</caption>
-<colgroup>
-<col width="4%" />
-<col width="10%" />
-<col width="11%" />
-<col width="73%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="right">id</th>
-<th align="right">parent</th>
-<th align="right">notused</th>
-<th align="left">detail</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">5</td>
-<td align="right">0</td>
-<td align="right">216</td>
-<td align="left">SCAN short</td>
-</tr>
-<tr class="even">
-<td align="right">9</td>
+<td align="right">7</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="left">BLOOM FILTER ON long (id=?)</td>
@@ -2216,8 +1788,436 @@ limit 5;</code></pre>
 <td align="right">53</td>
 <td align="left">SEARCH long USING AUTOMATIC COVERING INDEX (id=?)</td>
 </tr>
+</tbody>
+</table>
+</div>
+<p>Result: 10000000 rows returned in 38790ms</p>
+<pre class="sql"><code>explain query plan
+select id, name, address, tel, age, day, val from long
+join short using(id)
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>3 records</caption>
+<colgroup>
+<col width="4%" />
+<col width="10%" />
+<col width="11%" />
+<col width="73%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">3</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN long</td>
+</tr>
 <tr class="even">
-<td align="right">36</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">BLOOM FILTER ON short (id=?)</td>
+</tr>
+<tr class="odd">
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">53</td>
+<td align="left">SEARCH short USING AUTOMATIC COVERING INDEX (id=?)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result: 10000000 rows returned in 3192ms</p>
+<pre class="sql"><code>explain query plan
+select id, name, address, tel, age, count(1) as n from long
+join short using(id)
+group by id
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>4 records</caption>
+<colgroup>
+<col width="4%" />
+<col width="10%" />
+<col width="11%" />
+<col width="73%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN long</td>
+</tr>
+<tr class="even">
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">BLOOM FILTER ON short (id=?)</td>
+</tr>
+<tr class="odd">
+<td align="right">24</td>
+<td align="right">0</td>
+<td align="right">53</td>
+<td align="left">SEARCH short USING AUTOMATIC COVERING INDEX (id=?)</td>
+</tr>
+<tr class="even">
+<td align="right">30</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result: 900 rows returned in 17305ms</p>
+<pre class="sql"><code>explain query plan
+select id, name, address, tel, age, count(1) as n from long
+join short using(id)
+group by id having n&lt;11000
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>4 records</caption>
+<colgroup>
+<col width="4%" />
+<col width="10%" />
+<col width="11%" />
+<col width="73%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN long</td>
+</tr>
+<tr class="even">
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">BLOOM FILTER ON short (id=?)</td>
+</tr>
+<tr class="odd">
+<td align="right">24</td>
+<td align="right">0</td>
+<td align="right">53</td>
+<td align="left">SEARCH short USING AUTOMATIC COVERING INDEX (id=?)</td>
+</tr>
+<tr class="even">
+<td align="right">30</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result: 126 rows returned in 18391ms</p>
+<pre class="sql"><code>explain query plan
+select id, name, address, tel, age, sum(val) as cum from long
+join short using(id)
+group by id
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>4 records</caption>
+<colgroup>
+<col width="4%" />
+<col width="10%" />
+<col width="11%" />
+<col width="73%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN long</td>
+</tr>
+<tr class="even">
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">BLOOM FILTER ON short (id=?)</td>
+</tr>
+<tr class="odd">
+<td align="right">24</td>
+<td align="right">0</td>
+<td align="right">53</td>
+<td align="left">SEARCH short USING AUTOMATIC COVERING INDEX (id=?)</td>
+</tr>
+<tr class="even">
+<td align="right">30</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result: 900 rows returned in 20314ms</p>
+<pre class="sql"><code>explain query plan
+select id, name, address, tel, age, sum(val) as cum from long
+join short using(id)
+group by id having cum&lt;61000
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>4 records</caption>
+<colgroup>
+<col width="4%" />
+<col width="10%" />
+<col width="11%" />
+<col width="73%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN long</td>
+</tr>
+<tr class="even">
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">BLOOM FILTER ON short (id=?)</td>
+</tr>
+<tr class="odd">
+<td align="right">24</td>
+<td align="right">0</td>
+<td align="right">53</td>
+<td align="left">SEARCH short USING AUTOMATIC COVERING INDEX (id=?)</td>
+</tr>
+<tr class="even">
+<td align="right">30</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result: 380 rows returned in 20085ms</p>
+<pre class="sql"><code>explain query plan
+with tmp1 as(
+    select *, count(1) as n from long
+    group by id
+)
+select short.id, name, address, tel, age
+from short
+join tmp1 on short.id=tmp1.id and n&lt;11000
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>6 records</caption>
+<colgroup>
+<col width="3%" />
+<col width="9%" />
+<col width="10%" />
+<col width="76%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">CO-ROUTINE tmp1</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="right">2</td>
+<td align="right">216</td>
+<td align="left">SCAN long</td>
+</tr>
+<tr class="odd">
+<td align="right">10</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
+</tr>
+<tr class="even">
+<td align="right">51</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN short</td>
+</tr>
+<tr class="odd">
+<td align="right">55</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">BLOOM FILTER ON tmp1 (id=?)</td>
+</tr>
+<tr class="even">
+<td align="right">69</td>
+<td align="right">0</td>
+<td align="right">47</td>
+<td align="left">SEARCH tmp1 USING AUTOMATIC PARTIAL COVERING INDEX
+(id=?)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result: 126 rows returned in 13470ms</p>
+<pre class="sql"><code>explain query plan
+with tmp1 as(
+    select *, sum(val) as cum from long
+    group by id
+)
+select short.id, name, address, tel, age
+from short
+join tmp1 on short.id=tmp1.id and cum&lt;61000
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>6 records</caption>
+<colgroup>
+<col width="3%" />
+<col width="9%" />
+<col width="10%" />
+<col width="76%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">CO-ROUTINE tmp1</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="right">2</td>
+<td align="right">216</td>
+<td align="left">SCAN long</td>
+</tr>
+<tr class="odd">
+<td align="right">10</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
+</tr>
+<tr class="even">
+<td align="right">51</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN short</td>
+</tr>
+<tr class="odd">
+<td align="right">55</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">BLOOM FILTER ON tmp1 (id=?)</td>
+</tr>
+<tr class="even">
+<td align="right">69</td>
+<td align="right">0</td>
+<td align="right">47</td>
+<td align="left">SEARCH tmp1 USING AUTOMATIC PARTIAL COVERING INDEX
+(id=?)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result: 380 rows returned in 14238ms</p>
+<pre class="sql"><code>explain query plan
+select distinct id, name, address, tel, age from short
+join long using(id)
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>4 records</caption>
+<colgroup>
+<col width="4%" />
+<col width="10%" />
+<col width="11%" />
+<col width="73%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN short</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">BLOOM FILTER ON long (id=?)</td>
+</tr>
+<tr class="odd">
+<td align="right">17</td>
+<td align="right">0</td>
+<td align="right">53</td>
+<td align="left">SEARCH long USING AUTOMATIC COVERING INDEX (id=?)</td>
+</tr>
+<tr class="even">
+<td align="right">34</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="left">USE TEMP B-TREE FOR DISTINCT</td>
@@ -2225,11 +2225,11 @@ limit 5;</code></pre>
 </tbody>
 </table>
 </div>
-<p>Run Time: real 32.294 user 17.355100 sys 14.791196</p>
+<p>Result: 900 rows returned in 13946ms</p>
 <pre class="sql"><code>explain query plan
 select * from short
 where id in(select id from long)
-limit 5;</code></pre>
+;</code></pre>
 <div class="knitsql-table">
 <table>
 <caption>4 records</caption>
@@ -2243,37 +2243,37 @@ limit 5;</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">3</td>
+<td align="right">2</td>
 <td align="right">0</td>
 <td align="right">216</td>
 <td align="left">SCAN short</td>
 </tr>
 <tr class="even">
-<td align="right">8</td>
+<td align="right">7</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="left">LIST SUBQUERY 1</td>
 </tr>
 <tr class="odd">
-<td align="right">11</td>
-<td align="right">8</td>
+<td align="right">10</td>
+<td align="right">7</td>
 <td align="right">216</td>
 <td align="left">SCAN long</td>
 </tr>
 <tr class="even">
-<td align="right">17</td>
-<td align="right">8</td>
+<td align="right">16</td>
+<td align="right">7</td>
 <td align="right">0</td>
 <td align="left">CREATE BLOOM FILTER</td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>Run Time: real 2.300 user 2.300195 sys 0.000179</p>
+<p>Result: 900 rows returned in 2268ms</p>
 <pre class="sql"><code>explain query plan
 select * from short
 where exists(select 1 from long where long.id=short.id) 
-limit 5;</code></pre>
+;</code></pre>
 <div class="knitsql-table">
 <table>
 <caption>3 records</caption>
@@ -2287,34 +2287,34 @@ limit 5;</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">3</td>
+<td align="right">2</td>
 <td align="right">0</td>
 <td align="right">216</td>
 <td align="left">SCAN short</td>
 </tr>
 <tr class="even">
-<td align="right">6</td>
+<td align="right">5</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="left">CORRELATED SCALAR SUBQUERY 1</td>
 </tr>
 <tr class="odd">
-<td align="right">10</td>
-<td align="right">6</td>
+<td align="right">9</td>
+<td align="right">5</td>
 <td align="right">216</td>
 <td align="left">SCAN long</td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>Run Time: real 0.000 user 0.000350 sys 0.000058</p>
+<p>Result: 900 rows returned in 48987ms</p>
 <pre class="sql"><code>explain query plan
 select * from short
 where id in(
     select id from long
     group by id having count(1)&lt;11000
 )
-limit 5;</code></pre>
+;</code></pre>
 <div class="knitsql-table">
 <table>
 <caption>5 records</caption>
@@ -2328,39 +2328,81 @@ limit 5;</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">3</td>
+<td align="right">2</td>
 <td align="right">0</td>
 <td align="right">216</td>
 <td align="left">SCAN short</td>
 </tr>
 <tr class="even">
-<td align="right">8</td>
+<td align="right">7</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="left">LIST SUBQUERY 1</td>
 </tr>
 <tr class="odd">
-<td align="right">15</td>
-<td align="right">8</td>
+<td align="right">14</td>
+<td align="right">7</td>
 <td align="right">216</td>
 <td align="left">SCAN long</td>
 </tr>
 <tr class="even">
-<td align="right">17</td>
-<td align="right">8</td>
+<td align="right">16</td>
+<td align="right">7</td>
 <td align="right">0</td>
 <td align="left">USE TEMP B-TREE FOR GROUP BY</td>
 </tr>
 <tr class="odd">
-<td align="right">50</td>
-<td align="right">8</td>
+<td align="right">49</td>
+<td align="right">7</td>
 <td align="right">0</td>
 <td align="left">CREATE BLOOM FILTER</td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>Run Time: real 5.082 user 5.019876 sys 0.062595</p>
+<p>Result: 126 rows returned in 12255ms</p>
+<pre class="sql"><code>explain query plan
+select * from short
+where exists (select 1 from long 
+  where long.id=short.id 
+  group by id having count(1)&lt;11000
+)
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>3 records</caption>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN short</td>
+</tr>
+<tr class="even">
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">CORRELATED SCALAR SUBQUERY 1</td>
+</tr>
+<tr class="odd">
+<td align="right">13</td>
+<td align="right">5</td>
+<td align="right">216</td>
+<td align="left">SCAN long</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result: 126 rows returned in 511341ms Result: 126 rows returned in
+503609ms</p>
 <pre class="sql"><code>explain query plan
 with tmp1 as(
     select id from long
@@ -2368,7 +2410,7 @@ with tmp1 as(
 )
 select * from short
 where exists(select 1 from tmp1 where tmp1.id=short.id) 
-limit 5;</code></pre>
+;</code></pre>
 <div class="knitsql-table">
 <table>
 <caption>7 records</caption>
@@ -2388,95 +2430,54 @@ limit 5;</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">3</td>
+<td align="right">2</td>
 <td align="right">0</td>
 <td align="right">216</td>
 <td align="left">SCAN short</td>
 </tr>
 <tr class="even">
-<td align="right">6</td>
+<td align="right">5</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="left">CORRELATED SCALAR SUBQUERY 2</td>
 </tr>
 <tr class="odd">
-<td align="right">9</td>
-<td align="right">6</td>
+<td align="right">8</td>
+<td align="right">5</td>
 <td align="right">0</td>
 <td align="left">CO-ROUTINE tmp1</td>
 </tr>
 <tr class="even">
-<td align="right">15</td>
-<td align="right">9</td>
+<td align="right">14</td>
+<td align="right">8</td>
 <td align="right">216</td>
 <td align="left">SCAN long</td>
 </tr>
 <tr class="odd">
-<td align="right">17</td>
-<td align="right">9</td>
+<td align="right">16</td>
+<td align="right">8</td>
 <td align="right">0</td>
 <td align="left">USE TEMP B-TREE FOR GROUP BY</td>
 </tr>
 <tr class="even">
-<td align="right">56</td>
-<td align="right">6</td>
+<td align="right">55</td>
+<td align="right">5</td>
 <td align="right">0</td>
 <td align="left">BLOOM FILTER ON tmp1 (id=?)</td>
 </tr>
 <tr class="odd">
-<td align="right">67</td>
-<td align="right">6</td>
+<td align="right">66</td>
+<td align="right">5</td>
 <td align="right">47</td>
 <td align="left">SEARCH tmp1 USING AUTOMATIC COVERING INDEX (id=?)</td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>Run Time: real 4.839 user 4.773618 sys 0.064931</p>
-<pre class="sql"><code>explain query plan
-select * from short
-where exists (select 1 from long 
-  where long.id = short.id 
-  group by id having count(1) &lt;11000
-)
-limit 5;</code></pre>
-<div class="knitsql-table">
-<table>
-<caption>3 records</caption>
-<thead>
-<tr class="header">
-<th align="right">id</th>
-<th align="right">parent</th>
-<th align="right">notused</th>
-<th align="left">detail</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">3</td>
-<td align="right">0</td>
-<td align="right">216</td>
-<td align="left">SCAN short</td>
-</tr>
-<tr class="even">
-<td align="right">6</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">CORRELATED SCALAR SUBQUERY 1</td>
-</tr>
-<tr class="odd">
-<td align="right">14</td>
-<td align="right">6</td>
-<td align="right">216</td>
-<td align="left">SCAN long</td>
-</tr>
-</tbody>
-</table>
+<p>Result: 126 rows returned in 12527ms</p>
 </div>
-<p>Run Time: real 19.479 user 19.477972 sys 0.000129</p>
-</div>
-<div id="with-indexing" class="section level2">
-<h2>with indexing</h2>
+<div id="after-indexing" class="section level2">
+<h2>after indexing</h2>
 <pre class="sql"><code>drop index if exists idx_id;
 create unique index idx_id on short(id);</code></pre>
 <pre class="sql"><code>drop index if exists idx_id_long;
@@ -2484,7 +2485,7 @@ create index idx_id_long on long(id);</code></pre>
 <pre class="sql"><code>explain query plan
 select id, name, address, tel, age, day, val from short
 join long using(id)
-limit 5;</code></pre>
+;</code></pre>
 <div class="knitsql-table">
 <table>
 <caption>3 records</caption>
@@ -2504,441 +2505,13 @@ limit 5;</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">4</td>
+<td align="right">3</td>
 <td align="right">0</td>
 <td align="right">216</td>
 <td align="left">SCAN short</td>
 </tr>
 <tr class="even">
-<td align="right">8</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">BLOOM FILTER ON long (id=?)</td>
-</tr>
-<tr class="odd">
-<td align="right">19</td>
-<td align="right">0</td>
-<td align="right">53</td>
-<td align="left">SEARCH long USING AUTOMATIC COVERING INDEX (id=?)</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Run Time: real 0.001 user 0.000105 sys 0.000000</p>
-<pre class="sql"><code>explain query plan
-select id, name, address, tel, age, day, val from long
-join short using(id)
-limit 5;</code></pre>
-<div class="knitsql-table">
-<table>
-<caption>3 records</caption>
-<colgroup>
-<col width="4%" />
-<col width="10%" />
-<col width="11%" />
-<col width="73%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="right">id</th>
-<th align="right">parent</th>
-<th align="right">notused</th>
-<th align="left">detail</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">4</td>
-<td align="right">0</td>
-<td align="right">216</td>
-<td align="left">SCAN long</td>
-</tr>
-<tr class="even">
-<td align="right">8</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">BLOOM FILTER ON short (id=?)</td>
-</tr>
-<tr class="odd">
-<td align="right">21</td>
-<td align="right">0</td>
-<td align="right">53</td>
-<td align="left">SEARCH short USING AUTOMATIC COVERING INDEX (id=?)</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Run Time: real 0.000 user 0.000148 sys 0.000000</p>
-<pre class="sql"><code>explain query plan
-select id, name, address, tel, age, count(1) as n from long
-join short using(id)
-group by id
-limit 5;</code></pre>
-<div class="knitsql-table">
-<table>
-<caption>4 records</caption>
-<colgroup>
-<col width="4%" />
-<col width="10%" />
-<col width="11%" />
-<col width="73%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="right">id</th>
-<th align="right">parent</th>
-<th align="right">notused</th>
-<th align="left">detail</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">8</td>
-<td align="right">0</td>
-<td align="right">216</td>
-<td align="left">SCAN long</td>
-</tr>
-<tr class="even">
-<td align="right">12</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">BLOOM FILTER ON short (id=?)</td>
-</tr>
-<tr class="odd">
-<td align="right">25</td>
-<td align="right">0</td>
-<td align="right">53</td>
-<td align="left">SEARCH short USING AUTOMATIC COVERING INDEX (id=?)</td>
-</tr>
-<tr class="even">
-<td align="right">31</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Run Time: real 0.014 user 0.013712 sys 0.000143</p>
-<pre class="sql"><code>explain query plan
-select id, name, address, tel, age, count(1) as n from long
-join short using(id)
-group by id having n&lt;11000
-limit 5;</code></pre>
-<div class="knitsql-table">
-<table>
-<caption>4 records</caption>
-<colgroup>
-<col width="4%" />
-<col width="10%" />
-<col width="11%" />
-<col width="73%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="right">id</th>
-<th align="right">parent</th>
-<th align="right">notused</th>
-<th align="left">detail</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">8</td>
-<td align="right">0</td>
-<td align="right">216</td>
-<td align="left">SCAN long</td>
-</tr>
-<tr class="even">
-<td align="right">12</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">BLOOM FILTER ON short (id=?)</td>
-</tr>
-<tr class="odd">
-<td align="right">25</td>
-<td align="right">0</td>
-<td align="right">53</td>
-<td align="left">SEARCH short USING AUTOMATIC COVERING INDEX (id=?)</td>
-</tr>
-<tr class="even">
-<td align="right">31</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Run Time: real 0.158 user 0.158068 sys 0.000000</p>
-<pre class="sql"><code>explain query plan
-select id, name, address, tel, age, sum(val) as cum from long
-join short using(id)
-group by id
-limit 5;</code></pre>
-<div class="knitsql-table">
-<table>
-<caption>4 records</caption>
-<colgroup>
-<col width="4%" />
-<col width="10%" />
-<col width="11%" />
-<col width="73%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="right">id</th>
-<th align="right">parent</th>
-<th align="right">notused</th>
-<th align="left">detail</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">8</td>
-<td align="right">0</td>
-<td align="right">216</td>
-<td align="left">SCAN long</td>
-</tr>
-<tr class="even">
-<td align="right">12</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">BLOOM FILTER ON short (id=?)</td>
-</tr>
-<tr class="odd">
-<td align="right">25</td>
-<td align="right">0</td>
-<td align="right">53</td>
-<td align="left">SEARCH short USING AUTOMATIC COVERING INDEX (id=?)</td>
-</tr>
-<tr class="even">
-<td align="right">31</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Run Time: real 0.060 user 0.059574 sys 0.000000</p>
-<pre class="sql"><code>explain query plan
-select id, name, address, tel, age, sum(val) as cum from long
-join short using(id)
-group by id having cum&lt;61000
-limit 5;</code></pre>
-<div class="knitsql-table">
-<table>
-<caption>4 records</caption>
-<colgroup>
-<col width="4%" />
-<col width="10%" />
-<col width="11%" />
-<col width="73%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="right">id</th>
-<th align="right">parent</th>
-<th align="right">notused</th>
-<th align="left">detail</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">8</td>
-<td align="right">0</td>
-<td align="right">216</td>
-<td align="left">SCAN long</td>
-</tr>
-<tr class="even">
-<td align="right">12</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">BLOOM FILTER ON short (id=?)</td>
-</tr>
-<tr class="odd">
-<td align="right">25</td>
-<td align="right">0</td>
-<td align="right">53</td>
-<td align="left">SEARCH short USING AUTOMATIC COVERING INDEX (id=?)</td>
-</tr>
-<tr class="even">
-<td align="right">31</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Run Time: real 0.183 user 0.182565 sys 0.000000</p>
-<pre class="sql"><code>explain query plan
-with tmp1 as(
-    select *, count(1) as n from long
-    group by id
-)
-select short.id, name, address, tel, age
-from short
-join tmp1 on short.id=tmp1.id and n&lt;11000
-limit 5;</code></pre>
-<div class="knitsql-table">
-<table>
-<caption>6 records</caption>
-<colgroup>
-<col width="3%" />
-<col width="9%" />
-<col width="10%" />
-<col width="76%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="right">id</th>
-<th align="right">parent</th>
-<th align="right">notused</th>
-<th align="left">detail</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">2</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">CO-ROUTINE tmp1</td>
-</tr>
-<tr class="even">
-<td align="right">8</td>
-<td align="right">2</td>
-<td align="right">216</td>
-<td align="left">SCAN long</td>
-</tr>
-<tr class="odd">
-<td align="right">10</td>
-<td align="right">2</td>
-<td align="right">0</td>
-<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
-</tr>
-<tr class="even">
-<td align="right">52</td>
-<td align="right">0</td>
-<td align="right">216</td>
-<td align="left">SCAN short</td>
-</tr>
-<tr class="odd">
-<td align="right">56</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">BLOOM FILTER ON tmp1 (id=?)</td>
-</tr>
-<tr class="even">
-<td align="right">70</td>
-<td align="right">0</td>
-<td align="right">47</td>
-<td align="left">SEARCH tmp1 USING AUTOMATIC PARTIAL COVERING INDEX
-(id=?)</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Run Time: real 0.034 user 0.034646 sys 0.000280</p>
-<pre class="sql"><code>explain query plan
-with tmp1 as(
-    select *, sum(val) as cum from long
-    group by id
-)
-select short.id, name, address, tel, age
-from short
-join tmp1 on short.id=tmp1.id and cum&lt;61000
-limit 5;</code></pre>
-<div class="knitsql-table">
-<table>
-<caption>6 records</caption>
-<colgroup>
-<col width="3%" />
-<col width="9%" />
-<col width="10%" />
-<col width="76%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="right">id</th>
-<th align="right">parent</th>
-<th align="right">notused</th>
-<th align="left">detail</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">2</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">CO-ROUTINE tmp1</td>
-</tr>
-<tr class="even">
-<td align="right">8</td>
-<td align="right">2</td>
-<td align="right">216</td>
-<td align="left">SCAN long</td>
-</tr>
-<tr class="odd">
-<td align="right">10</td>
-<td align="right">2</td>
-<td align="right">0</td>
-<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
-</tr>
-<tr class="even">
-<td align="right">52</td>
-<td align="right">0</td>
-<td align="right">216</td>
-<td align="left">SCAN short</td>
-</tr>
-<tr class="odd">
-<td align="right">56</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">BLOOM FILTER ON tmp1 (id=?)</td>
-</tr>
-<tr class="even">
-<td align="right">70</td>
-<td align="right">0</td>
-<td align="right">47</td>
-<td align="left">SEARCH tmp1 USING AUTOMATIC PARTIAL COVERING INDEX
-(id=?)</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Run Time: real 0.168 user 0.167271 sys 0.000716</p>
-<pre class="sql"><code>explain query plan
-select distinct id, name, address, tel, age from short
-join long using(id)
-limit 5;</code></pre>
-<div class="knitsql-table">
-<table>
-<caption>4 records</caption>
-<colgroup>
-<col width="4%" />
-<col width="10%" />
-<col width="11%" />
-<col width="73%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="right">id</th>
-<th align="right">parent</th>
-<th align="right">notused</th>
-<th align="left">detail</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">5</td>
-<td align="right">0</td>
-<td align="right">216</td>
-<td align="left">SCAN short</td>
-</tr>
-<tr class="even">
-<td align="right">9</td>
+<td align="right">7</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="left">BLOOM FILTER ON long (id=?)</td>
@@ -2949,8 +2522,436 @@ limit 5;</code></pre>
 <td align="right">53</td>
 <td align="left">SEARCH long USING AUTOMATIC COVERING INDEX (id=?)</td>
 </tr>
+</tbody>
+</table>
+</div>
+<p>Result: 10000000 rows returned in 1828ms</p>
+<pre class="sql"><code>explain query plan
+select id, name, address, tel, age, day, val from long
+join short using(id)
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>3 records</caption>
+<colgroup>
+<col width="4%" />
+<col width="10%" />
+<col width="11%" />
+<col width="73%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">3</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN long</td>
+</tr>
 <tr class="even">
-<td align="right">36</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">BLOOM FILTER ON short (id=?)</td>
+</tr>
+<tr class="odd">
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">53</td>
+<td align="left">SEARCH short USING AUTOMATIC COVERING INDEX (id=?)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result: 10000000 rows returned in 1857ms</p>
+<pre class="sql"><code>explain query plan
+select id, name, address, tel, age, count(1) as n from long
+join short using(id)
+group by id
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>4 records</caption>
+<colgroup>
+<col width="4%" />
+<col width="10%" />
+<col width="11%" />
+<col width="73%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN long</td>
+</tr>
+<tr class="even">
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">BLOOM FILTER ON short (id=?)</td>
+</tr>
+<tr class="odd">
+<td align="right">24</td>
+<td align="right">0</td>
+<td align="right">53</td>
+<td align="left">SEARCH short USING AUTOMATIC COVERING INDEX (id=?)</td>
+</tr>
+<tr class="even">
+<td align="right">30</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result: 900 rows returned in 2392ms</p>
+<pre class="sql"><code>explain query plan
+select id, name, address, tel, age, count(1) as n from long
+join short using(id)
+group by id having n&lt;11000
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>4 records</caption>
+<colgroup>
+<col width="4%" />
+<col width="10%" />
+<col width="11%" />
+<col width="73%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN long</td>
+</tr>
+<tr class="even">
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">BLOOM FILTER ON short (id=?)</td>
+</tr>
+<tr class="odd">
+<td align="right">24</td>
+<td align="right">0</td>
+<td align="right">53</td>
+<td align="left">SEARCH short USING AUTOMATIC COVERING INDEX (id=?)</td>
+</tr>
+<tr class="even">
+<td align="right">30</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result: 126 rows returned in 2179ms</p>
+<pre class="sql"><code>explain query plan
+select id, name, address, tel, age, sum(val) as cum from long
+join short using(id)
+group by id
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>4 records</caption>
+<colgroup>
+<col width="4%" />
+<col width="10%" />
+<col width="11%" />
+<col width="73%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN long</td>
+</tr>
+<tr class="even">
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">BLOOM FILTER ON short (id=?)</td>
+</tr>
+<tr class="odd">
+<td align="right">24</td>
+<td align="right">0</td>
+<td align="right">53</td>
+<td align="left">SEARCH short USING AUTOMATIC COVERING INDEX (id=?)</td>
+</tr>
+<tr class="even">
+<td align="right">30</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result: 900 rows returned in 10741ms</p>
+<pre class="sql"><code>explain query plan
+select id, name, address, tel, age, sum(val) as cum from long
+join short using(id)
+group by id having cum&lt;61000
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>4 records</caption>
+<colgroup>
+<col width="4%" />
+<col width="10%" />
+<col width="11%" />
+<col width="73%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN long</td>
+</tr>
+<tr class="even">
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">BLOOM FILTER ON short (id=?)</td>
+</tr>
+<tr class="odd">
+<td align="right">24</td>
+<td align="right">0</td>
+<td align="right">53</td>
+<td align="left">SEARCH short USING AUTOMATIC COVERING INDEX (id=?)</td>
+</tr>
+<tr class="even">
+<td align="right">30</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result: 380 rows returned in 10831ms</p>
+<pre class="sql"><code>explain query plan
+with tmp1 as(
+    select *, count(1) as n from long
+    group by id
+)
+select short.id, name, address, tel, age
+from short
+join tmp1 on short.id=tmp1.id and n&lt;11000
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>6 records</caption>
+<colgroup>
+<col width="3%" />
+<col width="9%" />
+<col width="10%" />
+<col width="76%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">CO-ROUTINE tmp1</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="right">2</td>
+<td align="right">216</td>
+<td align="left">SCAN long</td>
+</tr>
+<tr class="odd">
+<td align="right">10</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
+</tr>
+<tr class="even">
+<td align="right">51</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN short</td>
+</tr>
+<tr class="odd">
+<td align="right">55</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">BLOOM FILTER ON tmp1 (id=?)</td>
+</tr>
+<tr class="even">
+<td align="right">69</td>
+<td align="right">0</td>
+<td align="right">47</td>
+<td align="left">SEARCH tmp1 USING AUTOMATIC PARTIAL COVERING INDEX
+(id=?)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result: 126 rows returned in 714ms</p>
+<pre class="sql"><code>explain query plan
+with tmp1 as(
+    select *, sum(val) as cum from long
+    group by id
+)
+select short.id, name, address, tel, age
+from short
+join tmp1 on short.id=tmp1.id and cum&lt;61000
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>6 records</caption>
+<colgroup>
+<col width="3%" />
+<col width="9%" />
+<col width="10%" />
+<col width="76%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">CO-ROUTINE tmp1</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="right">2</td>
+<td align="right">216</td>
+<td align="left">SCAN long</td>
+</tr>
+<tr class="odd">
+<td align="right">10</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
+</tr>
+<tr class="even">
+<td align="right">51</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN short</td>
+</tr>
+<tr class="odd">
+<td align="right">55</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">BLOOM FILTER ON tmp1 (id=?)</td>
+</tr>
+<tr class="even">
+<td align="right">69</td>
+<td align="right">0</td>
+<td align="right">47</td>
+<td align="left">SEARCH tmp1 USING AUTOMATIC PARTIAL COVERING INDEX
+(id=?)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result: 380 rows returned in 9058ms</p>
+<pre class="sql"><code>explain query plan
+select distinct id, name, address, tel, age from short
+join long using(id)
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>4 records</caption>
+<colgroup>
+<col width="4%" />
+<col width="10%" />
+<col width="11%" />
+<col width="73%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN short</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">BLOOM FILTER ON long (id=?)</td>
+</tr>
+<tr class="odd">
+<td align="right">17</td>
+<td align="right">0</td>
+<td align="right">53</td>
+<td align="left">SEARCH long USING AUTOMATIC COVERING INDEX (id=?)</td>
+</tr>
+<tr class="even">
+<td align="right">34</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="left">USE TEMP B-TREE FOR DISTINCT</td>
@@ -2958,11 +2959,11 @@ limit 5;</code></pre>
 </tbody>
 </table>
 </div>
-<p>Run Time: real 0.018 user 0.017893 sys 0.000000</p>
+<p>Result: 900 rows returned in 3407ms</p>
 <pre class="sql"><code>explain query plan
 select * from short
 where id in(select id from long)
-limit 5;</code></pre>
+;</code></pre>
 <div class="knitsql-table">
 <table>
 <caption>4 records</caption>
@@ -2976,37 +2977,37 @@ limit 5;</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">3</td>
+<td align="right">2</td>
 <td align="right">0</td>
 <td align="right">216</td>
 <td align="left">SCAN short</td>
 </tr>
 <tr class="even">
-<td align="right">8</td>
+<td align="right">7</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="left">LIST SUBQUERY 1</td>
 </tr>
 <tr class="odd">
-<td align="right">11</td>
-<td align="right">8</td>
+<td align="right">10</td>
+<td align="right">7</td>
 <td align="right">216</td>
 <td align="left">SCAN long</td>
 </tr>
 <tr class="even">
-<td align="right">17</td>
-<td align="right">8</td>
+<td align="right">16</td>
+<td align="right">7</td>
 <td align="right">0</td>
 <td align="left">CREATE BLOOM FILTER</td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>Run Time: real 0.752 user 0.751934 sys 0.000000</p>
+<p>Result: 900 rows returned in 759ms</p>
 <pre class="sql"><code>explain query plan
 select * from short
 where exists(select 1 from long where long.id=short.id) 
-limit 5;</code></pre>
+;</code></pre>
 <div class="knitsql-table">
 <table>
 <caption>3 records</caption>
@@ -3020,34 +3021,34 @@ limit 5;</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">3</td>
+<td align="right">2</td>
 <td align="right">0</td>
 <td align="right">216</td>
 <td align="left">SCAN short</td>
 </tr>
 <tr class="even">
-<td align="right">6</td>
+<td align="right">5</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="left">CORRELATED SCALAR SUBQUERY 1</td>
 </tr>
 <tr class="odd">
-<td align="right">10</td>
-<td align="right">6</td>
+<td align="right">9</td>
+<td align="right">5</td>
 <td align="right">216</td>
 <td align="left">SCAN long</td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>Run Time: real 0.001 user 0.000146 sys 0.000000</p>
+<p>Result: 900 rows returned in 6ms</p>
 <pre class="sql"><code>explain query plan
 select * from short
 where id in(
     select id from long
     group by id having count(1)&lt;11000
 )
-limit 5;</code></pre>
+;</code></pre>
 <div class="knitsql-table">
 <table>
 <caption>5 records</caption>
@@ -3061,39 +3062,80 @@ limit 5;</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">3</td>
+<td align="right">2</td>
 <td align="right">0</td>
 <td align="right">216</td>
 <td align="left">SCAN short</td>
 </tr>
 <tr class="even">
-<td align="right">8</td>
+<td align="right">7</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="left">LIST SUBQUERY 1</td>
 </tr>
 <tr class="odd">
-<td align="right">15</td>
-<td align="right">8</td>
+<td align="right">14</td>
+<td align="right">7</td>
 <td align="right">216</td>
 <td align="left">SCAN long</td>
 </tr>
 <tr class="even">
-<td align="right">17</td>
-<td align="right">8</td>
+<td align="right">16</td>
+<td align="right">7</td>
 <td align="right">0</td>
 <td align="left">USE TEMP B-TREE FOR GROUP BY</td>
 </tr>
 <tr class="odd">
-<td align="right">50</td>
-<td align="right">8</td>
+<td align="right">49</td>
+<td align="right">7</td>
 <td align="right">0</td>
 <td align="left">CREATE BLOOM FILTER</td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>Run Time: real 0.552 user 0.551936 sys 0.000000</p>
+<p>Result: 126 rows returned in 549ms</p>
+<pre class="sql"><code>explain query plan
+select * from short
+where exists (select 1 from long 
+  where long.id = short.id 
+  group by id having count(1) &lt;11000
+)
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>3 records</caption>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN short</td>
+</tr>
+<tr class="even">
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">CORRELATED SCALAR SUBQUERY 1</td>
+</tr>
+<tr class="odd">
+<td align="right">13</td>
+<td align="right">5</td>
+<td align="right">216</td>
+<td align="left">SCAN long</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result: 126 rows returned in 675ms</p>
 <pre class="sql"><code>explain query plan
 with tmp1 as(
     select id from long
@@ -3101,7 +3143,7 @@ with tmp1 as(
 )
 select * from short
 where exists(select 1 from tmp1 where tmp1.id=short.id) 
-limit 5;</code></pre>
+;</code></pre>
 <div class="knitsql-table">
 <table>
 <caption>7 records</caption>
@@ -3121,92 +3163,51 @@ limit 5;</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">3</td>
+<td align="right">2</td>
 <td align="right">0</td>
 <td align="right">216</td>
 <td align="left">SCAN short</td>
 </tr>
 <tr class="even">
-<td align="right">6</td>
+<td align="right">5</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="left">CORRELATED SCALAR SUBQUERY 2</td>
 </tr>
 <tr class="odd">
-<td align="right">9</td>
-<td align="right">6</td>
+<td align="right">8</td>
+<td align="right">5</td>
 <td align="right">0</td>
 <td align="left">CO-ROUTINE tmp1</td>
 </tr>
 <tr class="even">
-<td align="right">15</td>
-<td align="right">9</td>
+<td align="right">14</td>
+<td align="right">8</td>
 <td align="right">216</td>
 <td align="left">SCAN long</td>
 </tr>
 <tr class="odd">
-<td align="right">17</td>
-<td align="right">9</td>
+<td align="right">16</td>
+<td align="right">8</td>
 <td align="right">0</td>
 <td align="left">USE TEMP B-TREE FOR GROUP BY</td>
 </tr>
 <tr class="even">
-<td align="right">56</td>
-<td align="right">6</td>
+<td align="right">55</td>
+<td align="right">5</td>
 <td align="right">0</td>
 <td align="left">BLOOM FILTER ON tmp1 (id=?)</td>
 </tr>
 <tr class="odd">
-<td align="right">67</td>
-<td align="right">6</td>
+<td align="right">66</td>
+<td align="right">5</td>
 <td align="right">47</td>
 <td align="left">SEARCH tmp1 USING AUTOMATIC COVERING INDEX (id=?)</td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>Run Time: real 0.537 user 0.536168 sys 0.001088</p>
-<pre class="sql"><code>explain query plan
-select * from short
-where exists (select 1 from long 
-  where long.id = short.id 
-  group by id having count(1) &lt;11000
-)
-limit 5;</code></pre>
-<div class="knitsql-table">
-<table>
-<caption>3 records</caption>
-<thead>
-<tr class="header">
-<th align="right">id</th>
-<th align="right">parent</th>
-<th align="right">notused</th>
-<th align="left">detail</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">3</td>
-<td align="right">0</td>
-<td align="right">216</td>
-<td align="left">SCAN short</td>
-</tr>
-<tr class="even">
-<td align="right">6</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">CORRELATED SCALAR SUBQUERY 1</td>
-</tr>
-<tr class="odd">
-<td align="right">14</td>
-<td align="right">6</td>
-<td align="right">216</td>
-<td align="left">SCAN long</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Run Time: real 0.031 user 0.030813 sys 0.000118</p>
+<p>Result: 126 rows returned in 555ms</p>
 </div>
 
 
