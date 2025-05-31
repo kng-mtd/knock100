@@ -34,7 +34,7 @@ suppressWarnings(
 )
 options(scipen=100,digits=3)
 
-con=dbConnect(SQLite(), ":memory:")
+con=dbConnect(SQLite(), "./join2tbls.db")
 ```
 
 ## make short and long table
@@ -185,6 +185,17 @@ Result: 900 rows returned in 13946ms
 
 ```{sql}
 explain query plan
+select id, name, address, tel, age  from short
+join long using(id)
+group by id order by count(1) desc
+limit 5
+;
+```
+Result: 5 rows returned in 17579ms
+
+### use in, exists instead of join
+```{sql}
+explain query plan
 select * from short
 where id in(select id from long)
 ;
@@ -219,8 +230,7 @@ where exists (select 1 from long
 )
 ;
 ```
-Result: 126 rows returned in 511341ms
-Result: 126 rows returned in 503609ms
+Time over
 
 ```{sql}
 explain query plan
@@ -233,6 +243,31 @@ where exists(select 1 from tmp1 where tmp1.id=short.id)
 ;
 ```
 Result: 126 rows returned in 12527ms
+
+```{sql}
+explain query plan
+select * from short
+where id in(
+	select id from long
+	group by id order by count(1) desc
+	limit 5
+)
+;
+```
+Result: 5 rows returned in 10553ms
+
+```{sql}
+explain query plan
+with tmp1 as(
+	select id from long
+	group by id order by count(1) desc
+	limit 5
+)
+select * from short
+where exists(select 1 from tmp1 where tmp1.id=short.id) 
+;
+```
+Time over
 
 
 
@@ -337,6 +372,18 @@ Result: 900 rows returned in 3407ms
 
 ```{sql}
 explain query plan
+select id, name, address, tel, age  from short
+join long using(id)
+group by id order by count(1) desc
+limit 5
+;
+```
+Result: 5 rows returned in 621ms
+
+
+### use in, exists instead of join
+```{sql}
+explain query plan
 select * from short
 where id in(select id from long)
 ;
@@ -384,4 +431,29 @@ where exists(select 1 from tmp1 where tmp1.id=short.id)
 ;
 ```
 Result: 126 rows returned in 555ms
+
+```{sql}
+explain query plan
+select * from short
+where id in(
+	select id from long
+	group by id order by count(1) desc
+	limit 5
+)
+;
+```
+Result: 5 rows returned in 557ms
+
+```{sql}
+explain query plan
+with tmp1 as(
+	select id from long
+	group by id order by count(1) desc
+	limit 5
+)
+select * from short
+where exists(select 1 from tmp1 where tmp1.id=short.id) 
+;
+```
+Time over
 

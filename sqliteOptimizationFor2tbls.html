@@ -1624,38 +1624,38 @@ select
 <tbody>
 <tr class="odd">
 <td align="left">1</td>
-<td align="left">15769e23</td>
-<td align="left">0524daab841dadfcb5fa11a38e7d4cc6</td>
-<td align="right">4098018130</td>
-<td align="right">22</td>
+<td align="left">bf6d9b17</td>
+<td align="left">ba7c35e42ea05b747507e049aa1055a5</td>
+<td align="right">767177405</td>
+<td align="right">77</td>
 </tr>
 <tr class="even">
 <td align="left">2</td>
-<td align="left">ff22bb33</td>
-<td align="left">c2a7c339651ba9c3700eb27d732ecf1c</td>
-<td align="right">116778087</td>
-<td align="right">50</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="left">d05009f9</td>
-<td align="left">e8cbe0a118bd418170316b2376146827</td>
-<td align="right">1108206077</td>
-<td align="right">87</td>
-</tr>
-<tr class="even">
-<td align="left">4</td>
-<td align="left">9b01023a</td>
-<td align="left">34f2d613acced4385bf455f22b17f8fc</td>
-<td align="right">3847584590</td>
+<td align="left">e1287b0b</td>
+<td align="left">d45f259ba07f584a7ef6e020d1790fba</td>
+<td align="right">9778024185</td>
 <td align="right">33</td>
 </tr>
 <tr class="odd">
+<td align="left">3</td>
+<td align="left">630f7a39</td>
+<td align="left">38e061ed35911661973c174bc2d1a036</td>
+<td align="right">7616636072</td>
+<td align="right">93</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">39a31644</td>
+<td align="left">ab4965c99bd0fbbdf22df153f90e9cda</td>
+<td align="right">4180522776</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
 <td align="left">5</td>
-<td align="left">fd71e188</td>
-<td align="left">b05b4f6a10b416a7aae0d8bdf1b3c579</td>
-<td align="right">3446687015</td>
-<td align="right">40</td>
+<td align="left">970ae2b5</td>
+<td align="left">ac43d5c8f863800f7a7e74f54b5020f5</td>
+<td align="right">5704624628</td>
+<td align="right">80</td>
 </tr>
 </tbody>
 </table>
@@ -1702,29 +1702,29 @@ select
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">528</td>
-<td align="left">2024-11-09</td>
-<td align="right">8</td>
+<td align="right">242</td>
+<td align="left">2025-03-12</td>
+<td align="right">6</td>
 </tr>
 <tr class="even">
-<td align="right">64</td>
-<td align="left">2025-04-14</td>
-<td align="right">10</td>
-</tr>
-<tr class="odd">
-<td align="right">724</td>
-<td align="left">2025-03-30</td>
+<td align="right">186</td>
+<td align="left">2025-04-07</td>
 <td align="right">4</td>
 </tr>
+<tr class="odd">
+<td align="right">687</td>
+<td align="left">2024-12-16</td>
+<td align="right">6</td>
+</tr>
 <tr class="even">
-<td align="right">511</td>
-<td align="left">2025-04-18</td>
+<td align="right">315</td>
+<td align="left">2024-12-16</td>
 <td align="right">2</td>
 </tr>
 <tr class="odd">
-<td align="right">300</td>
-<td align="left">2024-12-26</td>
-<td align="right">7</td>
+<td align="right">438</td>
+<td align="left">2024-10-17</td>
+<td align="right">4</td>
 </tr>
 </tbody>
 </table>
@@ -2227,6 +2227,66 @@ join long using(id)
 </div>
 <p>Result: 900 rows returned in 13946ms</p>
 <pre class="sql"><code>explain query plan
+select id, name, address, tel, age  from short
+join long using(id)
+group by id order by count(1) desc
+limit 5
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>5 records</caption>
+<colgroup>
+<col width="4%" />
+<col width="10%" />
+<col width="11%" />
+<col width="73%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">9</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN short</td>
+</tr>
+<tr class="even">
+<td align="right">13</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">BLOOM FILTER ON long (id=?)</td>
+</tr>
+<tr class="odd">
+<td align="right">22</td>
+<td align="right">0</td>
+<td align="right">53</td>
+<td align="left">SEARCH long USING AUTOMATIC COVERING INDEX (id=?)</td>
+</tr>
+<tr class="even">
+<td align="right">28</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
+</tr>
+<tr class="odd">
+<td align="right">78</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR ORDER BY</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result: 5 rows returned in 17579ms</p>
+<div id="use-in-exists-instead-of-join" class="section level3">
+<h3>use in, exists instead of join</h3>
+<pre class="sql"><code>explain query plan
 select * from short
 where id in(select id from long)
 ;</code></pre>
@@ -2401,8 +2461,7 @@ where exists (select 1 from long
 </tbody>
 </table>
 </div>
-<p>Result: 126 rows returned in 511341ms Result: 126 rows returned in
-503609ms</p>
+<p>Time over</p>
 <pre class="sql"><code>explain query plan
 with tmp1 as(
     select id from long
@@ -2475,6 +2534,128 @@ where exists(select 1 from tmp1 where tmp1.id=short.id)
 </table>
 </div>
 <p>Result: 126 rows returned in 12527ms</p>
+<pre class="sql"><code>explain query plan
+select * from short
+where id in(
+    select id from long
+    group by id order by count(1) desc
+    limit 5
+)
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>5 records</caption>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN short</td>
+</tr>
+<tr class="even">
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">LIST SUBQUERY 1</td>
+</tr>
+<tr class="odd">
+<td align="right">16</td>
+<td align="right">7</td>
+<td align="right">216</td>
+<td align="left">SCAN long</td>
+</tr>
+<tr class="even">
+<td align="right">18</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
+</tr>
+<tr class="odd">
+<td align="right">59</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR ORDER BY</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result: 5 rows returned in 10553ms</p>
+<pre class="sql"><code>explain query plan
+with tmp1 as(
+    select id from long
+    group by id order by count(1) desc
+    limit 5
+)
+select * from short
+where exists(select 1 from tmp1 where tmp1.id=short.id) 
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>7 records</caption>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN short</td>
+</tr>
+<tr class="even">
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">CORRELATED SCALAR SUBQUERY 2</td>
+</tr>
+<tr class="odd">
+<td align="right">8</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="left">CO-ROUTINE tmp1</td>
+</tr>
+<tr class="even">
+<td align="right">16</td>
+<td align="right">8</td>
+<td align="right">216</td>
+<td align="left">SCAN long</td>
+</tr>
+<tr class="odd">
+<td align="right">18</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
+</tr>
+<tr class="even">
+<td align="right">59</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR ORDER BY</td>
+</tr>
+<tr class="odd">
+<td align="right">66</td>
+<td align="right">5</td>
+<td align="right">39</td>
+<td align="left">SCAN tmp1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Time over</p>
+</div>
 </div>
 <div id="after-indexing" class="section level2">
 <h2>after indexing</h2>
@@ -2961,6 +3142,66 @@ join long using(id)
 </div>
 <p>Result: 900 rows returned in 3407ms</p>
 <pre class="sql"><code>explain query plan
+select id, name, address, tel, age  from short
+join long using(id)
+group by id order by count(1) desc
+limit 5
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>5 records</caption>
+<colgroup>
+<col width="4%" />
+<col width="10%" />
+<col width="11%" />
+<col width="73%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">9</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN short</td>
+</tr>
+<tr class="even">
+<td align="right">13</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">BLOOM FILTER ON long (id=?)</td>
+</tr>
+<tr class="odd">
+<td align="right">22</td>
+<td align="right">0</td>
+<td align="right">53</td>
+<td align="left">SEARCH long USING AUTOMATIC COVERING INDEX (id=?)</td>
+</tr>
+<tr class="even">
+<td align="right">28</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
+</tr>
+<tr class="odd">
+<td align="right">78</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR ORDER BY</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result: 5 rows returned in 621ms</p>
+<div id="use-in-exists-instead-of-join-1" class="section level3">
+<h3>use in, exists instead of join</h3>
+<pre class="sql"><code>explain query plan
 select * from short
 where id in(select id from long)
 ;</code></pre>
@@ -3208,6 +3449,128 @@ where exists(select 1 from tmp1 where tmp1.id=short.id)
 </table>
 </div>
 <p>Result: 126 rows returned in 555ms</p>
+<pre class="sql"><code>explain query plan
+select * from short
+where id in(
+    select id from long
+    group by id order by count(1) desc
+    limit 5
+)
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>5 records</caption>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN short</td>
+</tr>
+<tr class="even">
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">LIST SUBQUERY 1</td>
+</tr>
+<tr class="odd">
+<td align="right">16</td>
+<td align="right">7</td>
+<td align="right">216</td>
+<td align="left">SCAN long</td>
+</tr>
+<tr class="even">
+<td align="right">18</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
+</tr>
+<tr class="odd">
+<td align="right">59</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR ORDER BY</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result: 5 rows returned in 557ms</p>
+<pre class="sql"><code>explain query plan
+with tmp1 as(
+    select id from long
+    group by id order by count(1) desc
+    limit 5
+)
+select * from short
+where exists(select 1 from tmp1 where tmp1.id=short.id) 
+;</code></pre>
+<div class="knitsql-table">
+<table>
+<caption>7 records</caption>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">parent</th>
+<th align="right">notused</th>
+<th align="left">detail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">216</td>
+<td align="left">SCAN short</td>
+</tr>
+<tr class="even">
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">CORRELATED SCALAR SUBQUERY 2</td>
+</tr>
+<tr class="odd">
+<td align="right">8</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="left">CO-ROUTINE tmp1</td>
+</tr>
+<tr class="even">
+<td align="right">16</td>
+<td align="right">8</td>
+<td align="right">216</td>
+<td align="left">SCAN long</td>
+</tr>
+<tr class="odd">
+<td align="right">18</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR GROUP BY</td>
+</tr>
+<tr class="even">
+<td align="right">59</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="left">USE TEMP B-TREE FOR ORDER BY</td>
+</tr>
+<tr class="odd">
+<td align="right">66</td>
+<td align="right">5</td>
+<td align="right">39</td>
+<td align="left">SCAN tmp1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Time over</p>
+</div>
 </div>
 
 
