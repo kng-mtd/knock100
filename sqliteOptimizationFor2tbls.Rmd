@@ -1,0 +1,384 @@
+---
+title: "SQL optimization for 2 tables"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    code_folding: show 
+#date: "`r Sys.Date()`"
+
+---
+
+<style type="text/css">
+  body{
+  font-size: 12pt;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T,warning=F,message=F,comment='',
+                      connection = "con")
+
+suppressWarnings(
+  suppressMessages(
+    suppressPackageStartupMessages({
+      library(stats)
+      library(MASS)
+      library(tidyverse)
+      library(magrittr)
+      library(DBI)
+      library(RSQLite)
+    })
+  )
+)
+options(scipen=100,digits=3)
+
+con=dbConnect(SQLite(), ":memory:")
+```
+
+## make short and long table
+```{sql}
+drop table if exists short;
+```
+```{sql}
+create table short as
+with  tmp1 as (
+    select 1 as x
+    union all
+    select x+1 from tmp1 where x<1000
+  )
+select 
+	x as id
+	, lower(hex(randomblob(4))) as name
+	, lower(hex(randomblob(16))) as address
+	, cast(abs(random()%1e10) as integer)  as tel
+	, abs(random()%100) as age
+	from tmp1
+;
+```
+
+```{sql}
+select count(1) from short; 
+```
+```{sql}
+select * from short limit 5;
+```
+
+```{sql}
+drop table if exists long;
+```
+```{sql}
+create table long as
+with  tmp1 as (
+    select 1 as x
+    union all
+    select x+1 from tmp1 where x<1e7
+  )
+select 
+	abs(random()%900) as id
+	, date('now', printf('-%d days', abs(random()%365))) as day
+	, abs(random()%10)+1 as val
+	from tmp1
+;
+```
+
+```{sql}
+select count(1) from long;
+```
+```{sql}
+select * from long limit 5;
+```
+```{sql}
+select count(distinct id) from long limit 5;
+```
+
+
+
+## without indexing
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, day, val from short
+join long using(id)
+limit 5;
+```
+Run Time: real 48.401 user 24.587553 sys 23.559817
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, day, val from long
+join short using(id)
+limit 5;
+```
+Run Time: real 0.001 user 0.000648 sys 0.000000
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, count(1) as n from long
+join short using(id)
+group by id
+limit 5;
+```
+Run Time: real 6.736 user 6.385133 sys 0.349644
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, count(1) as n from long
+join short using(id)
+group by id having n<11000
+limit 5;
+```
+Run Time: real 6.911 user 6.532281 sys 0.377541
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, sum(val) as cum from long
+join short using(id)
+group by id
+limit 5;
+```
+Run Time: real 7.062 user 6.650269 sys 0.411151
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, sum(val) as cum from long
+join short using(id)
+group by id having cum<61000
+limit 5;
+```
+Run Time: real 7.614 user 7.055088 sys 0.554595
+
+```{sql}
+explain query plan
+with tmp1 as(
+	select *, count(1) as n from long
+	group by id
+)
+select short.id, name, address, tel, age
+from short
+join tmp1 on short.id=tmp1.id and n<11000
+limit 5;
+```
+Run Time: real 5.479 user 5.254691 sys 0.224727
+
+```{sql}
+explain query plan
+with tmp1 as(
+	select *, sum(val) as cum from long
+	group by id
+)
+select short.id, name, address, tel, age
+from short
+join tmp1 on short.id=tmp1.id and cum<61000
+limit 5;
+```
+Run Time: real 5.786 user 5.546627 sys 0.238967
+
+```{sql}
+explain query plan
+select distinct id, name, address, tel, age from short
+join long using(id)
+limit 5;
+```
+Run Time: real 32.294 user 17.355100 sys 14.791196
+
+```{sql}
+explain query plan
+select * from short
+where id in(select id from long)
+limit 5;
+```
+Run Time: real 2.300 user 2.300195 sys 0.000179
+
+```{sql}
+explain query plan
+select * from short
+where exists(select 1 from long where long.id=short.id) 
+limit 5;
+```
+Run Time: real 0.000 user 0.000350 sys 0.000058
+
+```{sql}
+explain query plan
+select * from short
+where id in(
+	select id from long
+	group by id having count(1)<11000
+)
+limit 5;
+```
+Run Time: real 5.082 user 5.019876 sys 0.062595
+
+```{sql}
+explain query plan
+with tmp1 as(
+	select id from long
+	group by id having count(1)<11000
+)
+select * from short
+where exists(select 1 from tmp1 where tmp1.id=short.id) 
+limit 5;
+```
+Run Time: real 4.839 user 4.773618 sys 0.064931
+
+```{sql}
+explain query plan
+select * from short
+where exists (select 1 from long 
+  where long.id = short.id 
+  group by id having count(1) <11000
+)
+limit 5;
+```
+Run Time: real 19.479 user 19.477972 sys 0.000129
+
+
+
+## with indexing
+```{sql}
+drop index if exists idx_id;
+create unique index idx_id on short(id);
+```
+
+```{sql}
+drop index if exists idx_id_long;
+create index idx_id_long on long(id);
+```
+
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, day, val from short
+join long using(id)
+limit 5;
+```
+Run Time: real 0.001 user 0.000105 sys 0.000000
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, day, val from long
+join short using(id)
+limit 5;
+```
+Run Time: real 0.000 user 0.000148 sys 0.000000
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, count(1) as n from long
+join short using(id)
+group by id
+limit 5;
+```
+Run Time: real 0.014 user 0.013712 sys 0.000143
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, count(1) as n from long
+join short using(id)
+group by id having n<11000
+limit 5;
+```
+Run Time: real 0.158 user 0.158068 sys 0.000000
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, sum(val) as cum from long
+join short using(id)
+group by id
+limit 5;
+```
+Run Time: real 0.060 user 0.059574 sys 0.000000
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, sum(val) as cum from long
+join short using(id)
+group by id having cum<61000
+limit 5;
+```
+Run Time: real 0.183 user 0.182565 sys 0.000000
+
+```{sql}
+explain query plan
+with tmp1 as(
+	select *, count(1) as n from long
+	group by id
+)
+select short.id, name, address, tel, age
+from short
+join tmp1 on short.id=tmp1.id and n<11000
+limit 5;
+```
+Run Time: real 0.034 user 0.034646 sys 0.000280
+
+```{sql}
+explain query plan
+with tmp1 as(
+	select *, sum(val) as cum from long
+	group by id
+)
+select short.id, name, address, tel, age
+from short
+join tmp1 on short.id=tmp1.id and cum<61000
+limit 5;
+```
+Run Time: real 0.168 user 0.167271 sys 0.000716
+
+```{sql}
+explain query plan
+select distinct id, name, address, tel, age from short
+join long using(id)
+limit 5;
+```
+Run Time: real 0.018 user 0.017893 sys 0.000000
+
+```{sql}
+explain query plan
+select * from short
+where id in(select id from long)
+limit 5;
+```
+Run Time: real 0.752 user 0.751934 sys 0.000000
+
+```{sql}
+explain query plan
+select * from short
+where exists(select 1 from long where long.id=short.id) 
+limit 5;
+```
+Run Time: real 0.001 user 0.000146 sys 0.000000
+
+```{sql}
+explain query plan
+select * from short
+where id in(
+	select id from long
+	group by id having count(1)<11000
+)
+limit 5;
+```
+Run Time: real 0.552 user 0.551936 sys 0.000000
+
+```{sql}
+explain query plan
+with tmp1 as(
+	select id from long
+	group by id having count(1)<11000
+)
+select * from short
+where exists(select 1 from tmp1 where tmp1.id=short.id) 
+limit 5;
+```
+Run Time: real 0.537 user 0.536168 sys 0.001088
+
+```{sql}
+explain query plan
+select * from short
+where exists (select 1 from long 
+  where long.id = short.id 
+  group by id having count(1) <11000
+)
+limit 5;
+```
+Run Time: real 0.031 user 0.030813 sys 0.000118
