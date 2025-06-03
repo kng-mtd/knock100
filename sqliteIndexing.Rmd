@@ -1,0 +1,852 @@
+---
+title: "SQLite indexing"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    code_folding: show 
+#date: "`r Sys.Date()`"
+
+---
+
+<style type="text/css">
+  body{
+  font-size: 12pt;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T,warning=F,message=F,comment='',
+                      connection = "con")
+
+suppressWarnings(
+  suppressMessages(
+    suppressPackageStartupMessages({
+      library(stats)
+      library(MASS)
+      library(tidyverse)
+      library(magrittr)
+      library(DBI)
+      library(RSQLite)
+    })
+  )
+)
+options(scipen=100,digits=3)
+
+con=dbConnect(SQLite(), ':memory:')
+```
+
+
+## Automatic indexing with column constraint
+```
+create table table0
+	id primary key -- clusterd indexing
+	, name unique --non-clusterd indexing
+;
+
+A clustered index determines the physical position on disk order of rows in the table, it can decrease I/O. 
+There can be only one clustered index per table because rows can only be stored in one order.
+
+A nonclustered index is a separate structure from the table.
+It contains, a copy of the indexed column(s) and a reference like a row pointeror back to the full row, it can avoid table scan.
+There can be multiple nonclustered indexes per table.
+```
+
+## make short and long table
+```{sql}
+drop table if exists short;
+```
+```{sql}
+create table short as
+with tmp1 as (
+    select 1 as x
+    union all
+    select x+1 from tmp1 where x<1000
+  )
+select 
+	x as id
+	, lower(hex(randomblob(4))) as name
+	, lower(hex(randomblob(16))) as address
+	, cast(abs(random()%1e10) as integer)  as tel
+	, abs(random()%100) as age
+	from tmp1
+;
+```
+```{sql}
+select count(1) from short; 
+```
+```{sql}
+select * from short limit 5;
+```
+
+```{sql}
+drop table if exists long;
+```
+```{sql}
+create table long as
+with  tmp1 as (
+    select 1 as x
+    union all
+    select x+1 from tmp1 where x<1e7
+  )
+select 
+	abs(random()%900)+1 as id
+	, date('now', printf('-%d days', abs(random()%365))) as day
+	, abs(random()%10)+1 as val
+	from tmp1
+;
+```
+```{sql}
+select count(1) from long;
+```
+```{sql}
+select * from long limit 5;
+```
+```{sql}
+select count(distinct id) from long;
+```
+
+
+## Indexing priority is for more cardinarity column
+
+@1
+```{sql}
+drop index if exists idx_id;
+create index idx_id on long(id);
+```
+Result: query executed successfully. Took 14752ms
+
+@2
+```{sql}
+drop index if exists idx_day;
+create index idx_day on long(day);
+```
+Result: query executed successfully. Took 13770ms
+
+@3
+```{sql}
+drop index if exists idx_id_day;
+create index idx_id_day on long(id, day);
+```
+Result: query executed successfully. Took 22324ms
+```
+Result
+  without index
+  with index @1 
+  with index @1+@2
+  with index @3
+```
+
+### where
+```{sql}
+explain query plan
+select * from long where id=500;
+```
+```
+Result: 11156 rows returned in 460ms
+Result: 11156 rows returned in 70ms
+Result: 11156 rows returned in 73ms
+Result: 11156 rows returned in 104ms
+```
+```{sql}
+explain query plan
+select * from long where id between 490 and 510;
+```
+```
+Result: 232397 rows returned in 607ms
+Result: 232397 rows returned in 141ms
+Result: 232397 rows returned in 163ms
+Result: 232397 rows returned in 2220ms
+```
+```{sql}
+explain query plan
+select  * from long
+where day between '2025-01-01'and '2025-01-07';
+```
+```
+Result: 191743 rows returned in 898ms
+Result: 191743 rows returned in 900ms
+Result: 191743 rows returned in 143ms
+Result: 191743 rows returned in 774ms
+```
+```{sql}
+explain query plan
+select  * from long
+where	id between 490 and 510	and  val between 1 and 3;
+```
+```
+Result: 69605 rows returned in 836ms
+Result: 69605 rows returned in 399ms
+Result: 69605 rows returned in 415ms
+Result: 69605 rows returned in 531ms
+```
+```{sql}
+explain query plan
+select  * from long
+where	val between 1 and 3	and id between 490 and 510;
+```
+```
+Result: 69605 rows returned in 965ms
+Result: 69605 rows returned in 409ms
+Result: 69605 rows returned in 393ms
+Result: 69605 rows returned in 549ms
+```
+
+### distinct
+```{sql}
+explain query plan
+select distinct id from long;
+```
+```
+Result: 900 rows returned in 1901ms
+Result: 900 rows returned in 385ms
+Result: 900 rows returned in 382ms
+Result: 900 rows returned in 387ms
+```
+```{sql}
+explain query plan
+select distinct day from long;
+```
+```
+Result: 365 rows returned in 2695ms
+Result: 365 rows returned in 2746ms
+Result: 365 rows returned in 511ms
+Result: 365 rows returned in 2024ms
+```
+```{sql}
+explain query plan
+select distinct id, day from long;
+```
+```
+Result: 328500 rows returned in 8673ms
+Result: 328500 rows returned in 14320ms
+Result: 328500 rows returned in 13972ms
+Result: 328500 rows returned in 827ms
+```
+```{sql}
+explain query plan
+select distinct day, id from long;
+```
+```
+Result: 328500 rows returned in 9545ms
+Result: 328500 rows returned in 9454ms
+Result: 328500 rows returned in 14221ms
+Result: 328500 rows returned in 781ms
+```
+```{sql}
+explain query plan
+select distinct id, val from long;
+```
+```
+Result: 9000 rows returned in 2925ms
+Result: 9000 rows returned in 9911ms
+Result: 9000 rows returned in 9848ms
+Result: 9000 rows returned in 13155ms
+```
+```{sql}
+explain query plan
+select distinct val, id from long;
+```
+```
+Result: 9000 rows returned in 3103ms
+Result: 9000 rows returned in 3082ms
+Result: 9000 rows returned in 3103ms
+Result: 9000 rows returned in 3107ms
+```
+
+### group by
+```{sql}
+explain query plan
+select id, count(1) from long group by id;
+```
+```
+Result: 900 rows returned in 11821ms
+Result: 900 rows returned in 603ms
+Result: 900 rows returned in 591ms
+Result: 900 rows returned in 608ms
+```
+```{sql}
+explain query plan
+select day, count(1) from long group by day;
+```
+```
+Result: 365 rows returned in 14260ms
+Result: 365 rows returned in 13312ms
+Result: 365 rows returned in 685ms
+Result: 365 rows returned in 4646ms
+```
+```{sql}
+explain query plan
+select id, day, count(1) from long group by id, day;
+```
+```
+Result: 328500 rows returned in 33231ms
+Result: 328500 rows returned in 34824ms
+Result: 328500 rows returned in 34236ms
+Result: 328500 rows returned in 1213ms
+```
+```{sql}
+explain query plan
+select id, val, count(1) from long group by id, val;
+```
+```
+Result: 9000 rows returned in 15308ms
+Result: 9000 rows returned in 14553ms
+Result: 9000 rows returned in 14521ms
+Result: 9000 rows returned in 18131ms
+```
+```{sql}
+explain query plan
+select id, val, count(1) from long group by val, id;
+```
+```
+Result: 9000 rows returned in 16161ms
+Result: 9000 rows returned in 16007ms
+Result: 9000 rows returned in 15616ms
+Result: 9000 rows returned in 16055ms
+```
+
+### order by
+```{sql}
+explain query plan
+select * from long order by id;
+```
+```
+Result: 10000000 rows returned in 14556ms
+Result: 10000000 rows returned in 871ms
+Result: 10000000 rows returned in 1333ms
+Result: 10000000 rows returned in 973ms
+```
+```{sql}
+explain query plan
+select * from long order by day;
+```
+```
+Result: 10000000 rows returned in 13490ms
+Result: 10000000 rows returned in 13302ms
+Result: 10000000 rows returned in 967ms
+Result: 10000000 rows returned in 14403ms
+```
+```{sql}
+explain query plan
+select * from long order by val;
+```
+```
+Result: 10000000 rows returned in 7532ms
+Result: 10000000 rows returned in 8841ms
+Result: 10000000 rows returned in 7020ms
+Result: 10000000 rows returned in 11305ms
+```
+```{sql}
+explain query plan
+select * from long order by id, day;
+```
+```
+Result: 10000000 rows returned in 18513ms
+Result: 10000000 rows returned in 14933ms
+Result: 10000000 rows returned in 14089ms
+Result: 10000000 rows returned in 1163ms
+```
+```{sql}
+explain query plan
+select * from long order by id, val;
+```
+```
+Result: 10000000 rows returned in 16826ms
+Result: 10000000 rows returned in 13556ms
+Result: 10000000 rows returned in 12712ms
+Result: 10000000 rows returned in 19742ms
+```
+```{sql}
+explain query plan
+select * from long order by val, id;
+```
+```
+Result: 10000000 rows returned in 15574ms
+Result: 10000000 rows returned in 14553ms
+Result: 10000000 rows returned in 15210ms
+Result: 10000000 rows returned in 15652ms
+```
+
+
+
+## Indexing priority is for shorter value column ??
+```{sql}
+drop table if exists long2;
+```
+```{sql}
+create table long2 as
+with tmp1 as (
+    select 1 as x
+    union all
+    select x+1 from tmp1 where x<1e7
+  )
+select 
+	 lower(hex(randomblob(3))) as short
+	, lower(hex(randomblob(16))) as long
+	from tmp1
+;
+```
+
+```{sql}
+select * from long2 limit 5;
+```
+
+
+@1
+```{sql}
+drop index if exists  idx_short;
+create index idx_short on long2(short);
+```
+Result: query executed successfully. Took 14846ms
+
+@2
+```{sql}
+drop index if exists  idx_long;
+create index idx_long on long2(long);
+```
+Result: query executed successfully. Took 16501ms
+```
+Result
+  without index
+  with index @1
+  with index @2
+```
+```{sql}
+explain query plan
+select * from long2 order by short;
+```
+```
+Result: 10000000 rows returned in 14010ms
+Result: 10000000 rows returned in 932ms
+Result: 10000000 rows returned in 15943ms
+```
+```{sql}
+explain query plan
+select * from long2 order by long;
+```
+```
+Result: 10000000 rows returned in 16344ms
+Result: 10000000 rows returned in 16311ms
+Result: 10000000 rows returned in 948ms
+```
+
+
+
+## join 2 tables
+
+### before indexing
+```{sql}
+drop index if exists idx_id;
+drop index if exists idx_id_long;
+```
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, day, val from short
+join long using(id)
+;
+```
+Result: 10000000 rows returned in 38790ms
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, day, val from long
+join short using(id)
+;
+```
+Result: 10000000 rows returned in 3192ms
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, count(1) as n from long
+join short using(id)
+group by id
+;
+```
+Result: 900 rows returned in 17305ms
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, count(1) as n from long
+join short using(id)
+group by id having n<11000
+;
+```
+Result: 126 rows returned in 18391ms
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, sum(val) as cum from long
+join short using(id)
+group by id
+;
+```
+Result: 900 rows returned in 20314ms
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, sum(val) as cum from long
+join short using(id)
+group by id having cum<61000
+;
+```
+Result: 380 rows returned in 20085ms
+
+```{sql}
+explain query plan
+with tmp1 as(
+	select *, count(1) as n from long
+	group by id
+)
+select short.id, name, address, tel, age
+from short
+join tmp1 on short.id=tmp1.id and n<11000
+;
+```
+Result: 126 rows returned in 13470ms
+
+```{sql}
+explain query plan
+with tmp1 as(
+	select *, sum(val) as cum from long
+	group by id
+)
+select short.id, name, address, tel, age
+from short
+join tmp1 on short.id=tmp1.id and cum<61000
+;
+```
+Result: 380 rows returned in 14238ms
+
+```{sql}
+explain query plan
+select distinct id, name, address, tel, age from short
+join long using(id)
+;
+```
+Result: 900 rows returned in 13946ms
+
+```{sql}
+explain query plan
+select id, name, address, tel, age  from short
+join long using(id)
+group by id order by count(1) desc
+limit 5
+;
+```
+Result: 5 rows returned in 17579ms
+
+#### use in, exists instead of join
+```{sql}
+explain query plan
+select * from short
+where id in(select id from long)
+;
+```
+Result: 900 rows returned in 2268ms
+
+```{sql}
+explain query plan
+select * from short
+where exists(select 1 from long where long.id=short.id) 
+;
+```
+Result: 900 rows returned in 48987ms
+
+```{sql}
+explain query plan
+select * from short
+where id in(
+	select id from long
+	group by id having count(1)<11000
+)
+;
+```
+Result: 126 rows returned in 12255ms
+
+```{sql}
+explain query plan
+select * from short
+where exists (select 1 from long 
+  where long.id=short.id 
+  group by id having count(1)<11000
+)
+;
+```
+Time over
+
+```{sql}
+explain query plan
+with tmp1 as(
+	select id from long
+	group by id having count(1)<11000
+)
+select * from short
+where exists(select 1 from tmp1 where tmp1.id=short.id) 
+;
+```
+Result: 126 rows returned in 12527ms
+
+```{sql}
+explain query plan
+select * from short
+where id in(
+	select id from long
+	group by id order by count(1) desc
+	limit 5
+)
+;
+```
+Result: 5 rows returned in 10553ms
+
+```{sql}
+explain query plan
+with tmp1 as(
+	select id from long
+	group by id order by count(1) desc
+	limit 5
+)
+select * from short
+where exists(select 1 from tmp1 where tmp1.id=short.id) 
+;
+```
+Time over
+
+
+
+### after indexing
+```{sql}
+drop index if exists idx_id;
+create unique index idx_id on short(id);
+
+drop index if exists idx_id_long;
+create index idx_id_long on long(id);
+```
+
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, day, val from short
+join long using(id)
+;
+```
+Result: 10000000 rows returned in 1828ms
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, day, val from long
+join short using(id)
+;
+```
+Result: 10000000 rows returned in 1857ms
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, count(1) as n from long
+join short using(id)
+group by id
+;
+```
+Result: 900 rows returned in 2392ms
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, count(1) as n from long
+join short using(id)
+group by id having n<11000
+;
+```
+Result: 126 rows returned in 2179ms
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, sum(val) as cum from long
+join short using(id)
+group by id
+;
+```
+Result: 900 rows returned in 10741ms
+
+```{sql}
+explain query plan
+select id, name, address, tel, age, sum(val) as cum from long
+join short using(id)
+group by id having cum<61000
+;
+```
+Result: 380 rows returned in 10831ms
+
+```{sql}
+explain query plan
+with tmp1 as(
+	select *, count(1) as n from long
+	group by id
+)
+select short.id, name, address, tel, age
+from short
+join tmp1 on short.id=tmp1.id and n<11000
+;
+```
+Result: 126 rows returned in 714ms
+
+```{sql}
+explain query plan
+with tmp1 as(
+	select *, sum(val) as cum from long
+	group by id
+)
+select short.id, name, address, tel, age
+from short
+join tmp1 on short.id=tmp1.id and cum<61000
+;
+```
+Result: 380 rows returned in 9058ms
+
+```{sql}
+explain query plan
+select distinct id, name, address, tel, age from short
+join long using(id)
+;
+```
+Result: 900 rows returned in 3407ms
+
+```{sql}
+explain query plan
+select id, name, address, tel, age  from short
+join long using(id)
+group by id order by count(1) desc
+limit 5
+;
+```
+Result: 5 rows returned in 621ms
+
+
+### use in, exists instead of join
+```{sql}
+explain query plan
+select * from short
+where id in(select id from long)
+;
+```
+Result: 900 rows returned in 759ms
+
+```{sql}
+explain query plan
+select * from short
+where exists(select 1 from long where long.id=short.id) 
+;
+```
+Result: 900 rows returned in 6ms
+
+```{sql}
+explain query plan
+select * from short
+where id in(
+	select id from long
+	group by id having count(1)<11000
+)
+;
+```
+Result: 126 rows returned in 549ms
+
+```{sql}
+explain query plan
+select * from short
+where exists (select 1 from long 
+  where long.id = short.id 
+  group by id having count(1) <11000
+)
+;
+```
+Result: 126 rows returned in 675ms
+
+```{sql}
+explain query plan
+with tmp1 as(
+	select id from long
+	group by id having count(1)<11000
+)
+select * from short
+where exists(select 1 from tmp1 where tmp1.id=short.id) 
+;
+```
+Result: 126 rows returned in 555ms
+
+```{sql}
+explain query plan
+select * from short
+where id in(
+	select id from long
+	group by id order by count(1) desc
+	limit 5
+)
+;
+```
+Result: 5 rows returned in 557ms
+
+```{sql}
+explain query plan
+with tmp1 as(
+	select id from long
+	group by id order by count(1) desc
+	limit 5
+)
+select * from short
+where exists(select 1 from tmp1 where tmp1.id=short.id) 
+;
+```
+Time over
+
+
+
+
+
+```
+----covering index
+--index column is (caluculated) to output column
+
+create index idx_receipt on receipt (sales_ymd, amonut);
+
+select sales_ymd, sum(amount) from receipt group by sales_ymd;
+
+drop index idx_receipt;
+
+
+----partial index
+--indexing to part of rows, removing needless rows (null, dummy,...), it decrese address table size
+
+create index idx_receipt on receipt (customer_id);
+
+select * from receipt where customer_id='CS022615000144';
+
+drop index idx_receipt;
+
+create index idx_receipt on receipt (customer_id) where customer_id='ZZ000000000000';
+
+select * from receipt where customer_id='CS022615000144';
+
+drop index idx_receipt;
+
+
+----index formula
+--ex. case insensitive index
+
+create index idx_receipt on receipt (customer_id);
+
+select * from receipt where customer_id='CS022615000144';
+
+drop index idx_receipt;
+
+create index idx_receipt on receipt (lower(customer_id)); 
+
+select * from receipt where lower(customer_id)='CS022615000144';
+
+drop index idx_receipt;
+```
+
+
+
+
+
