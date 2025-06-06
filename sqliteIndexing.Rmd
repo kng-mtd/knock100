@@ -111,21 +111,21 @@ select count(distinct id) from long;
 ## Indexing priority is for more cardinarity column
 
 @1
-```{sql}
+```
 drop index if exists idx_id;
 create index idx_id on long(id);
 ```
 Result: query executed successfully. Took 14752ms
 
 @2
-```{sql}
+```
 drop index if exists idx_day;
 create index idx_day on long(day);
 ```
 Result: query executed successfully. Took 13770ms
 
 @3
-```{sql}
+```
 drop index if exists idx_id_day;
 create index idx_id_day on long(id, day);
 ```
@@ -395,14 +395,14 @@ select * from long2 limit 5;
 
 
 @1
-```{sql}
+```
 drop index if exists  idx_short;
 create index idx_short on long2(short);
 ```
 Result: query executed successfully. Took 14846ms
 
 @2
-```{sql}
+```
 drop index if exists  idx_long;
 create index idx_long on long2(long);
 ```
@@ -437,11 +437,6 @@ Result: 10000000 rows returned in 948ms
 ## join 2 tables
 
 ### before indexing
-```{sql}
-drop index if exists idx_id;
-drop index if exists idx_id_long;
-```
-
 ```{sql}
 explain query plan
 select id, name, address, tel, age, day, val from short
@@ -803,50 +798,39 @@ Time over
 
 
 
+
+## covering index
 ```
-----covering index
---index column is (caluculated) to output column
+A covering index is an index that contains all the columns needed to satisfy a query, so that the database engine can get all necessary data directly from the index, without needing to access the main table (called a table lookup or rowid lookup).
 
-create index idx_receipt on receipt (sales_ymd, amonut);
+Using a covering index can significantly improve performance, especially for read-heavy queries, because:
+  Indexes are smaller and faster to scan than the full table.
+  Fewer I/O operations are needed.
 
-select sales_ymd, sum(amount) from receipt group by sales_ymd;
+ex.
+CREATE INDEX idx_users_name_email ON users(name, email);
 
-drop index idx_receipt;
-
-
-----partial index
---indexing to part of rows, removing needless rows (null, dummy,...), it decrese address table size
-
-create index idx_receipt on receipt (customer_id);
-
-select * from receipt where customer_id='CS022615000144';
-
-drop index idx_receipt;
-
-create index idx_receipt on receipt (customer_id) where customer_id='ZZ000000000000';
-
-select * from receipt where customer_id='CS022615000144';
-
-drop index idx_receipt;
-
-
-----index formula
---ex. case insensitive index
-
-create index idx_receipt on receipt (customer_id);
-
-select * from receipt where customer_id='CS022615000144';
-
-drop index idx_receipt;
-
-create index idx_receipt on receipt (lower(customer_id)); 
-
-select * from receipt where lower(customer_id)='CS022615000144';
-
-drop index idx_receipt;
+helpful covering index
+  SELECT email FROM users WHERE name = 'Alice';
+not helpful covering index
+  SELECT age FROM users WHERE name = 'Alice';
 ```
 
 
+## partial index
+```
+A partial index is an index that only includes rows that meet a specific condition (defined in a WHERE clause). It’s useful when you only need to index a subset of rows, not the entire table.
 
+Performance: Smaller index size → faster searches.
+Efficiency: Avoids indexing irrelevant rows (e.g., NULLs or rarely queried values).
+Selective optimization: Improves performance of queries that target just a certain portion of the data.
 
+ex.
+CREATE INDEX idx_active ON users(name) WHERE active=1;
 
+helpful partial index 
+SELECT * FROM users WHERE active=1 AND name like 'foo%';
+
+not helpful partial index
+SELECT * FROM users WHERE active!=1 AND name like 'foo%';
+```

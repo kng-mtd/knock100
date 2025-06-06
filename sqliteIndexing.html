@@ -1638,38 +1638,38 @@ select
 <tbody>
 <tr class="odd">
 <td align="left">1</td>
-<td align="left">1891e2ab</td>
-<td align="left">9f4ef2c3bb34862b9ddeabd807ab31c7</td>
-<td align="right">6680424980</td>
-<td align="right">89</td>
+<td align="left">db7d8665</td>
+<td align="left">a8cd77f7f30e1b2e8a332e0140dd1978</td>
+<td align="right">7363904596</td>
+<td align="right">25</td>
 </tr>
 <tr class="even">
 <td align="left">2</td>
-<td align="left">45b9e773</td>
-<td align="left">17451a3bcee9d84f207a39e56fa3e814</td>
-<td align="right">6694743157</td>
-<td align="right">89</td>
+<td align="left">3877fbf4</td>
+<td align="left">62ba62923ac6bbc456c73560b29917c0</td>
+<td align="right">8803371491</td>
+<td align="right">0</td>
 </tr>
 <tr class="odd">
 <td align="left">3</td>
-<td align="left">24352670</td>
-<td align="left">c0744126042dbb4fc5b25363c08caca1</td>
-<td align="right">2013406798</td>
-<td align="right">36</td>
+<td align="left">215a8ce2</td>
+<td align="left">2e5ebd5a8ffa24b9bdc28d995851c280</td>
+<td align="right">7919214738</td>
+<td align="right">21</td>
 </tr>
 <tr class="even">
 <td align="left">4</td>
-<td align="left">6793b33b</td>
-<td align="left">f8192238fe02a01c009528e1297e0dad</td>
-<td align="right">6587742544</td>
-<td align="right">55</td>
+<td align="left">839f2ac5</td>
+<td align="left">91047a069552b631e95e576b40a9b280</td>
+<td align="right">1551347300</td>
+<td align="right">90</td>
 </tr>
 <tr class="odd">
 <td align="left">5</td>
-<td align="left">88ae6bde</td>
-<td align="left">5bbfa4649bd43c8ae8442c88d7fb9ebc</td>
-<td align="right">2658656149</td>
-<td align="right">51</td>
+<td align="left">598b9725</td>
+<td align="left">889b1c1deb518642d8c8fcdb8f6484bb</td>
+<td align="right">8167991775</td>
+<td align="right">48</td>
 </tr>
 </tbody>
 </table>
@@ -1716,28 +1716,28 @@ select
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">408</td>
-<td align="left">2025-03-23</td>
+<td align="right">103</td>
+<td align="left">2025-02-08</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="right">81</td>
+<td align="left">2025-02-21</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="right">265</td>
+<td align="left">2024-11-10</td>
 <td align="right">2</td>
 </tr>
 <tr class="even">
-<td align="right">175</td>
-<td align="left">2024-12-15</td>
-<td align="right">9</td>
+<td align="right">716</td>
+<td align="left">2025-02-21</td>
+<td align="right">10</td>
 </tr>
 <tr class="odd">
-<td align="right">365</td>
-<td align="left">2025-02-10</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="right">441</td>
-<td align="left">2024-11-24</td>
-<td align="right">3</td>
-</tr>
-<tr class="odd">
-<td align="right">408</td>
-<td align="left">2024-11-08</td>
+<td align="right">364</td>
+<td align="left">2024-06-23</td>
 <td align="right">10</td>
 </tr>
 </tbody>
@@ -1763,15 +1763,15 @@ select
 <div id="indexing-priority-is-for-more-cardinarity-column" class="section level2">
 <h2>Indexing priority is for more cardinarity column</h2>
 <p><span class="citation">@1</span></p>
-<pre class="sql"><code>drop index if exists idx_id;
+<pre><code>drop index if exists idx_id;
 create index idx_id on long(id);</code></pre>
 <p>Result: query executed successfully. Took 14752ms</p>
 <p><span class="citation">@2</span></p>
-<pre class="sql"><code>drop index if exists idx_day;
+<pre><code>drop index if exists idx_day;
 create index idx_day on long(day);</code></pre>
 <p>Result: query executed successfully. Took 13770ms</p>
 <p><span class="citation">@3</span></p>
-<pre class="sql"><code>drop index if exists idx_id_day;
+<pre><code>drop index if exists idx_id_day;
 create index idx_id_day on long(id, day);</code></pre>
 <p>Result: query executed successfully. Took 22324ms</p>
 <pre><code>Result
@@ -2517,34 +2517,34 @@ select
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">b0faf0</td>
-<td align="left">577c636b5412d0cf18aeccd2c0781c64</td>
+<td align="left">6b496d</td>
+<td align="left">6187394562aa23de2ebe713ddd6bb758</td>
 </tr>
 <tr class="even">
-<td align="left">37f0b2</td>
-<td align="left">65f2804284286f4e66de910c3a457ee5</td>
+<td align="left">cb3c6a</td>
+<td align="left">3e5b3c5828d5298961cf99466d7ef184</td>
 </tr>
 <tr class="odd">
-<td align="left">0e87bc</td>
-<td align="left">dc85faef6a4bcdfab08b7ff9a2ed46e3</td>
+<td align="left">c9cfce</td>
+<td align="left">f5e874f024b25909c4fbbcf341e94213</td>
 </tr>
 <tr class="even">
-<td align="left">f068b0</td>
-<td align="left">0af08717b2dca8dc7862fe872cafb47b</td>
+<td align="left">ca284c</td>
+<td align="left">7f65297dd02c6c7af222c4ca440f3002</td>
 </tr>
 <tr class="odd">
-<td align="left">5449a9</td>
-<td align="left">ff34a27a85efe01fc345ef105d415d77</td>
+<td align="left">b19187</td>
+<td align="left">32924d7811d8a3941cc4c98b63ea3b06</td>
 </tr>
 </tbody>
 </table>
 </div>
 <p><span class="citation">@1</span></p>
-<pre class="sql"><code>drop index if exists  idx_short;
+<pre><code>drop index if exists  idx_short;
 create index idx_short on long2(short);</code></pre>
 <p>Result: query executed successfully. Took 14846ms</p>
 <p><span class="citation">@2</span></p>
-<pre class="sql"><code>drop index if exists  idx_long;
+<pre><code>drop index if exists  idx_long;
 create index idx_long on long2(long);</code></pre>
 <p>Result: query executed successfully. Took 16501ms</p>
 <pre><code>Result
@@ -2620,8 +2620,6 @@ Result: 10000000 rows returned in 948ms</code></pre>
 <h2>join 2 tables</h2>
 <div id="before-indexing" class="section level3">
 <h3>before indexing</h3>
-<pre class="sql"><code>drop index if exists idx_id;
-drop index if exists idx_id_long;</code></pre>
 <pre class="sql"><code>explain query plan
 select id, name, address, tel, age, day, val from short
 join long using(id)
@@ -4446,47 +4444,40 @@ where exists(select 1 from tmp1 where tmp1.id=short.id)
 </table>
 </div>
 <p>Time over</p>
-<pre><code>----covering index
---index column is (caluculated) to output column
-
-create index idx_receipt on receipt (sales_ymd, amonut);
-
-select sales_ymd, sum(amount) from receipt group by sales_ymd;
-
-drop index idx_receipt;
-
-
-----partial index
---indexing to part of rows, removing needless rows (null, dummy,...), it decrese address table size
-
-create index idx_receipt on receipt (customer_id);
-
-select * from receipt where customer_id=&#39;CS022615000144&#39;;
-
-drop index idx_receipt;
-
-create index idx_receipt on receipt (customer_id) where customer_id=&#39;ZZ000000000000&#39;;
-
-select * from receipt where customer_id=&#39;CS022615000144&#39;;
-
-drop index idx_receipt;
-
-
-----index formula
---ex. case insensitive index
-
-create index idx_receipt on receipt (customer_id);
-
-select * from receipt where customer_id=&#39;CS022615000144&#39;;
-
-drop index idx_receipt;
-
-create index idx_receipt on receipt (lower(customer_id)); 
-
-select * from receipt where lower(customer_id)=&#39;CS022615000144&#39;;
-
-drop index idx_receipt;</code></pre>
 </div>
+</div>
+<div id="covering-index" class="section level2">
+<h2>covering index</h2>
+<pre><code>A covering index is an index that contains all the columns needed to satisfy a query, so that the database engine can get all necessary data directly from the index, without needing to access the main table (called a table lookup or rowid lookup).
+
+Using a covering index can significantly improve performance, especially for read-heavy queries, because:
+  Indexes are smaller and faster to scan than the full table.
+  Fewer I/O operations are needed.
+
+ex.
+CREATE INDEX idx_users_name_email ON users(name, email);
+
+helpful covering index
+  SELECT email FROM users WHERE name = &#39;Alice&#39;;
+not helpful covering index
+  SELECT age FROM users WHERE name = &#39;Alice&#39;;</code></pre>
+</div>
+<div id="partial-index" class="section level2">
+<h2>partial index</h2>
+<pre><code>A partial index is an index that only includes rows that meet a specific condition (defined in a WHERE clause). It’s useful when you only need to index a subset of rows, not the entire table.
+
+Performance: Smaller index size → faster searches.
+Efficiency: Avoids indexing irrelevant rows (e.g., NULLs or rarely queried values).
+Selective optimization: Improves performance of queries that target just a certain portion of the data.
+
+ex.
+CREATE INDEX idx_active ON users(name) WHERE active=1;
+
+helpful partial index 
+SELECT * FROM users WHERE active=1 AND name like &#39;foo%&#39;;
+
+not helpful partial index
+SELECT * FROM users WHERE active!=1 AND name like &#39;foo%&#39;;</code></pre>
 </div>
 
 
