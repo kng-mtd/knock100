@@ -980,7 +980,7 @@ select * from table0;
 ```
 
 ```{sql}
-with tmp1 AS (
+with tmp1 as (
   select node1, node2, 1 as depth, node1||','||node2 as visited
   from table0
   where node1='a' --start node
@@ -990,11 +990,12 @@ with tmp1 AS (
   from table0 as t0
   inner join tmp1 on t0.node1=tmp1.node2
   where tmp1.depth<10 -- Limit search depth
-    and ','||tmp1.visited||',' not like '%,'||t0.node2||',%'
+    and tmp1.visited not like '%,'||t0.node2||',%'
 )
-select node2 AS goal, min(depth) as depth
-, visited from tmp1
-group by goal order by depth;
+select node2 as goal, depth, visited from(
+  select *, row_number() over (partition by node2 order by depth) as n    from tmp1
+)
+where n=1;
 ```
 
 ```{sql}
@@ -1039,14 +1040,12 @@ with tmp1 as(
   from table0 as t0
   inner join tmp1 on t0.node1=tmp1.node2
   where tmp1.weight<100 --max search depth
-    and ','||tmp1.visited||','  not like '%,'||t0.node2||',%'
+    and tmp1.visited not like '%,'||t0.node2||',%'
 )
-select node2 as goal
-, depth
-, min(weight) as distance
-, path
-from tmp1
-group by goal order by distance
+select node2 as goal, depth, weight as distance, path
+from (select *
+  , row_number() over (partition by node2 order by weight) as n from tmp1)
+where n=1
 ;
 ```
 
