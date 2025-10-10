@@ -142,6 +142,34 @@ from table1 as t1 inner join table1 as t2
 ```
 
 
+## 3 rows have highest value by group
+```{sql}
+drop table if exists score;
+```
+```{sql}
+create table score as
+	with tmp1 as(
+		select 0 as id, null as grp, null as val
+		union all
+		select id+1 as id, abs(floor(random()/1e18)) as grp, floor(random()/1e15) as val
+		from tmp1
+		where id<100
+	)
+	select * from tmp1 where id!=0
+;
+```
+
+```{sql}
+with tmp1 as(
+select *
+, rank() over (partition by grp order by val desc) as rank
+from score
+)
+select grp, id, val, rank from tmp1 where rank between 1 and 3
+;
+```
+
+
 ## groups with specified column's all elements meet condition
 The query retrieves all distinct values of chr1 in table1 where there are no rows in the same table (table1) for that chr1 value with num1 being less than 2.
 ```{sql}
