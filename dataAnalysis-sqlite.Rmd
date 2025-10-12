@@ -811,6 +811,54 @@ drop table prime;
 ```
 
 
+### binary search
+```{sql}
+-- x**2-10=0
+with tmp1 as (
+  select 0 as l, 10 as r, (0+10)/2.0 as x
+  union all
+  select
+    case when power(x,2)-10<0 then x else l end as l,
+    case when power(x,2)-10<0 then r else x end as r,
+    case when power(x,2)-10<0 then (x+r)/2.0 else (l+x)/2.0 end as x
+  from tmp1
+  where r-l>1e-6
+)
+select * from tmp1;
+```
+
+
+### iterative method
+```{sql}
+-- x1=g(x0), x1->x0 ,when  |g'(x0)|<1
+-- x**2-x-1=0 -> x-1-1/x= 0 -> x=1+1/x
+with tmp1 as(
+	select 0 as i, 1.0 as x
+	union all
+	select i+1 as i
+	, 1.0+1.0/x as x
+	from tmp1 	where  abs(x-1.0-1.0/x)>1e-6
+)
+select * from tmp1
+;
+```
+
+
+### Newton's method
+```{sql}
+-- x**2-10=0
+with tmp1 as(
+	select 0 as i, 10.0 as x
+	union all
+	select i+1 as i
+	, x-(power(x,2)-10.0)/((power(x+0.001,2)-10.0)-(power(x,2)-10.0))*0.001 as x
+	from tmp1	where abs(power(x,2)-10.0)>1e-6
+)
+select * from tmp1
+;
+```
+
+
 ### hierarchy level
 ```{sql}
 create table table0 (id,child,parent);
