@@ -676,6 +676,26 @@ select n, val from tmp1
 ```
 
 
+###  Euclidean Algorithm
+```{sql}
+with tmp0 as(
+	select 120 as a, 216 as b --a<b
+)
+, tmp1 as(
+	select 0 as i, * from tmp0
+	union all
+	select i+1 as i, b%a as a, a as b from tmp1
+	where a!=0
+)
+--select * from tmp1;
+select tmp0.a as a, tmp0.b as b
+, tmp1.b as gcd
+, tmp0.a*tmp0.b/tmp1.b as lcm
+from tmp1, tmp0
+where tmp1.a=0;
+```
+
+
 ### prime number
 ```{sql}
 drop table if exists prime;
