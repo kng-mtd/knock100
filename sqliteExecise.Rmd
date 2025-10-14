@@ -151,7 +151,7 @@ create table score as
 	with tmp1 as(
 		select 0 as id, null as grp, null as val
 		union all
-		select id+1 as id, abs(floor(random()/1e18)) as grp, floor(random()/1e15) as val
+		select id+1 as id, abs(random()%10) as grp, random()%1000 as val
 		from tmp1
 		where id<100
 	)

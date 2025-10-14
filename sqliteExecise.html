@@ -1872,84 +1872,84 @@ for(i in sql) dbExecute(con,i)</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">a</td>
-<td align="left">c2</td>
-<td align="right">4</td>
-<td align="right">52</td>
-<td align="right">0.1165935</td>
-<td align="left">2021-05-12</td>
-</tr>
-<tr class="even">
-<td align="left">d</td>
-<td align="left">c1</td>
-<td align="right">4</td>
-<td align="right">22</td>
-<td align="right">0.3370105</td>
-<td align="left">2020-09-27</td>
-</tr>
-<tr class="odd">
 <td align="left">b</td>
 <td align="left">c1</td>
-<td align="right">3</td>
-<td align="right">59</td>
-<td align="right">0.9540999</td>
-<td align="left">2020-09-21</td>
-</tr>
-<tr class="even">
-<td align="left">c</td>
-<td align="left">c2</td>
-<td align="right">9</td>
-<td align="right">5</td>
-<td align="right">0.8628208</td>
-<td align="left">2021-02-07</td>
-</tr>
-<tr class="odd">
-<td align="left">b</td>
-<td align="left">c1</td>
-<td align="right">9</td>
-<td align="right">56</td>
-<td align="right">0.3505841</td>
-<td align="left">2021-07-30</td>
-</tr>
-<tr class="even">
-<td align="left">a</td>
-<td align="left">c1</td>
-<td align="right">9</td>
-<td align="right">25</td>
-<td align="right">0.5025867</td>
-<td align="left">2020-08-16</td>
-</tr>
-<tr class="odd">
-<td align="left">a</td>
-<td align="left">c2</td>
-<td align="right">9</td>
-<td align="right">0</td>
-<td align="right">0.2175629</td>
-<td align="left">2020-12-16</td>
-</tr>
-<tr class="even">
-<td align="left">a</td>
-<td align="left">c1</td>
-<td align="right">7</td>
-<td align="right">53</td>
-<td align="right">0.2340994</td>
-<td align="left">2020-12-23</td>
-</tr>
-<tr class="odd">
-<td align="left">a</td>
-<td align="left">c2</td>
 <td align="right">8</td>
-<td align="right">3</td>
-<td align="right">0.6647698</td>
-<td align="left">2021-08-04</td>
+<td align="right">20</td>
+<td align="right">0.4246516</td>
+<td align="left">2021-05-21</td>
 </tr>
 <tr class="even">
 <td align="left">c</td>
 <td align="left">c1</td>
+<td align="right">4</td>
+<td align="right">55</td>
+<td align="right">0.8451485</td>
+<td align="left">2021-10-17</td>
+</tr>
+<tr class="odd">
+<td align="left">c</td>
+<td align="left">c2</td>
+<td align="right">4</td>
+<td align="right">33</td>
+<td align="right">0.9756793</td>
+<td align="left">2021-10-07</td>
+</tr>
+<tr class="even">
+<td align="left">a</td>
+<td align="left">c1</td>
+<td align="right">2</td>
+<td align="right">95</td>
+<td align="right">0.5816786</td>
+<td align="left">2020-02-21</td>
+</tr>
+<tr class="odd">
+<td align="left">a</td>
+<td align="left">c1</td>
+<td align="right">9</td>
+<td align="right">18</td>
+<td align="right">0.2136710</td>
+<td align="left">2020-03-24</td>
+</tr>
+<tr class="even">
+<td align="left">b</td>
+<td align="left">c2</td>
 <td align="right">7</td>
-<td align="right">68</td>
-<td align="right">0.5333987</td>
-<td align="left">2020-02-22</td>
+<td align="right">79</td>
+<td align="right">0.9483334</td>
+<td align="left">2020-03-29</td>
+</tr>
+<tr class="odd">
+<td align="left">b</td>
+<td align="left">c1</td>
+<td align="right">2</td>
+<td align="right">2</td>
+<td align="right">0.4171864</td>
+<td align="left">2020-04-21</td>
+</tr>
+<tr class="even">
+<td align="left">a</td>
+<td align="left">c1</td>
+<td align="right">7</td>
+<td align="right">27</td>
+<td align="right">0.7705710</td>
+<td align="left">2021-08-10</td>
+</tr>
+<tr class="odd">
+<td align="left">b</td>
+<td align="left">c1</td>
+<td align="right">5</td>
+<td align="right">3</td>
+<td align="right">0.3992485</td>
+<td align="left">2021-06-04</td>
+</tr>
+<tr class="even">
+<td align="left">a</td>
+<td align="left">c2</td>
+<td align="right">1</td>
+<td align="right">78</td>
+<td align="right">0.8117830</td>
+<td align="left">2021-02-11</td>
 </tr>
 </tbody>
 </table>
@@ -1964,7 +1964,7 @@ using WHERE EXISTS or WHERE NOT EXISTS is faster than using a JOIN.</p>
 where exists (select 1 from table1 where table0.chr1=table1.chr1);</code></pre>
 <div class="knitsql-table">
 <table>
-<caption>4 records</caption>
+<caption>3 records</caption>
 <thead>
 <tr class="header">
 <th align="left">chr1</th>
@@ -1988,11 +1988,6 @@ where exists (select 1 from table1 where table0.chr1=table1.chr1);</code></pre>
 <td align="right">300</td>
 <td align="right">0.33</td>
 </tr>
-<tr class="even">
-<td align="left">d</td>
-<td align="right">400</td>
-<td align="right">0.25</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -2004,7 +1999,7 @@ from table1 as t1 inner join table1 as t2
   on t1.chr1=t2.chr1 and t1.chr2!=t2.chr2;</code></pre>
 <div class="knitsql-table">
 <table>
-<caption>8 records</caption>
+<caption>6 records</caption>
 <thead>
 <tr class="header">
 <th align="left">chr1</th>
@@ -2013,35 +2008,27 @@ from table1 as t1 inner join table1 as t2
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">a</td>
-<td align="left">c2</td>
-</tr>
-<tr class="even">
-<td align="left">d</td>
-<td align="left">c1</td>
-</tr>
-<tr class="odd">
 <td align="left">b</td>
 <td align="left">c1</td>
 </tr>
 <tr class="even">
 <td align="left">c</td>
-<td align="left">c2</td>
+<td align="left">c1</td>
 </tr>
 <tr class="odd">
+<td align="left">c</td>
+<td align="left">c2</td>
+</tr>
+<tr class="even">
 <td align="left">a</td>
 <td align="left">c1</td>
 </tr>
-<tr class="even">
-<td align="left">c</td>
-<td align="left">c1</td>
-</tr>
 <tr class="odd">
-<td align="left">d</td>
+<td align="left">b</td>
 <td align="left">c2</td>
 </tr>
 <tr class="even">
-<td align="left">b</td>
+<td align="left">a</td>
 <td align="left">c2</td>
 </tr>
 </tbody>
@@ -2055,7 +2042,7 @@ from table1 as t1 inner join table1 as t2
     with tmp1 as(
         select 0 as id, null as grp, null as val
         union all
-        select id+1 as id, abs(floor(random()/1e18)) as grp, floor(random()/1e15) as val
+        select id+1 as id, abs(random()%10) as grp, random()%1000 as val
         from tmp1
         where id&lt;100
     )
@@ -2082,62 +2069,62 @@ select grp, id, val, rank from tmp1 where rank between 1 and 3
 <tbody>
 <tr class="odd">
 <td align="right">0</td>
-<td align="right">74</td>
-<td align="right">8324</td>
+<td align="right">43</td>
+<td align="right">569</td>
 <td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="right">0</td>
-<td align="right">54</td>
-<td align="right">1215</td>
+<td align="right">12</td>
+<td align="right">37</td>
 <td align="right">2</td>
 </tr>
 <tr class="odd">
 <td align="right">0</td>
-<td align="right">14</td>
-<td align="right">-131</td>
+<td align="right">61</td>
+<td align="right">36</td>
 <td align="right">3</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
-<td align="right">24</td>
-<td align="right">8709</td>
+<td align="right">76</td>
+<td align="right">557</td>
 <td align="right">1</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
-<td align="right">52</td>
-<td align="right">6578</td>
+<td align="right">15</td>
+<td align="right">554</td>
 <td align="right">2</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
-<td align="right">44</td>
-<td align="right">5601</td>
+<td align="right">75</td>
+<td align="right">550</td>
 <td align="right">3</td>
 </tr>
 <tr class="odd">
 <td align="right">2</td>
-<td align="right">11</td>
-<td align="right">9126</td>
+<td align="right">91</td>
+<td align="right">963</td>
 <td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
-<td align="right">34</td>
-<td align="right">7024</td>
+<td align="right">49</td>
+<td align="right">687</td>
 <td align="right">2</td>
 </tr>
 <tr class="odd">
 <td align="right">2</td>
-<td align="right">6</td>
-<td align="right">6457</td>
+<td align="right">17</td>
+<td align="right">365</td>
 <td align="right">3</td>
 </tr>
 <tr class="even">
 <td align="right">3</td>
-<td align="right">81</td>
-<td align="right">8101</td>
+<td align="right">59</td>
+<td align="right">809</td>
 <td align="right">1</td>
 </tr>
 </tbody>
@@ -2156,16 +2143,13 @@ where not exists(
 );</code></pre>
 <div class="knitsql-table">
 <table>
-<caption>1 records</caption>
+<caption>0 records</caption>
 <thead>
 <tr class="header">
 <th align="left">chr1</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">d</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -2186,16 +2170,13 @@ where not exists(
 );</code></pre>
 <div class="knitsql-table">
 <table>
-<caption>1 records</caption>
+<caption>0 records</caption>
 <thead>
 <tr class="header">
 <th align="left">chr1</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">d</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -2233,7 +2214,7 @@ where not exists(
 <pre class="sql"><code>select chr1, chr2, min(day), max(day) from table1 group by chr1, chr2;</code></pre>
 <div class="knitsql-table">
 <table>
-<caption>8 records</caption>
+<caption>6 records</caption>
 <thead>
 <tr class="header">
 <th align="left">chr1</th>
@@ -2246,50 +2227,38 @@ where not exists(
 <tr class="odd">
 <td align="left">a</td>
 <td align="left">c1</td>
-<td align="left">2020-01-26</td>
-<td align="left">2021-10-21</td>
+<td align="left">2020-01-01</td>
+<td align="left">2021-12-13</td>
 </tr>
 <tr class="even">
 <td align="left">a</td>
 <td align="left">c2</td>
-<td align="left">2020-03-06</td>
-<td align="left">2021-08-04</td>
+<td align="left">2020-02-26</td>
+<td align="left">2021-09-18</td>
 </tr>
 <tr class="odd">
 <td align="left">b</td>
 <td align="left">c1</td>
-<td align="left">2020-01-31</td>
-<td align="left">2021-11-26</td>
+<td align="left">2020-01-10</td>
+<td align="left">2021-12-04</td>
 </tr>
 <tr class="even">
 <td align="left">b</td>
 <td align="left">c2</td>
-<td align="left">2020-02-14</td>
-<td align="left">2020-07-06</td>
+<td align="left">2020-01-18</td>
+<td align="left">2021-12-25</td>
 </tr>
 <tr class="odd">
 <td align="left">c</td>
 <td align="left">c1</td>
-<td align="left">2020-02-22</td>
-<td align="left">2021-10-17</td>
+<td align="left">2020-05-11</td>
+<td align="left">2021-11-25</td>
 </tr>
 <tr class="even">
 <td align="left">c</td>
 <td align="left">c2</td>
-<td align="left">2020-01-21</td>
-<td align="left">2021-09-01</td>
-</tr>
-<tr class="odd">
-<td align="left">d</td>
-<td align="left">c1</td>
-<td align="left">2020-09-27</td>
-<td align="left">2021-12-05</td>
-</tr>
-<tr class="even">
-<td align="left">d</td>
-<td align="left">c2</td>
-<td align="left">2020-12-06</td>
-<td align="left">2020-12-06</td>
+<td align="left">2020-02-03</td>
+<td align="left">2021-10-07</td>
 </tr>
 </tbody>
 </table>
@@ -2313,53 +2282,53 @@ from table1;</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">a</td>
-<td align="right">4</td>
-<td align="right">0.0168067</td>
+<td align="right">2</td>
+<td align="right">0.0093023</td>
 </tr>
 <tr class="even">
 <td align="left">a</td>
 <td align="right">9</td>
-<td align="right">0.0378151</td>
+<td align="right">0.0418605</td>
 </tr>
 <tr class="odd">
-<td align="left">a</td>
-<td align="right">9</td>
-<td align="right">0.0378151</td>
-</tr>
-<tr class="even">
 <td align="left">a</td>
 <td align="right">7</td>
-<td align="right">0.0294118</td>
-</tr>
-<tr class="odd">
-<td align="left">a</td>
-<td align="right">8</td>
-<td align="right">0.0336134</td>
+<td align="right">0.0325581</td>
 </tr>
 <tr class="even">
 <td align="left">a</td>
-<td align="right">5</td>
-<td align="right">0.0210084</td>
+<td align="right">1</td>
+<td align="right">0.0046512</td>
 </tr>
 <tr class="odd">
 <td align="left">a</td>
-<td align="right">0</td>
-<td align="right">0.0000000</td>
+<td align="right">6</td>
+<td align="right">0.0279070</td>
 </tr>
 <tr class="even">
 <td align="left">a</td>
 <td align="right">0</td>
 <td align="right">0.0000000</td>
+</tr>
+<tr class="odd">
+<td align="left">a</td>
+<td align="right">4</td>
+<td align="right">0.0186047</td>
+</tr>
+<tr class="even">
+<td align="left">a</td>
+<td align="right">6</td>
+<td align="right">0.0279070</td>
 </tr>
 <tr class="odd">
 <td align="left">a</td>
 <td align="right">1</td>
-<td align="right">0.0042017</td>
+<td align="right">0.0046512</td>
 </tr>
 <tr class="even">
 <td align="left">a</td>
-<td align="right">0</td>
-<td align="right">0.0000000</td>
+<td align="right">7</td>
+<td align="right">0.0325581</td>
 </tr>
 </tbody>
 </table>
@@ -2569,93 +2538,93 @@ where chr2=&#39;c2&#39;;</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">a</td>
-<td align="left">2020-03-06</td>
-<td align="right">0</td>
+<td align="left">2020-02-26</td>
+<td align="right">7</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="right">1</td>
-<td align="right">4</td>
+<td align="right">5</td>
+<td align="right">2</td>
 </tr>
 <tr class="even">
 <td align="left">a</td>
-<td align="left">2020-05-16</td>
-<td align="right">1</td>
-<td align="right">0</td>
+<td align="left">2020-02-28</td>
+<td align="right">5</td>
+<td align="right">7</td>
 <td align="right">NA</td>
-<td align="right">4</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">a</td>
-<td align="left">2020-06-08</td>
-<td align="right">4</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">4</td>
-</tr>
-<tr class="even">
-<td align="left">a</td>
-<td align="left">2020-06-15</td>
-<td align="right">1</td>
-<td align="right">4</td>
-<td align="right">1</td>
-<td align="right">4</td>
-<td align="right">7</td>
-</tr>
-<tr class="odd">
-<td align="left">a</td>
-<td align="left">2020-08-23</td>
-<td align="right">4</td>
-<td align="right">1</td>
-<td align="right">4</td>
-<td align="right">7</td>
-<td align="right">4</td>
-</tr>
-<tr class="even">
-<td align="left">a</td>
-<td align="left">2020-09-14</td>
-<td align="right">7</td>
-<td align="right">4</td>
-<td align="right">1</td>
-<td align="right">4</td>
+<td align="right">2</td>
 <td align="right">0</td>
 </tr>
 <tr class="odd">
 <td align="left">a</td>
-<td align="left">2020-10-13</td>
-<td align="right">4</td>
+<td align="left">2020-03-01</td>
+<td align="right">2</td>
+<td align="right">5</td>
 <td align="right">7</td>
-<td align="right">4</td>
 <td align="right">0</td>
-<td align="right">8</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="left">a</td>
-<td align="left">2020-10-13</td>
+<td align="left">2020-04-23</td>
 <td align="right">0</td>
-<td align="right">4</td>
-<td align="right">7</td>
-<td align="right">8</td>
-<td align="right">9</td>
+<td align="right">2</td>
+<td align="right">5</td>
+<td align="right">1</td>
+<td align="right">2</td>
 </tr>
 <tr class="odd">
 <td align="left">a</td>
-<td align="left">2020-11-03</td>
-<td align="right">8</td>
+<td align="left">2020-05-07</td>
+<td align="right">1</td>
 <td align="right">0</td>
-<td align="right">4</td>
-<td align="right">9</td>
-<td align="right">7</td>
+<td align="right">2</td>
+<td align="right">2</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">a</td>
-<td align="left">2020-12-16</td>
-<td align="right">9</td>
-<td align="right">8</td>
+<td align="left">2020-07-18</td>
+<td align="right">2</td>
+<td align="right">1</td>
 <td align="right">0</td>
-<td align="right">7</td>
-<td align="right">6</td>
+<td align="right">0</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">a</td>
+<td align="left">2020-08-13</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">a</td>
+<td align="left">2020-09-07</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">3</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">a</td>
+<td align="left">2020-10-07</td>
+<td align="right">3</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">a</td>
+<td align="left">2021-02-09</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">2</td>
 </tr>
 </tbody>
 </table>
@@ -2686,64 +2655,64 @@ from tmp1;</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">2020-03-06</td>
-<td align="right">0</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td align="left">2020-05-16</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td align="left">2020-06-08</td>
-<td align="right">4</td>
-<td align="right">3</td>
-<td align="right">2</td>
-</tr>
-<tr class="even">
-<td align="left">2020-06-15</td>
-<td align="right">1</td>
-<td align="right">-3</td>
-<td align="right">-6</td>
-</tr>
-<tr class="odd">
-<td align="left">2020-08-23</td>
-<td align="right">4</td>
-<td align="right">3</td>
-<td align="right">6</td>
-</tr>
-<tr class="even">
-<td align="left">2020-09-14</td>
+<td align="left">2020-02-26</td>
 <td align="right">7</td>
-<td align="right">3</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="left">2020-10-13</td>
-<td align="right">4</td>
-<td align="right">-3</td>
-<td align="right">-6</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
-<td align="left">2020-10-13</td>
-<td align="right">0</td>
-<td align="right">-4</td>
+<td align="left">2020-02-28</td>
+<td align="right">5</td>
+<td align="right">-2</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-03-01</td>
+<td align="right">2</td>
+<td align="right">-3</td>
 <td align="right">-1</td>
 </tr>
+<tr class="even">
+<td align="left">2020-04-23</td>
+<td align="right">0</td>
+<td align="right">-2</td>
+<td align="right">1</td>
+</tr>
 <tr class="odd">
-<td align="left">2020-11-03</td>
-<td align="right">8</td>
-<td align="right">8</td>
-<td align="right">12</td>
+<td align="left">2020-05-07</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">3</td>
 </tr>
 <tr class="even">
-<td align="left">2020-12-16</td>
-<td align="right">9</td>
+<td align="left">2020-07-18</td>
+<td align="right">2</td>
 <td align="right">1</td>
-<td align="right">-7</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-08-13</td>
+<td align="right">0</td>
+<td align="right">-2</td>
+<td align="right">-3</td>
+</tr>
+<tr class="even">
+<td align="left">2020-09-07</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-10-07</td>
+<td align="right">3</td>
+<td align="right">2</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">2021-02-09</td>
+<td align="right">1</td>
+<td align="right">-2</td>
+<td align="right">-4</td>
 </tr>
 </tbody>
 </table>
@@ -2774,93 +2743,93 @@ order by day;</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">c</td>
+<td align="left">a</td>
+<td align="left">c1</td>
+<td align="right">0</td>
+<td align="right">17</td>
+<td align="right">0.7214464</td>
+<td align="left">2020-01-01</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">b</td>
+<td align="left">c1</td>
+<td align="right">7</td>
+<td align="right">10</td>
+<td align="right">0.6330389</td>
+<td align="left">2020-01-10</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">b</td>
 <td align="left">c2</td>
 <td align="right">9</td>
-<td align="right">34</td>
-<td align="right">0.5988351</td>
+<td align="right">6</td>
+<td align="right">0.1373376</td>
+<td align="left">2020-01-18</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">b</td>
+<td align="left">c1</td>
+<td align="right">1</td>
+<td align="right">15</td>
+<td align="right">0.9583105</td>
+<td align="left">2020-01-19</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">a</td>
+<td align="left">c1</td>
+<td align="right">2</td>
+<td align="right">90</td>
+<td align="right">0.9671684</td>
+<td align="left">2020-01-20</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">a</td>
+<td align="left">c1</td>
+<td align="right">9</td>
+<td align="right">83</td>
+<td align="right">0.0502221</td>
 <td align="left">2020-01-21</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">c</td>
+<td align="left">c2</td>
+<td align="right">3</td>
+<td align="right">41</td>
+<td align="right">0.2398266</td>
+<td align="left">2020-02-03</td>
 <td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">a</td>
 <td align="left">c1</td>
 <td align="right">6</td>
-<td align="right">13</td>
-<td align="right">0.2612334</td>
-<td align="left">2020-01-26</td>
+<td align="right">53</td>
+<td align="right">0.1396193</td>
+<td align="left">2020-02-13</td>
 <td align="right">NA</td>
 </tr>
 <tr class="odd">
-<td align="left">b</td>
-<td align="left">c1</td>
-<td align="right">3</td>
-<td align="right">9</td>
-<td align="right">0.5233523</td>
-<td align="left">2020-01-31</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td align="left">b</td>
-<td align="left">c1</td>
-<td align="right">4</td>
-<td align="right">70</td>
-<td align="right">0.1071834</td>
-<td align="left">2020-02-04</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td align="left">b</td>
-<td align="left">c1</td>
-<td align="right">8</td>
-<td align="right">19</td>
-<td align="right">0.1819975</td>
-<td align="left">2020-02-05</td>
+<td align="left">c</td>
+<td align="left">c2</td>
+<td align="right">6</td>
+<td align="right">36</td>
+<td align="right">0.9142181</td>
+<td align="left">2020-02-17</td>
 <td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">a</td>
 <td align="left">c1</td>
-<td align="right">8</td>
-<td align="right">59</td>
-<td align="right">0.9277812</td>
-<td align="left">2020-02-06</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">b</td>
-<td align="left">c2</td>
-<td align="right">4</td>
-<td align="right">14</td>
-<td align="right">0.4908964</td>
-<td align="left">2020-02-14</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td align="left">b</td>
-<td align="left">c1</td>
-<td align="right">1</td>
-<td align="right">85</td>
-<td align="right">0.6326686</td>
-<td align="left">2020-02-17</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td align="left">c</td>
-<td align="left">c1</td>
-<td align="right">7</td>
-<td align="right">68</td>
-<td align="right">0.5333987</td>
-<td align="left">2020-02-22</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td align="left">b</td>
-<td align="left">c1</td>
 <td align="right">2</td>
-<td align="right">23</td>
-<td align="right">0.6426349</td>
-<td align="left">2020-03-03</td>
+<td align="right">95</td>
+<td align="right">0.5816786</td>
+<td align="left">2020-02-21</td>
 <td align="right">NA</td>
 </tr>
 </tbody>
