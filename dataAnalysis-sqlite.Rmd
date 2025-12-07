@@ -112,8 +112,8 @@ select count(1), count(chr1), count(num1), count(num2), count(num3)
 ```
 
 ### rows have null
-answer of alithmetic  includes null is null,  
-text type column's value is 0 when its used alithmetic
+answer of alithmetric includes null is null,  
+text type column's value is 0 when its used alithmetric
 ```{sql}
 select * from tmp01
   where chr1+num1+num2 is null;
@@ -124,6 +124,15 @@ select * from tmp01
 select chr1 from tmp01
 group by chr1
 having count(1)!=count(num1);
+```
+
+### functions for null
+```
+coalesce(col1, col2..., val)
+
+nullif(col1, val)
+ex.
+select avg(nullif(col1, 'NA')) from table
 ```
 
 
