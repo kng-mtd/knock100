@@ -126,6 +126,35 @@ group by chr1
 having count(1)!=count(num1);
 ```
 
+### fill null with back value
+```{sql}
+create temp table dum as
+with tmp1 as(
+  select 0 as ts, random()%100 as val
+  union all
+  select ts+1, iif(random()%4=0, null, random()%100) from tmp1
+  where ts<20
+)
+select * from tmp1;
+```
+```{sql}
+select * from dum;
+```
+```{sql}
+with tmp1 as(
+        select row_number() over(order by ts) as i,* from dum
+)
+, tmp2 as(
+        select i, ts, val from tmp1 where i=1
+        union all
+        select tmp1.i as i, tmp1.ts as ts
+        , coalesce(tmp1.val, tmp2.val)
+        from tmp1 join tmp2
+        on tmp1.i=tmp2.i+1
+)
+select * from tmp2 order by i;
+```
+
 ### functions for null
 ```
 coalesce(col1, col2..., val)
@@ -170,7 +199,9 @@ drop table tmp01;
 ```{sql}
 drop table tmp02;
 ```
-
+```{sql}
+drop table dum;
+```
 
 
 ## aggregation
