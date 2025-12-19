@@ -2193,7 +2193,32 @@ UNIXスタイルのパターンマッチング、大文字小文字の区別あ�
   SELECT * FROM files WHERE filename GLOB &#39;data_?.csv&#39;;
 
 名前が &quot;image&quot; で始まり &quot;1&quot; から &quot;3&quot; のいずれかで終わるデータを検索
-  SELECT * FROM files WHERE filename GLOB &#39;image*[1-3].jpg&#39;;</code></pre>
+  SELECT * FROM files WHERE filename GLOB &#39;image*[1-3].jpg&#39;;
+  
+
+3. エスケープ処理
+
+シングルクォート、ダブルクォートは重ねる
+  &#39;I&#39;&#39;m&#39; &gt; I&#39;m
+  ”say &quot;&quot;Hello&quot;&quot;&quot; &gt; say &quot;Hello&quot; 
+
+コマンド名
+スペースを含むデータベース名、テーブル名、カラム名
+
+　ダブルクォート
+　SELECT &quot;select&quot;, &quot;user name&quot; FROM &quot;my table&quot;;
+
+　バッククォート
+　SELECT `select` FROM `my table`;
+
+　角括弧
+  SELECT [select] FROM [my table];
+
+ワイルドカード文字 % _に対してはESCAPEでエスケープコードを指定
+
+  SELECT * FROM t
+  WHERE col LIKE &#39;%\%%&#39; ESCAPE &#39;\&#39;;
+</code></pre>
 </div>
 <div id="s-010-店舗データstoreから店舗コードstore_cdがs14で始まるものだけ全項目抽出し10件表示せよ" class="section level4">
 <h4>S-010:
@@ -6128,54 +6153,54 @@ order by random();</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">CS015314000059</td>
-<td align="right">2428</td>
+<td align="left">CS018415000159</td>
+<td align="right">3491</td>
 <td align="right">3</td>
 </tr>
 <tr class="even">
-<td align="left">CS031513000075</td>
-<td align="right">1842</td>
-<td align="right">3</td>
-</tr>
-<tr class="odd">
-<td align="left">CS030215000025</td>
-<td align="right">192</td>
+<td align="left">CS040512000004</td>
+<td align="right">278</td>
 <td align="right">1</td>
 </tr>
-<tr class="even">
-<td align="left">CS014413000002</td>
-<td align="right">2298</td>
-<td align="right">3</td>
-</tr>
 <tr class="odd">
-<td align="left">CS017412000121</td>
-<td align="right">1016</td>
+<td align="left">CS010413000223</td>
+<td align="right">1174</td>
 <td align="right">2</td>
 </tr>
 <tr class="even">
-<td align="left">CS002315000068</td>
-<td align="right">228</td>
-<td align="right">1</td>
+<td align="left">CS017513000208</td>
+<td align="right">7000</td>
+<td align="right">4</td>
 </tr>
 <tr class="odd">
-<td align="left">CS015514000090</td>
-<td align="right">196</td>
+<td align="left">CS017215000012</td>
+<td align="right">4207</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">CS016414000063</td>
+<td align="right">6207</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">CS002615000220</td>
+<td align="right">368</td>
 <td align="right">1</td>
 </tr>
 <tr class="even">
-<td align="left">CS021613000001</td>
-<td align="right">1777</td>
-<td align="right">3</td>
-</tr>
-<tr class="odd">
-<td align="left">CS024512000057</td>
-<td align="right">448</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">CS021613000035</td>
-<td align="right">1383</td>
+<td align="left">CS042311000001</td>
+<td align="right">733</td>
 <td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">CS039513000174</td>
+<td align="right">503</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">CS014411000031</td>
+<td align="right">1614</td>
+<td align="right">3</td>
 </tr>
 </tbody>
 </table>
@@ -7676,16 +7701,16 @@ from tmp1 limit 10;</code></pre>
 <caption>Displaying records 1 - 10</caption>
 <colgroup>
 <col width="9%" />
-<col width="8%" />
+<col width="9%" />
 <col width="6%" />
 <col width="4%" />
 <col width="6%" />
 <col width="2%" />
 <col width="6%" />
-<col width="24%" />
-<col width="13%" />
+<col width="23%" />
+<col width="12%" />
 <col width="10%" />
-<col width="8%" />
+<col width="7%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -7704,134 +7729,134 @@ from tmp1 limit 10;</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">CS006415000279</td>
-<td align="left">末永 綾</td>
+<td align="left">CS026715000064</td>
+<td align="left">杉原 倫子</td>
 <td align="left">1</td>
 <td align="left">女性</td>
-<td align="left">1969-10-03</td>
-<td align="left">49</td>
-<td align="left">224-0037</td>
-<td align="left">神奈川県横浜市都筑区茅ケ崎南**********</td>
-<td align="left">S14006</td>
-<td align="left">20150713</td>
-<td align="left">1-20100519-2</td>
-</tr>
-<tr class="even">
-<td align="left">CS039714000007</td>
-<td align="left">水田 さやか</td>
-<td align="left">1</td>
-<td align="left">女性</td>
-<td align="left">1941-11-21</td>
-<td align="left">77</td>
-<td align="left">167-0043</td>
-<td align="left">東京都杉並区上荻**********</td>
-<td align="left">S13039</td>
-<td align="left">20150605</td>
+<td align="left">1945-11-29</td>
+<td align="left">73</td>
+<td align="left">251-0046</td>
+<td align="left">神奈川県藤沢市辻堂西海岸**********</td>
+<td align="left">S14026</td>
+<td align="left">20150629</td>
 <td align="left">0-00000000-0</td>
 </tr>
-<tr class="odd">
-<td align="left">CS024305000004</td>
-<td align="left">佐久間 花緑</td>
+<tr class="even">
+<td align="left">CS004402000153</td>
+<td align="left">岩本 栄一</td>
 <td align="left">0</td>
 <td align="left">男性</td>
-<td align="left">1982-03-16</td>
+<td align="left">1969-10-20</td>
+<td align="left">49</td>
+<td align="left">171-0051</td>
+<td align="left">東京都豊島区長崎**********</td>
+<td align="left">S13004</td>
+<td align="left">20170929</td>
+<td align="left">0-00000000-0</td>
+</tr>
+<tr class="odd">
+<td align="left">CS016615000116</td>
+<td align="left">本上 恵梨香</td>
+<td align="left">1</td>
+<td align="left">女性</td>
+<td align="left">1956-01-27</td>
+<td align="left">63</td>
+<td align="left">184-0013</td>
+<td align="left">東京都小金井市前原町**********</td>
+<td align="left">S13016</td>
+<td align="left">20150504</td>
+<td align="left">8-20080729-3</td>
+</tr>
+<tr class="even">
+<td align="left">CS001601000002</td>
+<td align="left">馬場 草太</td>
+<td align="left">0</td>
+<td align="left">男性</td>
+<td align="left">1949-04-09</td>
+<td align="left">69</td>
+<td align="left">212-0002</td>
+<td align="left">神奈川県川崎市幸区小向仲野町**********</td>
+<td align="left">S13001</td>
+<td align="left">20150820</td>
+<td align="left">0-00000000-0</td>
+</tr>
+<tr class="odd">
+<td align="left">CS001312000069</td>
+<td align="left">大山 ジローラモ</td>
+<td align="left">9</td>
+<td align="left">不明</td>
+<td align="left">1981-04-18</td>
 <td align="left">37</td>
-<td align="left">214-0039</td>
-<td align="left">神奈川県川崎市多摩区栗谷**********</td>
-<td align="left">S14024</td>
-<td align="left">20150625</td>
-<td align="left">A-20100924-A</td>
+<td align="left">210-0001</td>
+<td align="left">神奈川県川崎市川崎区本町**********</td>
+<td align="left">S13001</td>
+<td align="left">20151005</td>
+<td align="left">0-00000000-0</td>
 </tr>
 <tr class="even">
-<td align="left">CS003712000183</td>
-<td align="left">野沢 璃奈子</td>
-<td align="left">1</td>
-<td align="left">女性</td>
-<td align="left">1944-12-01</td>
-<td align="left">74</td>
-<td align="left">201-0016</td>
-<td align="left">東京都狛江市駒井町**********</td>
-<td align="left">S13003</td>
-<td align="left">20170130</td>
+<td align="left">CS018702000007</td>
+<td align="left">本橋 鉄二</td>
+<td align="left">0</td>
+<td align="left">男性</td>
+<td align="left">1940-10-21</td>
+<td align="left">78</td>
+<td align="left">204-0024</td>
+<td align="left">東京都清瀬市梅園**********</td>
+<td align="left">S13018</td>
+<td align="left">20150902</td>
 <td align="left">0-00000000-0</td>
 </tr>
 <tr class="odd">
-<td align="left">CS031514000047</td>
-<td align="left">原口 礼子</td>
+<td align="left">CS002315000178</td>
+<td align="left">福岡 美咲</td>
 <td align="left">1</td>
 <td align="left">女性</td>
-<td align="left">1963-07-26</td>
-<td align="left">55</td>
-<td align="left">151-0064</td>
-<td align="left">東京都渋谷区上原**********</td>
-<td align="left">S13031</td>
-<td align="left">20150927</td>
-<td align="left">8-20090607-6</td>
+<td align="left">1983-08-29</td>
+<td align="left">35</td>
+<td align="left">185-0011</td>
+<td align="left">東京都国分寺市本多**********</td>
+<td align="left">S13002</td>
+<td align="left">20150428</td>
+<td align="left">2-20081018-1</td>
 </tr>
 <tr class="even">
-<td align="left">CS023513000125</td>
-<td align="left">原口 紗季</td>
+<td align="left">CS021315000114</td>
+<td align="left">奈良 陽子</td>
 <td align="left">1</td>
 <td align="left">女性</td>
-<td align="left">1959-09-27</td>
-<td align="left">59</td>
-<td align="left">212-0011</td>
-<td align="left">神奈川県川崎市幸区幸町**********</td>
-<td align="left">S14023</td>
-<td align="left">20150301</td>
-<td align="left">0-00000000-0</td>
-</tr>
-<tr class="odd">
-<td align="left">CS010312000070</td>
-<td align="left">奥 由宇</td>
-<td align="left">1</td>
-<td align="left">女性</td>
-<td align="left">1984-07-22</td>
+<td align="left">1985-02-20</td>
 <td align="left">34</td>
-<td align="left">223-0057</td>
-<td align="left">神奈川県横浜市港北区新羽町**********</td>
-<td align="left">S14010</td>
+<td align="left">259-1133</td>
+<td align="left">神奈川県伊勢原市東大竹**********</td>
+<td align="left">S14021</td>
 <td align="left">20150817</td>
 <td align="left">0-00000000-0</td>
 </tr>
-<tr class="even">
-<td align="left">CS025514000099</td>
-<td align="left">広田 奈央</td>
-<td align="left">1</td>
-<td align="left">女性</td>
-<td align="left">1964-02-03</td>
-<td align="left">55</td>
-<td align="left">242-0024</td>
-<td align="left">神奈川県大和市福田**********</td>
-<td align="left">S14025</td>
-<td align="left">20150425</td>
-<td align="left">6-20101018-A</td>
-</tr>
 <tr class="odd">
-<td align="left">CS016604000012</td>
-<td align="left">草村 ジョージ</td>
-<td align="left">0</td>
-<td align="left">男性</td>
-<td align="left">1952-09-29</td>
-<td align="left">66</td>
-<td align="left">184-0014</td>
-<td align="left">東京都小金井市貫井南町**********</td>
-<td align="left">S13016</td>
-<td align="left">20150829</td>
-<td align="left">8-20100226-9</td>
-</tr>
-<tr class="even">
-<td align="left">CS001413000164</td>
-<td align="left">二宮 朝陽</td>
+<td align="left">CS033515000093</td>
+<td align="left">石倉 めぐみ</td>
 <td align="left">1</td>
 <td align="left">女性</td>
-<td align="left">1975-01-06</td>
-<td align="left">44</td>
-<td align="left">144-0034</td>
-<td align="left">東京都大田区西糀谷**********</td>
-<td align="left">S13001</td>
-<td align="left">20150828</td>
-<td align="left">0-00000000-0</td>
+<td align="left">1965-02-26</td>
+<td align="left">54</td>
+<td align="left">246-0025</td>
+<td align="left">神奈川県横浜市瀬谷区阿久和西**********</td>
+<td align="left">S14033</td>
+<td align="left">20150224</td>
+<td align="left">F-20101017-F</td>
+</tr>
+<tr class="even">
+<td align="left">CS021612000084</td>
+<td align="left">脇田 沙知絵</td>
+<td align="left">1</td>
+<td align="left">女性</td>
+<td align="left">1951-07-17</td>
+<td align="left">67</td>
+<td align="left">259-1116</td>
+<td align="left">神奈川県伊勢原市石田**********</td>
+<td align="left">S14021</td>
+<td align="left">20150712</td>
+<td align="left">A-20100503-C</td>
 </tr>
 </tbody>
 </table>
@@ -7863,15 +7888,15 @@ select gender_cd, count(1) from tmp1 group by gender_cd;</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">0</td>
-<td align="right">311</td>
+<td align="right">309</td>
 </tr>
 <tr class="even">
 <td align="left">1</td>
-<td align="right">1754</td>
+<td align="right">1778</td>
 </tr>
 <tr class="odd">
 <td align="left">9</td>
-<td align="right">88</td>
+<td align="right">115</td>
 </tr>
 </tbody>
 </table>
@@ -8616,7 +8641,7 @@ group by customer_id</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">CS001113000004</td>
-<td align="right">1</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">CS001114000005</td>
@@ -8628,7 +8653,7 @@ group by customer_id</code></pre>
 </tr>
 <tr class="even">
 <td align="left">CS001205000004</td>
-<td align="right">1</td>
+<td align="right">0</td>
 </tr>
 <tr class="odd">
 <td align="left">CS001205000006</td>
@@ -8640,7 +8665,7 @@ group by customer_id</code></pre>
 </tr>
 <tr class="odd">
 <td align="left">CS001212000027</td>
-<td align="right">0</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="left">CS001212000031</td>
@@ -8648,7 +8673,7 @@ group by customer_id</code></pre>
 </tr>
 <tr class="odd">
 <td align="left">CS001212000046</td>
-<td align="right">1</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">CS001212000070</td>
@@ -8806,34 +8831,34 @@ order by random() limit 8306;</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">CS002515000213</td>
+<td align="left">CS016205000001</td>
 </tr>
 <tr class="even">
-<td align="left">CS031414000073</td>
+<td align="left">CS026515000092</td>
 </tr>
 <tr class="odd">
-<td align="left">CS008513000110</td>
+<td align="left">CS010515000199</td>
 </tr>
 <tr class="even">
-<td align="left">CS024513000169</td>
+<td align="left">CS020315000067</td>
 </tr>
 <tr class="odd">
-<td align="left">CS012415000115</td>
+<td align="left">CS026512000011</td>
 </tr>
 <tr class="even">
-<td align="left">CS011212000011</td>
+<td align="left">CS040212000049</td>
 </tr>
 <tr class="odd">
-<td align="left">CS025414000094</td>
+<td align="left">CS006414000017</td>
 </tr>
 <tr class="even">
-<td align="left">CS013315000007</td>
+<td align="left">CS035514000110</td>
 </tr>
 <tr class="odd">
-<td align="left">CS009513000178</td>
+<td align="left">CS031515000022</td>
 </tr>
 <tr class="even">
-<td align="left">CS013412000092</td>
+<td align="left">CS016414000006</td>
 </tr>
 </tbody>
 </table>
@@ -8850,34 +8875,34 @@ order by random() limit 8306;</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">CS039413000296</td>
+<td align="left">CS040301000005</td>
 </tr>
 <tr class="even">
-<td align="left">CS014413000074</td>
+<td align="left">CS032213000038</td>
 </tr>
 <tr class="odd">
-<td align="left">CS002514000233</td>
+<td align="left">CS025513000218</td>
 </tr>
 <tr class="even">
-<td align="left">CS029413000077</td>
+<td align="left">CS038303000002</td>
 </tr>
 <tr class="odd">
-<td align="left">CS024611000039</td>
+<td align="left">CS023511000057</td>
 </tr>
 <tr class="even">
-<td align="left">CS033413000101</td>
+<td align="left">CS033413000203</td>
 </tr>
 <tr class="odd">
-<td align="left">CS035413000118</td>
+<td align="left">CS038312000061</td>
 </tr>
 <tr class="even">
-<td align="left">CS040213000032</td>
+<td align="left">CS002212000111</td>
 </tr>
 <tr class="odd">
-<td align="left">CS004402000141</td>
+<td align="left">CS027213000040</td>
 </tr>
 <tr class="even">
-<td align="left">CS025413000046</td>
+<td align="left">CS043612000009</td>
 </tr>
 </tbody>
 </table>
