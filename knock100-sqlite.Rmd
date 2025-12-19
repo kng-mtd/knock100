@@ -189,7 +189,7 @@ UNIXスタイルのパターンマッチング、大文字小文字の区別あ�
 スペースを含むデータベース名、テーブル名、カラム名
 
 　ダブルクォート
-　SELECT "select", "user name" FROM "my table";
+　SELECT "select" FROM "my table";
 
 　バッククォート
 　SELECT `select` FROM `my table`;
@@ -197,7 +197,7 @@ UNIXスタイルのパターンマッチング、大文字小文字の区別あ�
 　角括弧
   SELECT [select] FROM [my table];
 
-ワイルドカード文字 % _に対してはESCAPEでエスケープコードを指定
+ワイルドカード文字 % _ に対してはESCAPEでエスケープコードを指定
 
   SELECT * FROM t
   WHERE col LIKE '%\%%' ESCAPE '\';
